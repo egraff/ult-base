@@ -1,0 +1,68 @@
+% Copyright (c) 2015 Erlend Graff <erlend.graff@gmail.com>
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ult-autoref}[2015/11/05 v1.1a UiT LaTeX template customized autoref]
+
+\RequirePackage{hyperref}
+\RequirePackage{xpatch}
+
+% Define \Autoref macro that does the same as hyperref's \autoref, except it
+% capitalizes the first letter in the reference name.
+\def\ult@defspecialpatch
+{%
+  \begingroup
+    \catcode`\#=12
+    \ult@@defspecialpatch
+}
+\def\ult@@defspecialpatch#1#2#3#4
+{%
+  \endgroup
+  \def#1{%
+    \xpatchcmd
+      {#2}%
+      {#3}%
+      {#4}%
+      {}%
+      {\PackageError{ult-autoref}{Failed to patch \string#2}{\@ehd}}%
+  }%
+}
+
+% Copy \HyRef@autosetref
+\let\ult@HyRef@Autosetref\HyRef@autosetref
+
+\ult@defspecialpatch\ult@patch@Autosetref@makefirstuc
+  {\ult@HyRef@Autosetref}%
+  {%
+    \HyRef@currentHtag                                                    % refname + ~ space
+    \expandafter\@firstoffive#1\@empty\@empty\@empty                      % refnum
+    \null
+  }%
+  {%
+    \expandafter\expandafter\expandafter\MakeUppercase\HyRef@currentHtag  % refname + ~ space
+    \expandafter\@firstoffive#1\@empty\@empty\@empty                      % refnum
+    \null
+  }
+
+% Patch our copy of \HyRef@autosetref
+\ult@patch@Autosetref@makefirstuc
+
+\def\ult@autoref@starred#1{%
+    \autoref*{#1}%
+  \endgroup
+}
+
+\def\ult@autoref#1{%
+    \autoref{#1}%
+  \endgroup
+}
+
+\def\Autoref{%
+  \begingroup
+    % Override \HyRef@autosetref locally to our patched version that
+    % capitalizes the first letter in autorefname
+    \let\HyRef@autosetref\ult@HyRef@Autosetref
+    %
+    \@ifstar\ult@autoref@starred\ult@autoref
+}
+
+\endinput

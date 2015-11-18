@@ -1,0 +1,90 @@
+% Copyright (c) 2015 Erlend Graff <erlend.graff@gmail.com>
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ult-rename}[2015/11/05 v1.1a UiT LaTeX template rename definitions]
+
+% Allows us to rename name definitions for e.g. Figure, Table, Section,
+%   Subsection, etc.
+% Used as \renamedefname[language-name]{ident}{new name}.
+%   If 'language-name' is empty, then current language is used.
+%   'ident' is identifier, e.g. float name. For example, figure, section,
+%     lstlisting.
+%   'new name' is new reference name, e.g. Figure, Section, Code Listing.
+%
+% Example: if the current \languagename is USenglish, then you may either write
+%   \renamedefname[USenglish]{lstlisting}{Code Listing}
+% or
+%   \renamedefname{lstlisting}{Code Listing}
+\newcommand\renamedefname[3][\@empty]{%
+  \begingroup
+    \def\ult@tmp@langname{\@empty}%
+    \ifx#1\@empty
+      % If no language was specified, use current language.
+      \global\@namedef{#2name}{#3}%
+      \ifcsname languagename\endcsname
+        \let\ult@tmp@langname\languagename\relax
+      \fi
+    \else
+      \def\ult@tmp@langname{#1}%
+      \ifcsname languagename\endcsname
+        \ifx#1\languagename
+          % If we have a current language, only change these if
+          % requested language = current language
+          \global\@namedef{#2name}{#3}%
+        \fi
+      \fi
+    \fi
+    % If we have a language
+    \ifx\ult@tmp@langname\@empty\else
+      \ifcsname captions\ult@tmp@langname\endcsname
+        % Add name definition to \captions<Language name> macro.
+        \expandafter\g@addto@macro\csname captions\ult@tmp@langname\endcsname
+          {\@namedef{#2name}{#3}}%
+      \fi
+    \fi
+  \endgroup
+}
+
+% Allows us to rename autoref reference names for e.g. Figure, Table, Section,
+%   Subsection, etc.
+% Used as \renameautorefname[language-name]{ident}{new name}.
+%   If 'language-name' is empty, then current language is used.
+%   'ident' is identifier, e.g. float name. For example, figure, section,
+%     lstlisting.
+%   'new name' is new reference name, e.g. Figure, Section, Code Listing.
+%
+% Example: if the current \languagename is USenglish, then you may either write
+%   \renameautorefname[USenglish]{lstlisting}{Code Listing}
+% or
+%   \renameautorefname{lstlisting}{Code Listing}
+\newcommand\renameautorefname[3][\@empty]{%
+  \begingroup
+    \def\ult@tmp@langname{\@empty}%
+    \ifx#1\@empty
+      % If no language was specified, use current language.
+      \global\@namedef{#2autorefname}{#3}%
+      \ifcsname languagename\endcsname
+        \let\ult@tmp@langname\languagename\relax
+      \fi
+    \else
+      \def\ult@tmp@langname{#1}
+      \ifcsname languagename\endcsname
+        \ifx#1\languagename
+          % If we have a current language,
+          % only change these if requested language = current language
+          \global\@namedef{#2autorefname}{#3}%
+        \fi
+      \fi
+    \fi
+    % If we have a language
+    \ifx\ult@tmp@langname\@empty\else
+      \ifcsname extras\ult@tmp@langname\endcsname
+        % Add autorefname definition to \extras<Language name> macro.
+        \expandafter\g@addto@macro\csname extras\ult@tmp@langname\endcsname
+          {\@namedef{#2autorefname}{#3}}%
+      \fi
+    \fi
+  \endgroup
+}
+
+\endinput
