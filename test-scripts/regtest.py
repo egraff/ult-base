@@ -25,14 +25,12 @@ dlvl = [debug.INFO, debug.DEBUG, debug.WARNING, debug.FUCK, debug.NORMAL, debug.
 
 
 class TestPdfPagePair(asynclib.AsyncTask):
-  def __init__(self, config, testPdfObj, protoPdfObj, pageNum, testPngPath, protoPngPath):
+  def __init__(self, config, testPdfObj, protoPdfObj, pageNum, testName):
     self.pageNum = pageNum
-    self.testPngPath = testPngPath
-    self.protoPngPath = protoPngPath
 
-    self.testPngPagePath = "%s_%s.png" % (self.testPngPath, self.pageNum)
-    self.protoPngPagePath = "%s_%s.png" % (self.protoPngPath, self.pageNum)
-    self.diffPath = "%s/diff_%s_%s.png" % (config.DIFFDIR, os.path.basename(self.testPngPath), self.pageNum)
+    self.testPngPagePath = "%s/%s_%s.png" % (config.TMPDIR, testName, self.pageNum)
+    self.protoPngPagePath = "%s/%s_%s_%s.png" % (config.TMPDIR, config.PROTOFILEPREFIX, testName, self.pageNum)
+    self.diffPath = "%s/diff_%s_%s.png" % (config.DIFFDIR, testName, self.pageNum)
 
     # Start processes for generating PNGs
     self.testPdfTask = testPdfObj.getPngForPageAsync(pageNum, self.testPngPagePath)
@@ -117,9 +115,6 @@ class TestPdfPair(asynclib.AsyncTask):
     testPdfPath = "%s/%s.pdf" % (config.PDFSDIR, testName)
     protoPdfPath = "%s/%s.pdf" % (config.PROTODIR, testName)
 
-    testPngPath  = "%s/%s" % (config.TMPDIR, testName)
-    protoPngPath = "%s/%s_%s" % (config.TMPDIR, config.PROTOFILEPREFIX, testName)
-
     testPdfObj = PdfFile(testPdfPath)
     protoPdfObj = PdfFile(protoPdfPath)
 
@@ -136,7 +131,7 @@ class TestPdfPair(asynclib.AsyncTask):
         self.failedPages.append(pageNum)
         continue
 
-      task = TestPdfPagePair(config, testPdfObj, protoPdfObj, pageNum, testPngPath, protoPngPath)
+      task = TestPdfPagePair(config, testPdfObj, protoPdfObj, pageNum, testName)
       testTasks.append(task)
 
     self.__joinedTestTask = asynclib.JoinedAsyncTask(*testTasks)
@@ -154,8 +149,8 @@ class TestPdfPair(asynclib.AsyncTask):
     return (self.testName, self.failedPages)
 
 
-def makeTestTask(testName):
-  cmd = ['make', '--no-print-directory', '_file', 'RETAINBUILDFLD=y', 'FILE=%s.tex' % testName]
+def makeTestTask(config, testName):
+  cmd = ['make', '-C', config.TESTDIR, '--no-print-directory', '_file', 'RETAINBUILDFLD=y', 'FILE=%s.tex' % testName]
   task = asynclib.AsyncPopen(cmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   return task
 
@@ -165,7 +160,7 @@ class TestTask(asynclib.AsyncTask):
     self.config = config
     self.testName = testName
 
-    task = makeTestTask(self.testName)
+    task = makeTestTask(config, self.testName)
     task.await(self._makeTaskComplete)
     self.wait = task.wait
 
@@ -185,25 +180,10 @@ class TestTask(asynclib.AsyncTask):
   # Result is on the form
   #  (test name, Build succeeded = TRUE, list of failed pages)
   # or
-  #   (test name, Build succeeded = FALSE, build proc)
+  #  (test name, Build succeeded = FALSE, build proc)
   @property
   def result(self):
     return self.__result
-
-
-def testGenerator(config):
-  for fileName in os.listdir(config.TEXTESTDIR):
-    # Ignore files that contain spaces
-    if " " in fileName:
-      continue
-
-    if not fileName.startswith(config.TESTFILEPREFIX):
-      continue
-
-    if not fileName.endswith(".tex"):
-      continue
-
-    yield os.path.splitext(fileName)[0]
 
 
 class TestRunner():
@@ -305,6 +285,21 @@ class TestRunner():
           self.echo(debug.YELLOW, "PNGs containing diffs are available in '%s'\n\n" % (self.config.DIFFDIR,))
           json.dump(resultMap, fp)
           sys.exit(1)
+
+
+def testGenerator(config):
+  for fileName in os.listdir(config.TEXTESTDIR):
+    # Ignore files that contain spaces
+    if " " in fileName:
+      continue
+
+    if not fileName.startswith(config.TESTFILEPREFIX):
+      continue
+
+    if not fileName.endswith(".tex"):
+      continue
+
+    yield os.path.splitext(fileName)[0]
 
 
 class TestConfig():
