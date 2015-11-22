@@ -2,6 +2,7 @@
 
 import os
 import re
+import errno
 import subprocess
 
 import testenv
@@ -54,8 +55,10 @@ class ComparePngsAsyncTask(asynclib.AsyncTask):
 
 class PdfFile(object):
   def __init__(self, path):
-    self.path = path
+    if not os.path.exists(path):
+      raise OSError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
+    self.path = path
     self.__determineNumPagesInPdf()
 
   def __determineNumPagesInPdf(self):

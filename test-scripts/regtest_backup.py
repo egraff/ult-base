@@ -4,7 +4,6 @@ import os
 import re
 import sys
 import json
-import traceback
 import threading
 import subprocess
 
@@ -174,26 +173,21 @@ class TestTask(asynclib.AsyncTask):
 
   def _makeTaskComplete(self, proc):
     if proc.returncode != 0:
-      self.__result = (self.testName, False, None, proc)
+      self.__result = (self.testName, False, proc)
       return
 
-    try:
-      task = TestPdfPair(self.config, self.testName, self.texTestDir)
-    except OSError:
-      self.__result = (self.testName, True, sys.exc_info(), None)
-      return
-    else:
-      task.wait()
-      _, failedPages = task.result
+    task = TestPdfPair(self.config, self.testName, self.texTestDir)
+    task.wait()
+    _, failedPages = task.result
 
-      self.__result = (self.testName, True, None, failedPages)
+    testPassed = (len(failedPages) == 0)
+
+    self.__result = (self.testName, True, failedPages)
 
   # Result is on the form
-  #  (test name, build succeeded = TRUE, exception = None, list of failed pages)
+  #  (test name, Build succeeded = TRUE, list of failed pages)
   # or
-  #  (test name, build succeeded = TRUE, exc_info, None)
-  # or
-  #  (test name, build succeeded = FALSE, None, build proc)
+  #  (test name, Build succeeded = FALSE, build proc)
   @property
   def result(self):
     return self.__result
@@ -220,8 +214,8 @@ class TestRunner():
     asynclib.AsyncPopen(s, shell=True).wait()
 
   def __testCallback(self, result):
-    testName, buildSucceeded, exception, failedPages = result
-    testPassed = buildSucceeded and (exception is None) and (len(failedPages) == 0)
+    testName, buildSucceeded, failedPages = result
+    testPassed = buildSucceeded and (len(failedPages) == 0)
 
     with self.testResultLock:
       if self.numTestsCompleted % self.config.NUM_DOTS_PER_LINE == 0:
@@ -232,12 +226,7 @@ class TestRunner():
       if testPassed:
         self.echo(debug.GREEN, ".")
       else:
-        if not buildSucceeded:
-          self.echo(debug.ERROR, "B")
-        elif exception:
-          self.echo(debug.ERROR, "E")
-        else:
-          self.echo(debug.ERROR, "F")
+        self.echo(debug.ERROR, "F" if buildSucceeded else "B")
         self.failedTests.append(result)
 
   def run(self, testNames):
@@ -265,11 +254,10 @@ class TestRunner():
           self.echo(debug.ERROR, "%s failed" % (len(self.failedTests),))
           self.echo(debug.WHITE, ".\n\nError summary:\n\n")
 
-          for testName, buildSucceeded, exc_info, arg in self.failedTests:
+          for testName, buildSucceeded, arg in self.failedTests:
             failedTestMap = {}
             failedTestMap['test_name'] = testName
             failedTestMap['build_succeeded'] = buildSucceeded
-            failedTestMap['exception'] = False if exc_info is None else True
             self.echo(debug.WHITE, "  %s\n" % (testName,))
             if not buildSucceeded:
               proc = arg
@@ -294,18 +282,6 @@ class TestRunner():
                 self.echo(debug.WHITE, "\n    see %s for more info.\n\n" % (latexLogFile,))
               else:
                 self.echo(debug.WHITE, "\n\n")
-            elif exc_info is not None:
-              failedTestMap['exc_info'] = {}
-              failedTestMap['exc_info']['type'] = str(exc_info[0])
-              failedTestMap['exc_info']['value'] = str(exc_info[1])
-              failedTestMap['exc_info']['traceback'] = []
-              self.echo(debug.ERROR, "    Got exception %s: %s\n" % (exc_info[0], exc_info[1]))
-              self.echo(debug.ERROR, "    Traceback:\n")
-              for frame in traceback.format_tb(exc_info[2]):
-                for line in frame.split('\n'):
-                  line = line.rstrip('\n')
-                  failedTestMap['exc_info']['traceback'].append(line)
-                  self.echo(debug.NORMAL, "      %s\n" % (line,))
             else:
               failedPages = arg
               failedTestMap['failed_pages'] = failedPages
