@@ -179,7 +179,7 @@ class TestTask(asynclib.AsyncTask):
 
     try:
       task = TestPdfPair(self.config, self.testName, self.texTestDir)
-    except OSError:
+    except:
       self.__result = (self.testName, True, sys.exc_info(), None)
       return
     else:
