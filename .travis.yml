@@ -11,7 +11,7 @@ before_install:
   - pdfinfo -v
   - compare -version
   - gs -v
-  - sudo travis_wait ./install-tl-ubuntu
+  - travis_wait sudo ./install-tl-ubuntu
   - source /etc/environment
   - source /etc/profile
   - source ~/.profile
