@@ -12,7 +12,9 @@ before_install:
   - compare -version
   - gs -v
   - sudo ./install-tl-ubuntu --only-apt-and-dpkg
-  - sudo ./install-tl-ubuntu --no-apt-or-dpkg
+  - wget http://mirror.utexas.edu/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz -O install-tl-unx.tar.gz
+  - tar -xf "install-tl-unx.tar.gz"
+  - sudo ./install-tl
   - source /etc/environment
   - source /etc/profile
   - source ~/.profile
