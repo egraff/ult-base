@@ -14,7 +14,10 @@ before_install:
   - sudo ./install-tl-ubuntu --only-apt-and-dpkg
   - wget http://mirror.utexas.edu/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz -O install-tl-unx.tar.gz
   - tar -xf "install-tl-unx.tar.gz"
+  - tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
+  - cd "${tl_dir}"
   - sudo ./install-tl
+  - cd ..
   - source /etc/environment
   - source /etc/profile
   - source ~/.profile
