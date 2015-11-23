@@ -16,7 +16,7 @@ before_install:
   - tar -xf "install-tl-unx.tar.gz"
   - tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
   - cd "${tl_dir}"
-  - (echo "i" | sudo ./install-tl -v -v -no-cls -logfile install-tl.log) || cat install-tl.log
+  - echo "i" | sudo ./install-tl -v -v
   - cd ..
   - source /etc/environment
   - source /etc/profile
