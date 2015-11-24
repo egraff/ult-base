@@ -20,11 +20,11 @@ before_install:
   - MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
   - sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
   - sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
-  - texhash
   - cd ..
   - source /etc/environment
   - source /etc/profile
   - source ~/.profile
+  - sudo texhash
   - sudo -i tlmgr update --self --all
   - tlmgr conf
 install:
