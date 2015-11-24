@@ -16,7 +16,7 @@ before_install:
   - tar -xf "install-tl-unx.tar.gz"
   - tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
   - cd "${tl_dir}"
-  - (echo "i" | sudo ./install-tl -v -v -logfile install-tl.log) || (cat /var/log/messages; exit 1;)
+  - (echo "i" | sudo ./install-tl -v -v -logfile install-tl.log) || (cat /var/log/syslog; exit 1;)
   - MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
   - sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
   - sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
