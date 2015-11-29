@@ -11,13 +11,14 @@ before_install:
   - pdfinfo -v
   - compare -version
   - gs -v
+  - export WGETRC="$(realpath .wgetrc)"
   - sudo ./install-tl-ubuntu --only-apt-and-dpkg
   - wget http://mirror.utexas.edu/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz -O install-tl-unx.tar.gz
   - tar -xf "install-tl-unx.tar.gz"
   - tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
   - cd "${tl_dir}"
 install:
-  - (echo "i" | sudo ./install-tl -v -logfile install-tl.log) || (echo "i" | sudo ./install-tl -v -logfile install-tl.log)
+  - (echo "i" | sudo ./install-tl -v -logfile install-tl.log) || (cat wget.log)
   - MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
   - sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
   - sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
