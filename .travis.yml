@@ -11,7 +11,7 @@ before_install:
   - pdfinfo -v
   - compare -version
   - gs -v
-  - export WGETRC="`bash -c 'realpath .wgetrc'`"
+  - export WGETRC="$(readlink -f .wgetrc)"
   - sudo ./install-tl-ubuntu --only-apt-and-dpkg
   - wget http://mirror.utexas.edu/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz -O install-tl-unx.tar.gz
   - tar -xf "install-tl-unx.tar.gz"
@@ -26,7 +26,7 @@ install:
   - source /etc/environment
   - source /etc/profile
   - source ~/.profile
-  - sudo texhash
+  - sudo -i texhash
   - sudo -i tlmgr update --self --all
   - tlmgr conf
   - make install CONTINUE=y
