@@ -18,7 +18,7 @@ before_install:
   - tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
   - cd "${tl_dir}"
 install:
-  - (echo "i" | sudo -s ./install-tl --no-persistent-downloads -v -logfile install-tl.log) || (cat ~/wget.log)
+  - (echo "i" | sudo -s ./install-tl --no-persistent-downloads -logfile install-tl.log) || (cat ~/wget.log)
   - MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
   - sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
   - sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
