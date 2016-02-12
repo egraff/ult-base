@@ -1,0 +1,67 @@
+% Copyright (c) 2016 Erlend Graff <erlend.graff@gmail.com>
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ult-tikz-externalize-jobname-fix}[2016/02/12 v1.1a UiT LaTeX template TikZ externalize jobname fix]
+
+\RequirePackage{tikz}
+\RequirePackage{currfile-abspath}
+\RequirePackage{xpatch}
+
+\usetikzlibrary{external}
+
+\getmainfile
+
+\AtEndDocument{%
+  \newwrite\ult@maindeffile
+  \immediate\openout\ult@maindeffile=\jobname.maindef
+  \immediate\write\ult@maindeffile{%
+    \noexpand\ifcsname ult@mainfile@basename\noexpand\endcsname\noexpand\else%
+      \noexpand\expandafter\noexpand\gdef\noexpand\csname ult@mainfile@basename\noexpand\endcsname{\ult@mainfile@basename}%
+    \noexpand\fi
+  }%
+  \immediate\closeout\ult@maindeffile
+}
+
+\@input{\jobname.maindef}
+
+\ifcsname ult@mainfile@basename\endcsname
+  \ifx\ult@mainfile@basename\@empty
+    % Make a second attempt at extracting the real file name
+    \filename@parse{\themainfile}%
+    \let\ult@mainfile@basename\filename@base
+    \ifx\ult@mainfile@basename\@empty
+      % If still empty, fallback to default behavior
+      \def\ult@mainfile@basename{\tikzexternal@realjob}%
+    \fi
+  \fi
+\else
+  % First attempt at extracting real file name
+  \filename@parse{\themainfile}%
+  \let\ult@mainfile@basename\filename@base
+\fi
+
+\xpatchcmd{\tikzexternal@assemble@systemcall}
+  {%
+    \edef\texsource{%
+      \string\def\string\tikzexternalrealjob{\tikzexternal@realjob}%
+      \string\input{\tikzexternal@realjob}%
+    }%
+  }
+  {%
+    \edef\texsource{%
+      \string\def\string\tikzexternalrealjob{\tikzexternal@realjob}%
+      \string\expandafter\string\def\string\csname\space ult@mainfile@basename\string\endcsname{\ult@mainfile@basename}%
+      \string\input{\ult@mainfile@basename}%
+    }%
+  }
+  {}
+  {}
+
+\let\old@tikzexternalize@opt@withname\tikzexternalize@opt@withname
+\def\tikzexternalize@opt@withname[#1]#2{%
+  \ifx\ult@mainfile@basename\@empty\else
+    \old@tikzexternalize@opt@withname[#1]{#2}%
+  \fi
+}
+
+\endinput

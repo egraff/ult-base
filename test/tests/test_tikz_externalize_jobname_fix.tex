@@ -1,0 +1,39 @@
+%& -recorder
+
+\documentclass{book}
+
+\usepackage{tikz}
+\usepackage{pgfplots}
+
+\pgfplotsset{compat=1.12}
+
+\usepackage[eulergreek]{sansmath}
+\pgfplotsset{
+  tick label style = {font=\sansmath\sffamily\footnotesize},
+  every axis label = {font=\sansmath\sffamily\footnotesize},
+  legend style = {font=\sansmath\sffamily\footnotesize},
+  label style = {font=\sansmath\sffamily\footnotesize}
+}
+
+\usetikzlibrary{external}
+\tikzset{external/only named=true}
+
+\usepackage{ult-tikz-externalize-jobname-fix}
+
+\tikzexternalize
+
+\begin{document}
+
+Some text\ldots
+
+\begin{figure}[h]
+  \tikzsetnextfilename{sample_tikz}
+  \begin{tikzpicture}[scale=1.4]
+    \begin{axis}
+    \addplot {x^3};
+    \end{axis}
+  \end{tikzpicture}
+  \caption{Sample tikz picture}
+\end{figure}
+
+\end{document}
