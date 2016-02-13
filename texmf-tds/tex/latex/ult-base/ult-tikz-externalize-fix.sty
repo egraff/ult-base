@@ -9,6 +9,12 @@
 
 \usetikzlibrary{external}
 
+% Fix output/aux directory
+\getabspath{\jobname.aux}
+\let\ult@auxdir\theabsdir
+\let\ult@old@tikzexternalcheckshellescape\tikzexternalcheckshellescape
+\edef\tikzexternalcheckshellescape{\ult@old@tikzexternalcheckshellescape -output-directory="\ult@auxdir" -aux-directory="\ult@auxdir"\space}
+
 \getmainfile
 
 \AtEndDocument{%
