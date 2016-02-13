@@ -8,12 +8,13 @@ BASENAME = $(shell basename $(FILE) .tex)
 DIRNAME = $(shell dirname $(FILE))
 
 TESTSDIR = tests
+MAINDIR_REL2_TESTSDIR = $(shell python -c 'import os.path; print os.path.relpath(".", "$TESTSDIR")')
 PDFFLD = pdfs
 
 # Placement of all produced files
 BUILDFLD = .build
 
-BUILDFILE = $(TESTSDIR)/$(DIRNAME)/$(BASENAME).tex
+BUILDFILE = $(DIRNAME)/$(BASENAME).tex
 OUTDIR = $(BUILDFLD)/$(DIRNAME)/$(BASENAME)
 PDFOUTDIR = $(PDFFLD)/$(DIRNAME)
 
@@ -21,16 +22,16 @@ PDFOUTDIR = $(PDFFLD)/$(DIRNAME)
 OUTPUTNAME = output
 
 # Extra options, these must be available for both pdflatex and latexmk
-DEFOPT = -output-directory=$(OUTDIR) -interaction=batchmode
+DEFOPT = -output-directory=$(MAINDIR_REL2_TESTSDIR)/$(OUTDIR) -interaction=batchmode
 
 # Options for glossary
 GLOSSOPT = -q
 
 # Command to build document
-BUILD = ($(LATEXMK) -pdf -bibtex -jobname=$(OUTPUTNAME) $(DEFOPT) $(BUILDFILE) 2>&1) >/dev/null
+BUILD = ($(LATEXMK) -pdf -bibtex -latexoption=-shell-escape -jobname=$(OUTPUTNAME) $(DEFOPT) $(BUILDFILE) 2>&1) >/dev/null
 
 # Creates first auxiliary files required to build glossary
-LAMEBUILD = ($(PDFLATEX) -jobname=$(OUTPUTNAME) $(DEFOPT) $(BUILDFILE) 2>&1) >/dev/null
+LAMEBUILD = ($(PDFLATEX) -shell-escape -jobname=$(OUTPUTNAME) $(DEFOPT) $(BUILDFILE) 2>&1) >/dev/null
 
 # Command to build glossary and glossarylists
 # (Not using -d option due to incompatibility with some systems)
@@ -46,7 +47,7 @@ clean:
 	@$(RM) -r $(PDFFLD) $(BUILDFLD)
 	@echo "Done!"
 
-test: 
+test:
 	@echo "Running comparison tests..."
 	@echo ""
 	@python ../test-scripts/regtest.py .
@@ -56,9 +57,9 @@ _file: _ctrl_
 	$(RM) $(PDFOUTDIR)/$(BASENAME).pdf
 	mkdir -p $(OUTDIR)
 	mkdir -p $(PDFOUTDIR)
-	$(LAMEBUILD)
-	@if grep -q "\\makeglossaries" $(BUILDFILE); then $(BUILDGLOSS); fi
-	$(BUILD) && mv $(OUTDIR)/$(OUTPUTNAME).pdf $(PDFOUTDIR)/$(BASENAME).pdf && \
+	(cd $(TESTSDIR) && $(LAMEBUILD))
+	@if grep -q "\\makeglossaries" $(TESTSDIR)/$(BUILDFILE); then $(BUILDGLOSS); fi
+	(cd $(TESTSDIR) && $(BUILD)) && mv $(OUTDIR)/$(OUTPUTNAME).pdf $(PDFOUTDIR)/$(BASENAME).pdf && \
 	  $(RM) -r $(OUTDIR)
 ifndef RETAINBUILDFLD
 	@$(RM) -r $(BUILDFLD)
