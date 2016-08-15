@@ -351,8 +351,8 @@ class TestConfig():
 
 
 if __name__ == '__main__':
-  if len(sys.argv) != 2:
-    print "Usage: %s <test base folder>" % sys.argv[0]
+  if len(sys.argv) not in [2, 3]:
+    print "Usage: %s <test base folder> [<test name>]" % sys.argv[0]
     sys.exit(1)
 
   testDir = sys.argv[1]
@@ -360,5 +360,12 @@ if __name__ == '__main__':
 
   config = TestConfig(testDir)
   runner = TestRunner(config)
-  runner.run(testGenerator(texTestsRootDir))
+
+  if len(sys.argv) == 3:
+    testName = sys.argv[2]
+    tests = [(testName, '.')]
+  else:
+    tests = [tup for tup in testGenerator(texTestsRootDir)]
+
+  runner.run(tests)
   runner.waitForSummary()
