@@ -153,8 +153,8 @@
 }
 
 % Usage: \newcustomlstenvironment
-%          {<Environment name>}{<Aux extension>}{<Caption/autref name>}
-%          [<number>][<opt. default arg.>]{<starting code>}{ending code>} <-- These are passed directly to \lstnewenvironment
+%          {<Environment name>}{<Aux extension>}{<Caption/autoref name>}
+%          [<number>][<opt. default arg.>]{<starting code>}{<ending code>} <-- These are passed directly to \lstnewenvironment
 \lst@UserCommand\newcustomlstenvironment#1#2#3#4#{%
   \newcustomlstenvironment@{#1}{#2}{#3}{#4}%
 }
@@ -191,7 +191,7 @@
     % Contents passed to {<starting code} of \lstnewenvrionment (e.g. \lstset{#1,..})
     #5%
   }{%
-    % Contents passed to {<ending code>} of \lstnewenvrionment
+    % Contents passed to {<ending code>} of \lstnewenvironment
     #6%
   }%
   \expandafter\newcommand\csname lstinput#1\endcsname[2][]{%
