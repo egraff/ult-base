@@ -29,7 +29,9 @@ Some text\ldots
 \begin{figure}[h]
   \tikzsetnextfilename{sample_tikz}
   \begin{tikzpicture}[scale=1.4]
-    \begin{axis}
+    \begin{axis}[
+      xmin=-6,xmax=6,
+    ]
     \addplot {x^3};
     \end{axis}
   \end{tikzpicture}
