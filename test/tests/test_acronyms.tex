@@ -1,0 +1,104 @@
+\documentclass[10pt]{book}
+
+\usepackage[toc,acronym,shortcuts]{glossaries}
+\usepackage{ult-glossaries}
+
+\setacronymstyle{ult-long-upsc-short}
+
+\makeglossaries
+
+\newacronym[\glslongpluralkey={dynamic-link Libraries}]{dll}{dLL}{dynamic-link Library}
+
+\begin{document}
+\mainmatter
+
+\chapter{Test}
+
+\section{GLS}
+\subsection{Subsequent use}
+\glsunset{dll}
+
+Plural, no case change: \acp{dll}, \glspl{dll}\\
+Plural, first letter upper case: \Acp{dll}, \Glspl{dll}\\
+Plural, all caps: \GLSpl{dll}\\
+Singular, no case change: \ac{dll}, \gls{dll}\\
+Singular, first letter upper case: \Ac{dll}, \Gls{dll}\\
+Singular, all caps: \GLS{dll}
+
+\subsection{First use}
+Plural, no case change: \glsreset{dll}\acp{dll}, \glsreset{dll}\glspl{dll}\\
+Plural, first letter upper case: \glsreset{dll}\Acp{dll}, \glsreset{dll}\Glspl{dll}\\
+Plural, all caps: \glsreset{dll}\GLSpl{dll}\\
+Singular, no case change: \glsreset{dll}\ac{dll}, \glsreset{dll}\gls{dll}\\
+Singular, first letter upper case: \glsreset{dll}\Ac{dll}, \glsreset{dll}\Gls{dll}\\
+Singular, all caps: \glsreset{dll}\GLS{dll}
+
+\section{ACR}
+\subsection{Subsequent use}
+\glsunset{dll}
+
+Short, no case change: \acs{dll}, \acrshort{dll}\\
+Short, first letter upper case: \Acs{dll}, \Acrshort{dll}\\
+Short plural, no case change: \acsp{dll}, \acrshortpl{dll}\\
+Short plural, first letter upper case: \Acsp{dll}, \Acrshortpl{dll}\\
+Long, no case change: \acl{dll}, \acrlong{dll}\\
+Long, first letter upper case: \Acl{dll}, \Acrlong{dll}\\
+Long plural, no case change: \aclp{dll}, \acrlongpl{dll}\\
+Long plural, first letter upper case: \Aclp{dll}, \Acrlongpl{dll}\\
+Full, no case change: \acf{dll}, \acrfull{dll}\\
+Full, first letter upper case: \Acf{dll}, \Acrfull{dll}\\
+Full plural, no case change: \acfp{dll}, \acrfullpl{dll}\\
+Full plural, first letter upper case: \Acfp{dll}, \Acrfullpl{dll}
+
+\subsection{First use}
+Short, no case change: \glsreset{dll}\acs{dll}, \glsreset{dll}\acrshort{dll}\\
+Short, first letter upper case: \glsreset{dll}\Acs{dll}, \glsreset{dll}\Acrshort{dll}\\
+Short plural, no case change: \glsreset{dll}\acsp{dll}, \glsreset{dll}\acrshortpl{dll}\\
+Short plural, first letter upper case: \glsreset{dll}\Acsp{dll}, \glsreset{dll}\Acrshortpl{dll}\\
+Long, no case change: \glsreset{dll}\acl{dll}, \glsreset{dll}\acrlong{dll}\\
+Long, first letter upper case: \glsreset{dll}\Acl{dll}, \glsreset{dll}\Acrlong{dll}\\
+Long plural, no case change: \glsreset{dll}\aclp{dll}, \glsreset{dll}\acrlongpl{dll}\\
+Long plural, first letter upper case: \glsreset{dll}\Aclp{dll}, \glsreset{dll}\Acrlongpl{dll}\\
+Full, no case change: \glsreset{dll}\acf{dll}, \glsreset{dll}\acrfull{dll}\\
+Full, first letter upper case: \glsreset{dll}\Acf{dll}, \glsreset{dll}\Acrfull{dll}\\
+Full plural, no case change: \glsreset{dll}\acfp{dll}, \glsreset{dll}\acrfullpl{dll}\\
+Full plural, first letter upper case: \glsreset{dll}\Acfp{dll}, \glsreset{dll}\Acrfullpl{dll}
+
+\section{Other}
+Glstext, no case change, first use: \glsreset{dll}\glstext{dll}\\
+Glstext, no case change, subsequent use: \glstext{dll}\\
+Glstext, first letter upper case, first use: \glsreset{dll}\Glstext{dll}\\
+Glstext, first letter upper case, subsequent use: \Glstext{dll}\\
+Glstext, all caps, first use: \glsreset{dll}\GLStext{dll}\\
+Glstext, all caps, subsequent use: \GLStext{dll}
+
+Glsfirst, no case change, first use: \glsreset{dll}\glsfirst{dll}\\
+Glsfirst, no case change, subsequent use: \glsfirst{dll}\\
+Glsfirst, first letter upper case, first use: \glsreset{dll}\Glsfirst{dll}\\
+Glsfirst, first letter upper case, subsequent use: \Glsfirst{dll}\\
+Glsfirst, all caps, first use: \glsreset{dll}\GLSfirst{dll}\\
+Glsfirst, all caps, subsequent use: \GLSfirst{dll}
+
+Glsplural, no case change, first use: \glsreset{dll}\glsplural{dll}\\
+Glsplural, no case change, subsequent use: \glsplural{dll}\\
+Glsplural, first letter upper case, first use: \glsreset{dll}\Glsplural{dll}\\
+Glsplural, first letter upper case, subsequent use: \Glsplural{dll}\\
+Glsplural, all caps, first use: \glsreset{dll}\GLSplural{dll}\\
+Glsplural, all caps, subsequent use: \GLSplural{dll}
+
+Glsfirstplural, no case change, first use: \glsreset{dll}\glsfirstplural{dll}\\
+Glsfirstplural, no case change, subsequent use: \glsfirstplural{dll}\\
+Glsfirstplural, first letter upper case, first use: \glsreset{dll}\Glsfirstplural{dll}\\
+Glsfirstplural, first letter upper case, subsequent use: \Glsfirstplural{dll}\\
+Glsfirstplural, all caps, first use: \glsreset{dll}\GLSfirstplural{dll}\\
+Glsfirstplural, all caps, subsequent use: \GLSfirstplural{dll}
+
+Glsentryshort, no case change, first use: \glsreset{dll}\glsentryshort{dll}\\
+Glsentryshort, no case change, subsequent use: \glsentryshort{dll}\\
+Glsentryshort, first letter upper case, first use: \glsreset{dll}\Glsentryshort{dll}\\
+Glsentryshort, first letter upper case, subsequent use: \Glsentryshort{dll}
+
+%Glsdisp, first use: \glsreset{dll}\glsdisp{dll}\\
+%Glsdisp, subsequent use: \glsdisp{dll}
+
+\end{document}
