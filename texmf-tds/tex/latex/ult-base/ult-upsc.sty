@@ -1,7 +1,7 @@
 % Copyright (c) 2015 Erlend Graff <erlend.graff@gmail.com>
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ult-upsc}[2015/11/05 v1.1a UiT LaTeX template upsc macro]
+\ProvidesPackage{ult-upsc}[2016/08/18 v1.2a UiT LaTeX template upsc macro]
 
 \RequirePackage{xparse}
 \RequirePackage{l3regex}
@@ -9,7 +9,7 @@
 % Magic to define \upsc{} command that replaces upper-case letters with lower-case small-caps
 \ExplSyntaxOn
 \cs_generate_variant:Nn \tl_rescan:nn { nV }
-\NewDocumentCommand \upsc { m }
+\NewDocumentCommand \@@upsc { m }
   {
     \tl_set:Nx \l_tmpa_tl {#1}
     \regex_replace_all:nnN { ([A-Z]+) }
@@ -17,5 +17,12 @@
     \tl_use:N \l_tmpa_tl
   }
 \ExplSyntaxOff
+
+
+\newcommand{\upsc}[1]{%
+  \begingroup
+    \expandafter{\protect\@@upsc{#1}}%
+  \endgroup
+}
 
 \endinput
