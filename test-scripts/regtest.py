@@ -71,7 +71,10 @@ class TestPdfPagePair(asynclib.AsyncTask):
     if self.__pngsAreEqual:
       os.remove(self.testPngPagePath)
       os.remove(self.protoPngPagePath)
-      os.remove(self.diffPath)
+      try:
+        os.remove(self.diffPath)
+      except OSError:
+        pass
 
     self.__result = (self.pageNum, self.__pngsAreEqual)
 
