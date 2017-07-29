@@ -30,6 +30,7 @@ install:
   - echo $PATH
   - source ~/.profile
   - echo $PATH
+  - unset _OLD_VIRTUAL_PATH
   - cat ~/virtualenv/python2.7/bin/activate
   - source ~/virtualenv/python2.7/bin/activate
   - echo $PATH
