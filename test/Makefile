@@ -66,15 +66,15 @@ ifndef RETAINBUILDFLD
 endif
 
 _ctrl_:
-ifndef LATEXMK
+ifeq ($(LATEXMK),)
 	@echo "Cannot find 'latexmk'" >&2
 	@exit 2
 endif
-ifndef PDFLATEX
+ifeq ($(PDFLATEX),)
 	@echo "Cannot find 'pdflatex'" >&2
 	@exit 3
 endif
-ifndef MAKEGLOSSARIES
+ifeq ($(MAKEGLOSSARIES),)
 	@echo "Cannot find 'makeglossaries'" >&2
 	@exit 4
 endif
