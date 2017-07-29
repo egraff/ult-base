@@ -19,9 +19,9 @@ before_install:
   - cd "${tl_dir}"
 install:
   - echo "i" | sudo -s ./install-tl -logfile install-tl.adjustpath.log -repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet -profile ../texlive.adjustpath.profile || true
-  - echo "i" | sudo -s ./install-tl -logfile install-tl.log -repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet -profile ../texlive.profile
-  - MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
-  - sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
+#  - echo "i" | sudo -s ./install-tl -logfile install-tl.log -repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet -profile ../texlive.profile
+#  - MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
+#  - sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
   - sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
   - cd ..
   - source /etc/environment
@@ -30,18 +30,19 @@ install:
   - echo $PATH
   - source ~/.profile
   - echo $PATH
+  - cat ~/virtualenv/python2.7/bin/activate
   - source ~/virtualenv/python2.7/bin/activate
   - echo $PATH
-  - ls -la /opt/texbin
-  - sudo -i texhash
-  - sudo -i tlmgr update --self --all
-  - tlmgr conf
-  - make install CONTINUE=y
-script:
-  - make -C test
-after_script:
-  - openssl aes-256-cbc -K $encrypted_95d1ac70cca8_key -iv $encrypted_95d1ac70cca8_iv -in travis-deploy-key.enc -out travis-deploy-key -d
-  - chmod 600 travis-deploy-key
-  - eval `ssh-agent -s`
-  - ssh-add travis-deploy-key
-  - cd test && scripts/travis-after.sh
+  - ls -la /opt/texbin/
+#  - sudo -i texhash
+#  - sudo -i tlmgr update --self --all
+#  - tlmgr conf
+#  - make install CONTINUE=y
+#script:
+#  - make -C test
+#after_script:
+#  - openssl aes-256-cbc -K $encrypted_95d1ac70cca8_key -iv $encrypted_95d1ac70cca8_iv -in travis-deploy-key.enc -out travis-deploy-key -d
+#  - chmod 600 travis-deploy-key
+#  - eval `ssh-agent -s`
+#  - ssh-add travis-deploy-key
+#  - cd test && scripts/travis-after.sh
