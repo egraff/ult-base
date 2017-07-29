@@ -1,0 +1,133 @@
+.failed_pages {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.failed_pages > li {
+}
+
+.failed_pages > li  .page_num {
+  width: 100%;
+  text-align: center;
+  border-bottom: 1px solid #ccc;
+}
+
+.failed_pages > li  .page_details {
+  width: 100%;
+  overflow: hidden;
+}
+
+.failed_pages > li  .page_details > div {
+  width: 359px;
+}
+
+.failed_pages > li  .page_details .image_name {
+  width: 100%;
+  text-align: center;
+}
+
+.failed_pages > li  .page_details .page_image {
+  border: 2px solid #ddd;
+  width: 359px;
+  height: 507px;
+}
+
+.failed_pages > li  .page_details .page_image img {
+}
+
+.failed_pages > li  .page_details .diff {
+  float: left;
+}
+
+.failed_pages > li  .page_details .proto_test {
+  float: right;
+  position: relative;
+}
+
+.failed_pages > li  .page_details .proto_test > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.failed_pages > li  .page_details .proto_test .proto {
+  visibility: visible;
+}
+
+.failed_pages > li  .page_details .proto_test .test {
+  visibility: hidden;
+}
+
+.failed_pages > li  .page_details .proto_test:hover .proto {
+  visibility: hidden;
+}
+
+.failed_pages > li  .page_details .proto_test:hover .test {
+  visibility: visible;
+}
+
+.failed_pages > li  .page_details .proto_test .proto .page_image {
+  border-color: #ccf;
+}
+
+.failed_pages > li  .page_details .proto_test .test .page_image {
+  border-color: #fcc;
+}
+
+
+
+/************************************************************/
+
+table.test-overview,
+table.test-overview td,
+table.test-overview th {
+  border-color: #fff;
+}
+
+table.test-overview td,
+table.test-overview th {
+  text-align: center;
+}
+
+table.test-overview thead td,
+table.test-overview thead th {
+  background-color: #676767;
+  color: #f9f9f9;
+}
+
+table.test-overview tbody tr:nth-child(odd).passed td,
+table.test-overview tbody tr:nth-child(odd).passed th {
+  background-color: #49D415;
+}
+
+table.test-overview tbody tr:nth-child(even).passed td,
+table.test-overview tbody tr:nth-child(even).passed th {
+  background-color: #83EC5C;
+}
+
+table.test-overview tbody tr:nth-child(odd).failed td,
+table.test-overview tbody tr:nth-child(odd).failed th {
+  background-color: #FF7171;
+}
+
+table.test-overview tbody tr:nth-child(even).failed td,
+table.test-overview tbody tr:nth-child(even).failed th {
+  background-color: #FFA4A4;
+}
+
+table.test-overview .failed {
+  color: #8A0000;
+}
+
+table.test-overview .failed a {
+  color: #C50F0F;
+}
+
+table.test-overview .passed {
+  color: #165200;
+}
+
+table.test-overview .passed a {
+  color: #1E6F00;
+}

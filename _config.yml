@@ -1,0 +1,19 @@
+# jekyll conf
+
+# site conf
+title: ult-base
+
+permalink: date
+
+url: http://egraff.github.io
+baseurl: /ult-base
+
+# GitHub flavored Markdown
+kramdown:
+  input: GFM
+
+exclude: ['.git']
+paginate: 5
+
+sass:
+  sass_dir: _sass
