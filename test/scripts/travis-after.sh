@@ -10,7 +10,7 @@ git init
 git config core.autocrlf true
 git config user.name "Travis"
 git config user.email "travis@travis-ci.com"
-git config remote.origin.url git@github.com:egraff/uit-thesis.git
+git config remote.origin.url git@github.com:egraff/ult-base.git
 git config remote.origin.fetch +refs/heads/gh-pages:refs/remotes/origin/gh-pages
 git config branch.gh-pages.remote origin
 git config branch.gh-pages.merge refs/heads/gh-pages
