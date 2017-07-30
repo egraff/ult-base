@@ -27,6 +27,7 @@ dlvl = [debug.INFO, debug.DEBUG, debug.WARNING, debug.FUCK, debug.NORMAL, debug.
 
 class TestPdfPagePair(asynclib.AsyncTask):
   def __init__(self, config, testPdfObj, protoPdfObj, pageNum, testName):
+    self.config = config
     self.pageNum = pageNum
 
     tmpTestsDir = "%s/tests" % (config.TMPDIR,)
@@ -42,6 +43,7 @@ class TestPdfPagePair(asynclib.AsyncTask):
     mkdirp(os.path.dirname(self.diffPath))
 
     # Start processes for generating PNGs
+    config.processPoolSemaphore.acquire()
     self.testPdfTask = testPdfObj.getPngForPageAsync(pageNum, self.testPngPagePath)
     self.protoPdfTask = protoPdfObj.getPngForPageAsync(pageNum, self.protoPngPagePath)
 
@@ -66,6 +68,7 @@ class TestPdfPagePair(asynclib.AsyncTask):
 
     # Wait synchronously since we're already executing in separate thread
     task.wait()
+    self.config.processPoolSemaphore.release()
     aeDiff = task.result
 
     self.__pngsAreEqual = (aeDiff == 0)
@@ -127,8 +130,10 @@ class TestPdfPair(asynclib.AsyncTask):
     testPdfPath = "%s/%s.pdf" % (config.PDFSDIR, testName)
     protoPdfPath = "%s/%s.pdf" % (config.PROTODIR, testName)
 
+    config.processPoolSemaphore.acquire()
     testPdfObj = PdfFile(testPdfPath)
     protoPdfObj = PdfFile(protoPdfPath)
+    config.processPoolSemaphore.release()
 
     testPageList = determineListOfPagesToTest(testPdfObj)
     protoPageList = determineListOfPagesToTest(protoPdfObj)
@@ -172,11 +177,14 @@ class TestTask(asynclib.AsyncTask):
     self.config = config
     self.testName = testName
 
+    config.processPoolSemaphore.acquire()
     task = makeTestTask(config, self.testName)
     task.await(self._makeTaskComplete)
     self.wait = task.wait
 
   def _makeTaskComplete(self, proc):
+    self.config.processPoolSemaphore.release()
+
     if proc.returncode != 0:
       self.__result = (self.testName, False, None, proc)
       return
@@ -355,6 +363,8 @@ class TestConfig():
     self.NUM_DOTS_PER_LINE = numDotsPerLine
 
     self.DEBUGLEVEL = debugLevel
+
+    self.processPoolSemaphore = threading.BoundedSemaphore(8)
 
 
 if __name__ == '__main__':
