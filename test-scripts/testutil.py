@@ -44,11 +44,13 @@ class ComparePngsAsyncTask(asynclib.AsyncTask):
     lines = self.__cmpProc.stderr.readlines()
     assert self.__cmpProc.returncode <= 1
 
-    print
-    print repr(lines)
-    print
     # Needed because lines[0] could be something like "1.33125e+006"
-    self.__result = int(float(lines[0]))
+    try:
+      self.__result = int(float(lines[0]))
+    except Exception:
+      print
+      print 'LINES', repr(lines)
+      print
 
   # Result is diff (0 means equal)
   @property
