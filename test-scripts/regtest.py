@@ -26,18 +26,20 @@ dlvl = [debug.INFO, debug.DEBUG, debug.WARNING, debug.FUCK, debug.NORMAL, debug.
 
 
 class TestPdfPagePair(asynclib.AsyncTask):
-  def __init__(self, config, testPdfObj, protoPdfObj, pageNum, testName, texTestDir):
+  def __init__(self, config, testPdfObj, protoPdfObj, pageNum, testName):
     self.pageNum = pageNum
 
-    tmpDir = "%s/%s" % (config.TMPDIR, texTestDir)
-    diffDir = "%s/%s" % (config.DIFFDIR, texTestDir)
+    tmpTestsDir = "%s/tests" % (config.TMPDIR,)
+    tmpProtoDir = "%s/proto" % (config.TMPDIR,)
+    diffDir = config.DIFFDIR
 
-    mkdirp(tmpDir)
-    mkdirp(diffDir)
+    self.testPngPagePath = "%s/%s_%s.png" % (tmpTestsDir, testName, self.pageNum)
+    self.protoPngPagePath = "%s/%s_%s.png" % (tmpProtoDir, testName, self.pageNum)
+    self.diffPath = "%s/%s_%s.png" % (diffDir, testName, self.pageNum)
 
-    self.testPngPagePath = "%s/%s_%s.png" % (tmpDir, testName, self.pageNum)
-    self.protoPngPagePath = "%s/proto_%s_%s.png" % (tmpDir, testName, self.pageNum)
-    self.diffPath = "%s/diff_%s_%s.png" % (diffDir, testName, self.pageNum)
+    mkdirp(os.path.dirname(self.testPngPagePath))
+    mkdirp(os.path.dirname(self.protoPngPagePath))
+    mkdirp(os.path.dirname(self.diffPath))
 
     # Start processes for generating PNGs
     self.testPdfTask = testPdfObj.getPngForPageAsync(pageNum, self.testPngPagePath)
@@ -119,11 +121,11 @@ def determineListOfPagesToTest(pdfObj):
 
 
 class TestPdfPair(asynclib.AsyncTask):
-  def __init__(self, config, testName, texTestDir):
+  def __init__(self, config, testName):
     self.testName = testName
 
-    testPdfPath = "%s/%s/%s.pdf" % (config.PDFSDIR, texTestDir, testName)
-    protoPdfPath = "%s/%s/%s.pdf" % (config.PROTODIR, texTestDir, testName)
+    testPdfPath = "%s/%s.pdf" % (config.PDFSDIR, testName)
+    protoPdfPath = "%s/%s.pdf" % (config.PROTODIR, testName)
 
     testPdfObj = PdfFile(testPdfPath)
     protoPdfObj = PdfFile(protoPdfPath)
@@ -141,7 +143,7 @@ class TestPdfPair(asynclib.AsyncTask):
         self.failedPages.append(pageNum)
         continue
 
-      task = TestPdfPagePair(config, testPdfObj, protoPdfObj, pageNum, testName, texTestDir)
+      task = TestPdfPagePair(config, testPdfObj, protoPdfObj, pageNum, testName)
       testTasks.append(task)
 
     self.__joinedTestTask = asynclib.JoinedAsyncTask(*testTasks)
@@ -159,19 +161,18 @@ class TestPdfPair(asynclib.AsyncTask):
     return (self.testName, self.failedPages)
 
 
-def makeTestTask(config, testName, texTestDir):
-  cmd = ['make', '-C', config.TESTDIR, '--no-print-directory', '_file', 'RETAINBUILDFLD=y', 'FILE=%s/%s.tex' % (texTestDir, testName)]
+def makeTestTask(config, testName):
+  cmd = ['make', '-C', config.TESTDIR, '--no-print-directory', '_file', 'RETAINBUILDFLD=y', 'FILE=%s.tex' % (testName,)]
   task = asynclib.AsyncPopen(cmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   return task
 
 
 class TestTask(asynclib.AsyncTask):
-  def __init__(self, config, testName, texTestDir):
+  def __init__(self, config, testName):
     self.config = config
     self.testName = testName
-    self.texTestDir = texTestDir
 
-    task = makeTestTask(config, self.testName, self.texTestDir)
+    task = makeTestTask(config, self.testName)
     task.await(self._makeTaskComplete)
     self.wait = task.wait
 
@@ -181,7 +182,7 @@ class TestTask(asynclib.AsyncTask):
       return
 
     try:
-      task = TestPdfPair(self.config, self.testName, self.texTestDir)
+      task = TestPdfPair(self.config, self.testName)
     except:
       self.__result = (self.testName, True, sys.exc_info(), None)
       return
@@ -219,7 +220,7 @@ class TestRunner():
       color = string[0]
       string = string[1:]
 
-    s = "sh -c \"printf \\\"" + color + " ".join([str(x).replace("\n", "\\n") for x in string]) + "\\033[0m\\\"\""
+    s = "sh -c \"printf \\\"" + color + " ".join([str(x).replace("\n", "\\n").replace('"', '\\\\\\"') for x in string]) + "\\033[0m\\\"\""
     asynclib.AsyncPopen(s, shell=True).wait()
 
   def __testCallback(self, result):
@@ -244,8 +245,8 @@ class TestRunner():
         self.failedTests.append(result)
 
   def run(self, testNames):
-    for testName, texTestDir in testNames:
-      task = TestTask(self.config, testName, texTestDir)
+    for testName in testNames:
+      task = TestTask(self.config, testName)
       task.await(self.__testCallback)
       self.tasks.append(task)
 
@@ -334,7 +335,10 @@ def testGenerator(texTestsRootDir, testFilePrefix='test'):
       if not fileName.endswith(".tex"):
         continue
 
-      yield (os.path.splitext(fileName)[0], os.path.relpath(dirPath, texTestsRootDir))
+      filebasename = os.path.splitext(fileName)[0]
+      test_name = os.path.relpath(os.path.join(dirPath, filebasename), texTestsRootDir)
+
+      yield test_name
 
 
 class TestConfig():
@@ -366,7 +370,7 @@ if __name__ == '__main__':
 
   if len(sys.argv) == 3:
     testName = sys.argv[2]
-    tests = [(testName, '.')]
+    tests = [testName]
   else:
     tests = [tup for tup in testGenerator(texTestsRootDir)]
 
