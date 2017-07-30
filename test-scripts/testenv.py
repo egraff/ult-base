@@ -3,26 +3,21 @@ import subprocess
 
 def __unpackAppListToWhichCommand(appList):
   if isinstance(appList, basestring):
-    return "which %s" % (appList,)
-  
-  appIter = iter(appList)
-  cmd = "which %s" % (appIter.next(),)
-  for app in appIter:
-    cmd += " || which %s" % (app,)
-  
-  return cmd
+    appList = [appList]
+
+  return "||".join("which %s" % (app,) for app in appList)
 
 
 def __locateTestUtility(appName, appCmds):
   whichCommand = __unpackAppListToWhichCommand(appCmds)
   whichApp = subprocess.Popen(["sh", "-c", whichCommand], env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   whichApp.wait()
-  
+
   app = whichApp.stdout.readline().strip()
-  
+
   if not len(app):
     raise Exception("The test utility %s could not be found in the system! Have you installed it?" % (appName,))
-  
+
   return os.path.basename(app)
 
 
