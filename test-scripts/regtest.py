@@ -18,11 +18,28 @@ class debug:
   DEBUG = "\\033[0;32m"
   WARNING = "\\033[1;33m"
   YELLOW = "\\033[1;33m"
+  BLUE = "\\033[1;34m"
   ERROR = "\\033[1;31m"
   FUCK = "\\033[1;41m"
   GREEN = "\\033[1;32m"
   WHITE = "\\033[1;37m"
-dlvl = [debug.INFO, debug.DEBUG, debug.WARNING, debug.FUCK, debug.NORMAL, debug.WHITE, debug.GREEN, debug.YELLOW, debug.ERROR]
+  BOLD = "\\033[1m"
+  UNDERLINE = "\\033[4m"
+
+dlvl = [
+  debug.INFO,
+  debug.DEBUG,
+  debug.WARNING,
+  debug.FUCK,
+  debug.NORMAL,
+  debug.BOLD,
+  debug.UNDERLINE,
+  debug.WHITE,
+  debug.GREEN,
+  debug.YELLOW,
+  debug.BLUE,
+  debug.ERROR
+]
 
 
 class TestPdfPagePair(asynclib.AsyncTask):
@@ -237,7 +254,7 @@ class TestRunner():
 
     with self.testResultLock:
       if self.numTestsCompleted % self.config.NUM_DOTS_PER_LINE == 0:
-        self.echo(debug.WHITE, "\n")
+        self.echo(debug.BOLD, "\n")
 
       self.numTestsCompleted += 1
 
@@ -267,7 +284,7 @@ class TestRunner():
       with open(os.path.join(self.config.TESTDIR, "test_result.json").replace("\\", "/"), 'wb') as fp:
         resultMap['num_tests'] = self.numTestsCompleted
         resultMap['failed_tests'] = []
-        self.echo(debug.WHITE, "\n\n\nRan %s tests, " % (self.numTestsCompleted,))
+        self.echo(debug.BOLD, "\n\n\nRan %s tests, " % (self.numTestsCompleted,))
 
         if len(self.failedTests) == 0:
           self.echo(debug.GREEN, "all succeeded!\n\n")
@@ -275,14 +292,14 @@ class TestRunner():
           sys.exit(0)
         else:
           self.echo(debug.ERROR, "%s failed" % (len(self.failedTests),))
-          self.echo(debug.WHITE, ".\n\nError summary:\n\n")
+          self.echo(debug.BOLD, ".\n\nError summary:\n\n")
 
           for testName, buildSucceeded, exc_info, arg in self.failedTests:
             failedTestMap = {}
             failedTestMap['test_name'] = testName
             failedTestMap['build_succeeded'] = buildSucceeded
             failedTestMap['exception'] = False if exc_info is None else True
-            self.echo(debug.WHITE, "  %s\n" % (testName,))
+            self.echo(debug.BOLD, "  %s\n" % (testName,))
             if not buildSucceeded:
               proc = arg
               failedTestMap['proc'] = {}
@@ -303,9 +320,9 @@ class TestRunner():
               latexLogFile = ".build/%s/output.log" % (testName,)
               if os.path.exists(latexLogFile):
                 failedTestMap['log_file'] = latexLogFile
-                self.echo(debug.WHITE, "\n    see %s for more info.\n\n" % (latexLogFile,))
+                self.echo(debug.BOLD, "\n    see %s for more info.\n\n" % (latexLogFile,))
               else:
-                self.echo(debug.WHITE, "\n\n")
+                self.echo(debug.BOLD, "\n\n")
             elif exc_info is not None:
               failedTestMap['exc_info'] = {}
               failedTestMap['exc_info']['type'] = str(exc_info[0])
@@ -325,7 +342,7 @@ class TestRunner():
               self.echo(debug.ERROR, "    Pages with diff: %s.\n\n" % (failedPagesString,))
             resultMap['failed_tests'].append(failedTestMap)
 
-          self.echo(debug.YELLOW, "PNGs containing diffs are available in '%s'\n\n" % (self.config.DIFFDIR,))
+          self.echo(debug.BLUE, "PNGs containing diffs are available in '%s'\n\n" % (self.config.DIFFDIR,))
           json.dump(resultMap, fp)
           sys.exit(1)
 
