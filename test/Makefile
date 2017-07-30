@@ -53,10 +53,10 @@ test:
 	@python ../test-scripts/regtest.py .
 
 _file: _ctrl_
-	echo "Building $(FILE)..."
-	$(RM) $(PDFOUTDIR)/$(BASENAME).pdf
-	mkdir -p $(OUTDIR)
-	mkdir -p $(PDFOUTDIR)
+	@echo "Building $(FILE)..."
+	@$(RM) $(PDFOUTDIR)/$(BASENAME).pdf
+	@mkdir -p $(OUTDIR)
+	@mkdir -p $(PDFOUTDIR)
 	(cd $(TESTSDIR) && $(LAMEBUILD))
 	@if grep -q "\\makeglossaries" $(TESTSDIR)/$(BUILDFILE); then $(BUILDGLOSS); fi
 	(cd $(TESTSDIR) && $(BUILD)) && mv $(OUTDIR)/$(OUTPUTNAME).pdf $(PDFOUTDIR)/$(BASENAME).pdf && \
