@@ -14,7 +14,7 @@ clone_depth: 1
 install:
   - cinst imagemagick -PackageParameters LegacySupport=true
   - cinst ghostscript
-  - powershell -Command "Get-ChildItem -Path 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | % { $_.FullName }"
+  - powershell -Command "echo (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse).FullName"
   - cinst xpdf-utils
   #- cinst -y miktex
   - refreshenv
