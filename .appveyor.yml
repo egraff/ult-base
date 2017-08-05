@@ -28,11 +28,12 @@ install:
   - where pdfinfo
   - ps: >-
       echo $ErrorActionPreference;
-      $ErrorActionPreference = "Continue";
+      $ErrorActionPreference = "SilentlyContinue";
       pdfinfo -v;
       if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
         $host.SetShouldExit($LastExitCode);
       }
+      echo 'here';
   - ps: >-
       echo $ErrorActionPreference;
   - mpm --admin --update-db
