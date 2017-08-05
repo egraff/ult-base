@@ -18,9 +18,13 @@ install:
   - cinst -y miktex
   - refreshenv
   - set
+  - compare -version
+  - gs -v
+  - pdfinfo -v
   - mpm --admin --update-db
-  - mpm --admin --upgrade --package-level=complete
+  - mpm --admin --upgrade --package-level=basic
   - mpm --admin --update
+  - initexmf --admin --enable-installer
 
 build_script:
   - C:\MinGW\msys\1.0\bin\make install CONTINUE=y
