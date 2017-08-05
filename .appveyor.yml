@@ -29,7 +29,7 @@ install:
   - ps: >-
       $OldErrorActionPreference = $ErrorActionPreference;
       $ErrorActionPreference = "SilentlyContinue";
-      &{ "pdfinfo -v" 2>&1 };
+      &{ pdfinfo -v 2>&1 };
       if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
         $host.SetShouldExit($LastExitCode);
       }
@@ -39,14 +39,19 @@ install:
   - mpm --admin --update
   - initexmf --admin --enable-installer
   - initexmf --admin --update-fndb
+  - ps: >-
+      $MsysPath = 'C:\MinGW\msys\1.0\bin';
+      $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
+      $NewPath = $OldPath + ';' + $MsysPath;
+      [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
 
 build_script:
   - ps: >-
-      "kpsewhich --var-value TEXMFHOME" 2>&1;
+      kpsewhich --var-value TEXMFHOME 2>&1;
   - ps: >-
-      "kpsewhich --var-value TEXMFLOCAL" 2>&1;
-  - C:\MinGW\msys\1.0\bin\make install CONTINUE=y
+      kpsewhich --var-value TEXMFLOCAL 2>&1;
+  - make install CONTINUE=y
   - initexmf --admin --update-fndb
 
 test_script:
- - C:\MinGW\msys\1.0\bin\make -C test
+ - make -C test
