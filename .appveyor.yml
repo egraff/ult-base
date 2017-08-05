@@ -27,8 +27,8 @@ install:
   - gswin64c -v
   - where pdfinfo
   - ps: >-
-      pdfinfo -v
-      if ($LastExitCode -ne 0 -And  $LastExitCode -ne 99) {
+      pdfinfo -v;
+      if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
         $host.SetShouldExit($LastExitCode);
       }
   - mpm --admin --update-db
