@@ -46,13 +46,13 @@ install:
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
   - refreshenv
   - ps: >-
-      kpsewhich --var-value TEXMFHOME 2>&1 | %{ "$_" };
+      cmd.exe /c "kpsewhich --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
   - ps: >-
-      kpsewhich --admin --var-value TEXMFHOME 2>&1 | %{ "$_" };
+      cmd.exe /c "kpsewhich --admin --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
   - ps: >-
-      kpsewhich --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
+      cmd.exe /c "kpsewhich --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
   - ps: >-
-      kpsewhich --admin --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
+      cmd.exe /c "kpsewhich --admin --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
 
 build_script:
   - make install CONTINUE=y
