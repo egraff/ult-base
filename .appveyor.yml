@@ -29,7 +29,7 @@ install:
   - ps: >-
       $OldErrorActionPreference = $ErrorActionPreference;
       $ErrorActionPreference = "SilentlyContinue";
-      &{ pdfinfo -v };
+      &{ "pdfinfo -v" 2>&1 };
       if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
         $host.SetShouldExit($LastExitCode);
       }
@@ -38,10 +38,13 @@ install:
   - mpm --admin --upgrade --package-level=basic
   - mpm --admin --update
   - initexmf --admin --enable-installer
+  - initexmf --admin --update-fndb
 
 build_script:
-  - kpsewhich --var-value TEXMFHOME
-  - kpsewhich --var-value TEXMFLOCAL
+  - ps: >-
+      "kpsewhich --var-value TEXMFHOME" 2>&1;
+  - ps: >-
+      "kpsewhich --var-value TEXMFLOCAL" 2>&1;
   - C:\MinGW\msys\1.0\bin\make install CONTINUE=y
   - initexmf --admin --update-fndb
 
