@@ -11,6 +11,12 @@ image: Visual Studio 2015
 
 clone_depth: 1
 
+
+# https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
+init:
+  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+
+
 install:
   - cinst imagemagick -PackageParameters LegacySupport=true
   - cinst ghostscript
@@ -52,6 +58,7 @@ install:
       cmd.exe /c "kpsewhich --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
       psexec -l kpsewhich --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
       $ErrorActionPreference = $OldErrorActionPreference;
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 build_script:
   - tex -version
@@ -61,11 +68,11 @@ build_script:
   - initexmf --admin --update-fndb
 
 test_script:
- - make -C test
+  #- make -C test
 
 
 on_finish:
- - pxexec -l tex -version
- - dir test\.build
- - dir test\.build\listings
- - dir test\.build\listings\test_custom_listings_caption_1
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  - dir test\.build
+  - dir test\.build\listings
+  - dir test\.build\listings\test_custom_listings_caption_1
