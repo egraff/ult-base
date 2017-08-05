@@ -27,15 +27,13 @@ install:
   - gswin64c -v
   - where pdfinfo
   - ps: >-
-      echo $ErrorActionPreference;
+      $OldErrorActionPreference = $ErrorActionPreference;
       $ErrorActionPreference = "SilentlyContinue";
-      pdfinfo -v;
+      &{ pdfinfo -v };
       if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
         $host.SetShouldExit($LastExitCode);
       }
-      echo 'here';
-  - ps: >-
-      echo $ErrorActionPreference;
+      $ErrorActionPreference = $OldErrorActionPreference;
   - mpm --admin --update-db
   - mpm --admin --upgrade --package-level=basic
   - mpm --admin --update
@@ -43,6 +41,7 @@ install:
 
 build_script:
   - C:\MinGW\msys\1.0\bin\make install CONTINUE=y
+  - texhash
 
 test_script:
  - echo No tests yet...
