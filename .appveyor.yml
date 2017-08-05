@@ -17,7 +17,7 @@ install:
   - powershell -Command "& {
       $GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | select -f 1).FullName;
       $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
-      $NewPath = '$OldPath;$GsPath';
+      $NewPath = $OldPath + ';' + $GsPath;
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
     }"
   - cinst xpdf-utils
