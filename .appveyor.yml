@@ -46,7 +46,11 @@ install:
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
   - refreshenv
   - ps: >-
+      $OldErrorActionPreference = $ErrorActionPreference;
+      $ErrorActionPreference = "Continue";
       cmd.exe /c "kpsewhich --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
+      $ErrorActionPreference = $OldErrorActionPreference;
+      echo "HERE"
   - ps: >-
       cmd.exe /c "kpsewhich --admin --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
   - ps: >-
