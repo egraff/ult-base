@@ -40,8 +40,10 @@ install:
   - initexmf --admin --enable-installer
 
 build_script:
+  - kpsewhich --var-value TEXMFHOME
+  - kpsewhich --var-value TEXMFLOCAL
   - C:\MinGW\msys\1.0\bin\make install CONTINUE=y
-  - texhash
+  - initexmf --admin --update-fndb
 
 test_script:
- - echo No tests yet...
+ - C:\MinGW\msys\1.0\bin\make -C test
