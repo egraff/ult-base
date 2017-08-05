@@ -57,6 +57,7 @@ install:
       $ErrorActionPreference = $OldErrorActionPreference;
 
 build_script:
+  - pdflatex -help
   - make install CONTINUE=y
   - initexmf --admin --update-fndb
 
