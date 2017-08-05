@@ -27,10 +27,14 @@ install:
   - gswin64c -v
   - where pdfinfo
   - ps: >-
+      echo $ErrorActionPreference;
+      $ErrorActionPreference = "Continue";
       pdfinfo -v;
       if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
         $host.SetShouldExit($LastExitCode);
       }
+  - ps: >-
+      echo $ErrorActionPreference;
   - mpm --admin --update-db
   - mpm --admin --upgrade --package-level=basic
   - mpm --admin --update
