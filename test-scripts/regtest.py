@@ -365,14 +365,14 @@ def testGenerator(texTestsRootDir, testFilePrefix='test'):
         continue
 
       filebasename = os.path.splitext(fileName)[0]
-      test_name = os.path.relpath(os.path.join(dirPath, filebasename).replace("\\", "/"), texTestsRootDir)
+      test_name = os.path.relpath(os.path.join(dirPath, filebasename), texTestsRootDir).replace("\\", "/")
 
       yield test_name
 
 
 class TestConfig():
   def __init__(self, testDir, numDotsPerLine=80, debugLevel=debug.INFO):
-    testDir = os.path.relpath(os.path.realpath(testDir))
+    testDir = os.path.relpath(os.path.realpath(testDir)).replace("\\", "/")
     assert os.path.isdir(testDir)
 
     self.TESTDIR     = testDir

@@ -65,7 +65,7 @@ test_script:
 
 
 on_finish:
- - dir test/.build
- - dir test/.build/listings
- - dir test/.build/listings/test_custom_listings_caption_1
- - cat test/.build/listings/test_custom_listings_caption_1/output.log
+ - dir test\.build
+ - dir test\.build\listings
+ - dir test\.build\listings\test_custom_listings_caption_1
+ - cat test\.build\listings\test_custom_listings_caption_1\output.log
