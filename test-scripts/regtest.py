@@ -365,7 +365,7 @@ def testGenerator(texTestsRootDir, testFilePrefix='test'):
         continue
 
       filebasename = os.path.splitext(fileName)[0]
-      test_name = os.path.relpath(os.path.join(dirPath, filebasename), texTestsRootDir)
+      test_name = os.path.relpath(os.path.join(dirPath, filebasename).replace("\\", "/"), texTestsRootDir)
 
       yield test_name
 
