@@ -34,11 +34,11 @@ install:
         $host.SetShouldExit($LastExitCode);
       }
       $ErrorActionPreference = $OldErrorActionPreference;
-  - mpm --admin --update-db
-  - mpm --admin --upgrade --package-level=basic
-  - mpm --admin --update
-  - initexmf --admin --enable-installer
-  - initexmf --admin --update-fndb
+  #- mpm --admin --update-db
+  #- mpm --admin --upgrade --package-level=basic
+  #- mpm --admin --update
+  #- initexmf --admin --enable-installer
+  #- initexmf --admin --update-fndb
   - ps: >-
       $MsysPath = 'C:\MinGW\msys\1.0\bin';
       $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
@@ -49,15 +49,14 @@ install:
       $OldErrorActionPreference = $ErrorActionPreference;
       $ErrorActionPreference = "Continue";
       cmd.exe /c "kpsewhich --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
-      $ErrorActionPreference = $OldErrorActionPreference;
-  - ps: >-
-      $OldErrorActionPreference = $ErrorActionPreference;
-      $ErrorActionPreference = "Continue";
       cmd.exe /c "kpsewhich --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
+      psexec -l kpsewhich --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
       $ErrorActionPreference = $OldErrorActionPreference;
 
 build_script:
-  - pdflatex -help
+  - tex -version
+  - latex -version
+  - pdflatex -version
   - make install CONTINUE=y
   - initexmf --admin --update-fndb
 
@@ -66,6 +65,7 @@ test_script:
 
 
 on_finish:
+ - pxexec -l tex -version
  - dir test\.build
  - dir test\.build\listings
  - dir test\.build\listings\test_custom_listings_caption_1
