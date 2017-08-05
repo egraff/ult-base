@@ -14,20 +14,23 @@ clone_depth: 1
 install:
   - cinst imagemagick -PackageParameters LegacySupport=true
   - cinst ghostscript
-  - powershell -Command "& {
+  - ps: >-
       $GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | select -f 1).FullName;
       $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
       $NewPath = $OldPath + ';' + $GsPath;
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
-    }"
   - cinst xpdf-utils
-  #- cinst -y miktex
+  - cinst -y miktex
   - refreshenv
   - set
   - compare -version
   - gswin64c -v
   - where pdfinfo
-  - pdfinfo -v
+  - ps: >-
+      pdfinfo -v
+      if ($LastExitCode -ne 0 -And  $LastExitCode -ne 99) {
+        $host.SetShouldExit($LastExitCode);
+      }
   - mpm --admin --update-db
   - mpm --admin --upgrade --package-level=basic
   - mpm --admin --update
