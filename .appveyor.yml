@@ -14,18 +14,16 @@ clone_depth: 1
 install:
   - cinst imagemagick
   - cinst ghostscript
+  - cinst xpdf-utils
   - cinst -y miktex
   - refreshenv
   - set
   - mpm --admin --update-db
-  - mpm --admin --upgrade --package-level=basic
+  - mpm --admin --upgrade --package-level=complete
   - mpm --admin --update
-  - mpm --update-db
-  - mpm --upgrade --package-level=basic
-  - mpm --update
 
 build_script:
-  - echo No builds yet...
+  - C:\MinGW\msys\1.0\bin\make install CONTINUE=y
 
 test_script:
  - echo No tests yet...
