@@ -62,3 +62,10 @@ build_script:
 
 test_script:
  - make -C test
+
+
+on_finish:
+ - dir test/.build
+ - dir test/.build/listings
+ - dir test/.build/listings/test_custom_listings_caption_1
+ - cat test/.build/listings/test_custom_listings_caption_1/output.log
