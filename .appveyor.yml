@@ -20,7 +20,7 @@ install:
       $NewPath = $OldPath + ';' + $GsPath;
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
   - cinst xpdf-utils
-  - cinst -y miktex
+  #- cinst -y miktex
   - refreshenv
   - set
   - compare -version
@@ -28,8 +28,8 @@ install:
   - where pdfinfo
   - ps: >-
       $OldErrorActionPreference = $ErrorActionPreference;
-      $ErrorActionPreference = "SilentlyContinue";
-      pdfinfo -v 2>&1;
+      $ErrorActionPreference = "Continue";
+      pdfinfo -v 2>&1 | %{ "$_" };
       if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
         $host.SetShouldExit($LastExitCode);
       }
