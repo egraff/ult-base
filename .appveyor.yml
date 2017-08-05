@@ -39,11 +39,7 @@ install:
   - mpm --admin --update
   - initexmf --admin --enable-installer
   - initexmf --admin --update-fndb
-  - ps: >-
-      $MsysPath = 'C:\MinGW\msys\1.0\bin';
-      $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
-      $NewPath = $OldPath + ';' + $MsysPath;
-      [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
+  - set PATH="%PATH%;C:\MinGW\msys\1.0\bin"
 
 build_script:
   - ps: >-
