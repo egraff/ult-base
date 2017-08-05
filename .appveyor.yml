@@ -26,6 +26,7 @@ install:
   - set
   - compare -version
   - gswin64c -v
+  - where pdfinfo
   - pdfinfo -v
   - mpm --admin --update-db
   - mpm --admin --upgrade --package-level=basic
