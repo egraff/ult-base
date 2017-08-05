@@ -42,10 +42,6 @@ install:
   - set PATH="%PATH%;C:\MinGW\msys\1.0\bin"
 
 build_script:
-  - ps: >-
-      kpsewhich --var-value TEXMFHOME 2>&1;
-  - ps: >-
-      kpsewhich --var-value TEXMFLOCAL 2>&1;
   - make install CONTINUE=y
   - initexmf --admin --update-fndb
 
