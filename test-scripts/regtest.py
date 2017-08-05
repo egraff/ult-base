@@ -249,7 +249,7 @@ class TestRunner():
     asynclib.AsyncPopen([
       'sh',
       '-c',
-      'printf "' + color + ' '.join(str(x).replace('\n', '\\n').replace('"', '\\"') for x in string) + '\\033[0m"'
+      'printf "' + color + ' '.join(str(x).replace('\\', '\\\\').replace('\n', '\\n').replace('"', '\\"') for x in string) + '\\033[0m"'
     ]).wait()
 
   def __testCallback(self, result):
