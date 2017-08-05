@@ -20,7 +20,7 @@ install:
       $NewPath = $OldPath + ';' + $GsPath;
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
   - cinst xpdf-utils
-  #- cinst -y miktex
+  - cinst -y miktex
   - refreshenv
   - set
   - compare -version
@@ -45,6 +45,14 @@ install:
       $NewPath = $OldPath + ';' + $MsysPath;
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
   - refreshenv
+  - ps: >-
+      kpsewhich --var-value TEXMFHOME 2>&1 | %{ "$_" };
+  - ps: >-
+      kpsewhich --admin --var-value TEXMFHOME 2>&1 | %{ "$_" };
+  - ps: >-
+      kpsewhich --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
+  - ps: >-
+      kpsewhich --admin --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
 
 build_script:
   - make install CONTINUE=y
