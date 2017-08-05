@@ -245,8 +245,12 @@ class TestRunner():
       color = string[0]
       string = string[1:]
 
-    s = "sh -c \"printf \\\"" + color + " ".join([str(x).replace("\n", "\\n").replace('"', '\\\\\\"') for x in string]) + "\\033[0m\\\"\""
-    asynclib.AsyncPopen(s, shell=True).wait()
+    #s = "sh -c \"printf \\\"" + color + " ".join([str(x).replace("\n", "\\n").replace('"', '\\\\\\"') for x in string]) + "\\033[0m\\\"\""
+    asynclib.AsyncPopen([
+      'sh',
+      '-c',
+      'printf "' + color + ' '.join(str(x).replace('\n', '\\n').replace('"', '\\"') for x in string) + '\\033[0m"'
+    ]).wait()
 
   def __testCallback(self, result):
     testName, buildSucceeded, exception, failedPages = result
