@@ -22,7 +22,8 @@ PDFOUTDIR = $(PDFFLD)/$(DIRNAME)
 OUTPUTNAME = output
 
 # Extra options, these must be available for both pdflatex and latexmk
-DEFOPT = -output-directory=$(MAINDIR_REL2_TESTSDIR)/$(OUTDIR) -interaction=batchmode
+#DEFOPT = -output-directory=$(MAINDIR_REL2_TESTSDIR)/$(OUTDIR) -interaction=batchmode
+DEFOPT = -output-directory=$(MAINDIR_REL2_TESTSDIR)/$(OUTDIR) -interaction=nonstopmode -halt-on-error
 
 # Options for glossary
 GLOSSOPT = -q
