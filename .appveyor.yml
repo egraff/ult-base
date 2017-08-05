@@ -1,0 +1,29 @@
+branches:
+  except:
+    - gh-pages
+
+skip_commits:
+  message: /\[ci skip\]/
+
+max_jobs: 1
+
+image: Visual Studio 2015
+
+clone_depth: 1
+
+install:
+  - cinst -y miktex
+  - mpm --admin --update-db
+  - mpm --admin --upgrade --package-level=basic
+  - mpm --admin --update
+  - mpm --update-db
+  - mpm --upgrade --package-level=basic
+  - mpm --update
+  - cinst imagemagick
+  - cinst ghostscript
+
+build_script:
+  - echo No builds yet...
+
+test_script:
+ - echo No tests yet...
