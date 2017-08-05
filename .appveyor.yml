@@ -12,7 +12,7 @@ image: Visual Studio 2015
 clone_depth: 1
 
 install:
-  - cinst imagemagick
+  - cinst imagemagick -PackageParameters LegacySupport=true
   - cinst ghostscript
   - cinst xpdf-utils
   - cinst -y miktex
