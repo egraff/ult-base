@@ -14,7 +14,7 @@ clone_depth: 1
 install:
   - cinst imagemagick -PackageParameters LegacySupport=true
   - cinst ghostscript
-  - powershell -Command "echo (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | Select-Object -First 1).FullName"
+  - powershell -Command "& {$GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | Select-Object -First 1).FullName; Setx /M PATH "%PATH%;$GsPath";}"
   - cinst xpdf-utils
   #- cinst -y miktex
   - refreshenv
