@@ -12,15 +12,17 @@ image: Visual Studio 2015
 clone_depth: 1
 
 install:
+  - cinst imagemagick
+  - cinst ghostscript
   - cinst -y miktex
+  - refreshenv
+  - set
   - mpm --admin --update-db
   - mpm --admin --upgrade --package-level=basic
   - mpm --admin --update
   - mpm --update-db
   - mpm --upgrade --package-level=basic
   - mpm --update
-  - cinst imagemagick
-  - cinst ghostscript
 
 build_script:
   - echo No builds yet...
