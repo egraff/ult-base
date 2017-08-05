@@ -194,13 +194,13 @@ class TestTask(asynclib.AsyncTask):
     self.config = config
     self.testName = testName
 
-    config.processPoolSemaphore.acquire()
+    config.makeTaskSemaphore.acquire()
     task = makeTestTask(config, self.testName)
     task.await(self._makeTaskComplete)
     self.wait = task.wait
 
   def _makeTaskComplete(self, proc):
-    self.config.processPoolSemaphore.release()
+    self.config.makeTaskSemaphore.release()
 
     if proc.returncode != 0:
       self.__result = (self.testName, False, None, proc)
@@ -385,6 +385,7 @@ class TestConfig():
 
     self.DEBUGLEVEL = debugLevel
 
+    self.makeTaskSemaphore = threading.BoundedSemaphore(1)
     self.processPoolSemaphore = threading.BoundedSemaphore(8)
 
 

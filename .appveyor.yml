@@ -42,8 +42,9 @@ install:
       $ErrorActionPreference = $OldErrorActionPreference;
   - mpm --admin --update-db
   #- mpm --admin --upgrade --package-level=basic
-  - mpm --admin --find-updates | out-string | select-string "^(?!miktex.*$)" > upd-packages.txt
-  - mpm --admin --update-some=upd-packages.txt --verbose
+  # ps
+  #    mpm --admin --find-updates | foreach { $_.ToString() } | select-string "^(?!miktex.*$)" > upd-packages.txt
+  #- mpm --admin --update-some=upd-packages.txt --verbose
   - initexmf --admin --enable-installer --verbose
   - initexmf --admin --update-fndb --verbose
   - initexmf --admin --mkmaps --verbose
