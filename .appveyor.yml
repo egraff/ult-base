@@ -40,11 +40,12 @@ install:
         $host.SetShouldExit($LastExitCode);
       }
       $ErrorActionPreference = $OldErrorActionPreference;
-  #- mpm --admin --update-db
+  - mpm --admin --update-db
   #- mpm --admin --upgrade --package-level=basic
-  #- mpm --admin --update
-  #- initexmf --admin --enable-installer
-  #- initexmf --admin --update-fndb
+  - mpm --admin --update --verbose
+  - initexmf --admin --enable-installer --verbose
+  - initexmf --admin --update-fndb --verbose
+  - initexmf --admin --mkmaps --verbose
   - ps: >-
       $MsysPath = 'C:\MinGW\msys\1.0\bin';
       $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
@@ -65,7 +66,7 @@ build_script:
   - latex -version
   - pdflatex -version
   - make install CONTINUE=y
-  - initexmf --admin --update-fndb
+  - initexmf --admin --update-fndb --verbose
 
 test_script:
   #- make -C test
