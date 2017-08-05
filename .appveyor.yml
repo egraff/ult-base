@@ -50,13 +50,11 @@ install:
       $ErrorActionPreference = "Continue";
       cmd.exe /c "kpsewhich --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
       $ErrorActionPreference = $OldErrorActionPreference;
-      echo "HERE"
   - ps: >-
-      cmd.exe /c "kpsewhich --admin --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
-  - ps: >-
+      $OldErrorActionPreference = $ErrorActionPreference;
+      $ErrorActionPreference = "Continue";
       cmd.exe /c "kpsewhich --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
-  - ps: >-
-      cmd.exe /c "kpsewhich --admin --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
+      $ErrorActionPreference = $OldErrorActionPreference;
 
 build_script:
   - make install CONTINUE=y
