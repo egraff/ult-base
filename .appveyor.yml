@@ -29,7 +29,7 @@ install:
   - ps: >-
       $OldErrorActionPreference = $ErrorActionPreference;
       $ErrorActionPreference = "Continue";
-      ssh -o StrictHostKeyChecking=no -T git@github.com
+      ssh -o StrictHostKeyChecking=no -T git@github.com;
       $ErrorActionPreference = $OldErrorActionPreference;
 
   - cinst imagemagick -PackageParameters LegacySupport=true
