@@ -12,12 +12,22 @@ image: Visual Studio 2015
 clone_depth: 1
 
 
+environment:
+  deploy_key_secret:
+    secure: oUQd0vmgGMlZagBkEVim8K75YMyxu/bvTi6drd6SGbyo3ek14qnJNB7aJ6iFQOJE
+
+
 # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
 init:
   - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
 install:
+  # Decrypt deploy key
+  - nuget install secure-file -ExcludeVersion
+  - secure-file\tools\secure-file -decrypt appveyor-deploy-key.enc -secret %deploy_key_secret% -out %USERPROFILE%\.ssh\id_rsa
+  - ssh -o StrictHostKeyChecking=no -T git@github.com
+
   - cinst imagemagick -PackageParameters LegacySupport=true
   - cinst ghostscript
   - ps: >-
