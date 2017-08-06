@@ -1,13 +1,30 @@
 language: python
-python:
-  - "2.7"
-sudo: true
+
+git:
+  depth: 1
+
+matrix:
+  include:
+    - os: linux
+      sudo: required
+      python: 2.7
+    - os: osx
+      sudo: required
+      language: generic
+
 install:
-  - ci/travis-install.sh
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      ci/travis-install-linux.sh
+    fi
+  - which python
+  - locate python
   - sudo -i texhash
   - sudo -i tlmgr update --self --all
   - tlmgr conf
   - make install CONTINUE=y
 script:
   - make -C test
-after_script: ci/travis-after.sh
+after_script:
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      ci/travis-after.sh
+    fi

@@ -1,6 +1,7 @@
 branches:
   except:
     - gh-pages
+    - travis-osx
 
 skip_commits:
   message: /\[ci skip\]/
