@@ -84,8 +84,11 @@ class AsyncPopen(AsyncTask):
     self.__proc = subprocess.Popen(*args, **kwargs)
 
   def wait(self):
+    stdout, stderr = self.__proc.communicate()
     self.__proc.wait()
+    self.__stdout = stdout.splitlines() if stdout is not None else []
+    self.__stderr = stderr.splitlines() if stderr is not None else []
 
   @property
   def result(self):
-    return self.__proc
+    return (self.__proc, self.__stdout, self.__stderr)
