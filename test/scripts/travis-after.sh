@@ -30,13 +30,10 @@ travis:
   build-id: ${TRAVIS_BUILD_ID}
   build-number: ${TRAVIS_BUILD_NUMBER}
   commit: ${TRAVIS_COMMIT}
-  commit-message: ${TRAVIS_COMMIT_MESSAGE}
   commit-range: ${TRAVIS_COMMIT_RANGE}
   job-id: ${TRAVIS_JOB_ID}
   job-number: ${TRAVIS_JOB_NUMBER}
   os-name: ${TRAVIS_OS_NAME}
-  pull-request: ${TRAVIS_PULL_REQUEST}
-  pull-request-branch: ${TRAVIS_PULL_REQUEST_BRANCH}
   test-result: ${TRAVIS_TEST_RESULT}
 ---
 EOF
