@@ -26,7 +26,11 @@ install:
   # Decrypt deploy key
   - nuget install secure-file -ExcludeVersion
   - secure-file\tools\secure-file -decrypt appveyor-deploy-key.enc -secret %deploy_key_secret% -out %USERPROFILE%\.ssh\id_rsa
-  - ssh -o StrictHostKeyChecking=no -T git@github.com
+  - ps: >-
+      $OldErrorActionPreference = $ErrorActionPreference;
+      $ErrorActionPreference = "Continue";
+      ssh -o StrictHostKeyChecking=no -T git@github.com
+      $ErrorActionPreference = $OldErrorActionPreference;
 
   - cinst imagemagick -PackageParameters LegacySupport=true
   - cinst ghostscript
