@@ -13,18 +13,18 @@ from testutil import ComparePngsAsyncTask, PdfFile, mkdirp
 
 
 class debug:
-  NORMAL = "\033[0m"
-  INFO  = "\033[1;34m"
-  DEBUG = "\033[0;32m"
-  WARNING = "\033[1;33m"
-  YELLOW = "\033[1;33m"
-  BLUE = "\033[1;34m"
-  ERROR = "\033[1;31m"
-  FUCK = "\033[1;41m"
-  GREEN = "\033[1;32m"
-  WHITE = "\033[1;37m"
-  BOLD = "\033[1m"
-  UNDERLINE = "\033[4m"
+  NORMAL = "\\033[0m"
+  INFO  = "\\033[1;34m"
+  DEBUG = "\\033[0;32m"
+  WARNING = "\\033[1;33m"
+  YELLOW = "\\033[1;33m"
+  BLUE = "\\033[1;34m"
+  ERROR = "\\033[1;31m"
+  FUCK = "\\033[1;41m"
+  GREEN = "\\033[1;32m"
+  WHITE = "\\033[1;37m"
+  BOLD = "\\033[1m"
+  UNDERLINE = "\\033[4m"
 
 dlvl = [
   debug.INFO,
@@ -250,12 +250,12 @@ class TestRunner():
       color = string[0]
       string = string[1:]
 
+    echoStr = ' '.join(str(x) for x in string)
     with self.config.echoLock:
-      echoStr = color + ' '.join(str(x) for x in string) + '\033[0m'
       subprocess.Popen([
         'sh',
         '-c',
-        'printf %r' % (echoStr,)
+        'printf "%s"; printf %r; printf "%s"' % (color, echoStr, '\\033[0m')
       ]).wait()
 
   def __testCallback(self, result):
