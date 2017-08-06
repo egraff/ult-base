@@ -5,19 +5,20 @@ git:
 
 matrix:
   include:
-    - os: linux
-      sudo: required
-      python: 2.7
+    #- os: linux
+    #  sudo: required
+    #  python: 2.7
     - os: osx
       sudo: required
       language: generic
 
 install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      ci/travis-install-linux.sh
+      ci/travis-install-linux.sh;
     fi
   - which python
   - locate python
+  - python -v
   - sudo -i texhash
   - sudo -i tlmgr update --self --all
   - tlmgr conf
