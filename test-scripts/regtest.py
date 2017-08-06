@@ -251,8 +251,12 @@ class TestRunner():
       string = string[1:]
 
     with self.config.echoLock:
-      sys.stdout.write(color + ' '.join(str(x) for x in string) + '\033[0m')
-      sys.stdout.flush()
+      echoStr = color + ' '.join(str(x) for x in string) + '\033[0m'
+	    subprocess.Popen([
+        'sh',
+        '-c',
+        'printf %r' % (echoStr,)
+      ]).wait()
 
   def __testCallback(self, result):
     testName, buildSucceeded, exception, failedPages = result
