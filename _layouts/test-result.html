@@ -2,7 +2,7 @@
 layout: default
 ---
 {% comment %} Convert number to string {% endcomment %}
-{% capture travis_job_number %}{{ page.travis.job-number }}{% endcapture %}
+{% capture travis_job_number %}{{ page.travis.job-number | replace: '.', '_' }}{% endcapture %}
 
 {% comment %} Get test result from JSON {% endcomment %}
 {% assign result_map = site.data.travis-builds[travis_job_number] %}
