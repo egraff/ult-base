@@ -17,7 +17,6 @@ install:
       ci/travis-install-linux.sh;
     fi
   - which python
-  - locate python
   - python -v
   - sudo -i texhash
   - sudo -i tlmgr update --self --all
