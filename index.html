@@ -22,8 +22,6 @@ title: Last 25 Travis builds
   {% endif %}
 {% endfor %}
 
-DEBUG<br/>{{ job_num_string_list }}
-
 {% comment %} Convert to a list, and sort in descending order {% endcomment %}
 {% assign job_num_string_list = job_num_string_list | split: ',' | sort | reverse %}
 
