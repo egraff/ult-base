@@ -21,7 +21,6 @@ install:
   - brew install python --universal --framework
   - python -v
   - brew cask install basictex
-  - sudo -i texhash
   - sudo -i tlmgr update --self --all
   - tlmgr conf
   - make install CONTINUE=y
