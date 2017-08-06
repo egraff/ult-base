@@ -20,7 +20,12 @@ install:
   - brew uninstall python
   - brew install python --universal --framework
   - python -v
-  - brew cask install basictex
+  - brew cask install -v basictex
+  - alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
+  - ls -la /Library/TeX
+  - ls -la /Library/TeX/Distributions
+  - (cd /Library/TeX/Distributions && tree)
+  - export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
   - sudo -i tlmgr update --self --all
   - tlmgr conf
   - make install CONTINUE=y
