@@ -252,7 +252,7 @@ class TestRunner():
 
     with self.config.echoLock:
       echoStr = color + ' '.join(str(x) for x in string) + '\033[0m'
-	    subprocess.Popen([
+      subprocess.Popen([
         'sh',
         '-c',
         'printf %r' % (echoStr,)
