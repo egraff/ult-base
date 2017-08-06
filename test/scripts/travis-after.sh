@@ -9,7 +9,7 @@ pushd gh-pages
 git init
 git config core.autocrlf true
 git config user.name "Travis"
-git config user.email "travis@travis-ci.com"
+git config user.email "travis@travis-ci.org"
 git config remote.origin.url git@github.com:egraff/ult-base.git
 git config remote.origin.fetch +refs/heads/gh-pages:refs/remotes/origin/gh-pages
 git config branch.gh-pages.remote origin
@@ -20,9 +20,9 @@ git checkout -l -f -q -b gh-pages origin/gh-pages
 
 popd
 
-mkdir -p gh-pages/travis-builds/${TRAVIS_BUILD_NUMBER}
+mkdir -p gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}
 
-cat <<EOF > gh-pages/travis-builds/${TRAVIS_BUILD_NUMBER}/index.md
+cat <<EOF > gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/index.md
 ---
 layout: test-result
 travis:
@@ -37,17 +37,17 @@ travis:
 ---
 EOF
 
-cp -Rf .build gh-pages/travis-builds/${TRAVIS_BUILD_NUMBER}/build
-cp -Rf diffs gh-pages/travis-builds/${TRAVIS_BUILD_NUMBER}/diffs || true
-cp -Rf tmp/tests gh-pages/travis-builds/${TRAVIS_BUILD_NUMBER}/tests || true
-cp -Rf tmp/proto gh-pages/travis-builds/${TRAVIS_BUILD_NUMBER}/proto || true
+cp -Rf .build gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/build
+cp -Rf diffs gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/diffs || true
+cp -Rf tmp/tests gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/tests || true
+cp -Rf tmp/proto gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/proto || true
 
-cp test_result.json gh-pages/_data/travis-builds/${TRAVIS_BUILD_NUMBER}.json
+cp test_result.json gh-pages/_data/travis-builds/${TRAVIS_JOB_NUMBER}.json
 
 pushd gh-pages
 
 git add --all .
-git commit -m "Travis: test results from build ${TRAVIS_BUILD_NUMBER}"
+git commit -m "Travis: test results from job ${TRAVIS_JOB_NUMBER}"
 
 # Allow command to fail (no exit on failure)
 set +e
