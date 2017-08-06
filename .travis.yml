@@ -20,15 +20,15 @@ install:
   - brew uninstall python
   - brew install python --universal --framework
   - python -v
+  - brew install ghostscript
+  - gs -v
+  - brew install imagemagick
+  - compare -v
+  - brew install xpdf
+  - pdfinfo -v || (exit 0)
   - brew cask install -v basictex
-  - ls -la /Library/TeX
-  - ls -la /Library/TeX/Distributions
-  - ls -la /Library/TeX/Distributions/Programs
-  - ls -la /Library/TeX/Distributions/.DefaultTeX
-  - ls -la /Library/TeX/Distributions/.DefaultTeX/Contents
-  - ls -la /Library/TeX/Distributions/.DefaultTeX/Contents/Programs
-  - (cd /Library/TeX/Distributions && find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g')
-  - export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
+  #- export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
+  - export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
   - sudo -i tlmgr update --self --all
   - tlmgr conf
   - make install CONTINUE=y
