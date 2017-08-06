@@ -20,7 +20,7 @@ environment:
 install:
   # Decrypt deploy key
   - nuget install secure-file -ExcludeVersion
-  - secure-file\tools\secure-file -decrypt appveyor-deploy-key.enc -secret %deploy_key_secret% -out %USERPROFILE%\.ssh\id_rsa
+  - secure-file\tools\secure-file -decrypt ci\appveyor-deploy-key.enc -secret %deploy_key_secret% -out %USERPROFILE%\.ssh\id_rsa
   - ps: >-
       $OldErrorActionPreference = $ErrorActionPreference;
       $ErrorActionPreference = "Continue";
