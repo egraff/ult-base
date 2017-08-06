@@ -16,6 +16,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       ci/travis-install-linux.sh;
     fi
+  - brew update
   - brew uninstall python
   - brew install python --universal --framework
   - python -v
