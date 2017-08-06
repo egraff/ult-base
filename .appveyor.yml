@@ -17,11 +17,6 @@ environment:
     secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRF5qU3bakG0+sgJiC4nSsx8
 
 
-# https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
-init:
-  - ps: iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-
-
 install:
   # Decrypt deploy key
   - nuget install secure-file -ExcludeVersion
@@ -69,13 +64,6 @@ install:
       $NewPath = $OldPath + ';' + $MsysPath;
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
   - refreshenv
-  - ps: >-
-      $OldErrorActionPreference = $ErrorActionPreference;
-      $ErrorActionPreference = "Continue";
-      cmd.exe /c "kpsewhich --var-value TEXMFHOME 2>&1" 2>&1 | %{ "$_" };
-      cmd.exe /c "kpsewhich --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
-      psexec -l kpsewhich --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
-      $ErrorActionPreference = $OldErrorActionPreference;
 
 build_script:
   - make install CONTINUE=y
@@ -84,5 +72,6 @@ build_script:
 test_script:
   - make -C test
 
+# https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
 on_failure:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
