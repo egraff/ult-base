@@ -23,7 +23,7 @@ install:
   - brew install ghostscript
   - gs -v
   - brew install imagemagick
-  - compare -v
+  - compare -version
   - brew install xpdf
   - pdfinfo -v || (exit 0)
   - brew cask install -v basictex
