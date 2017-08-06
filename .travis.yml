@@ -21,10 +21,13 @@ install:
   - brew install python --universal --framework
   - python -v
   - brew cask install -v basictex
-  - alias tree="find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g'"
   - ls -la /Library/TeX
   - ls -la /Library/TeX/Distributions
-  - (cd /Library/TeX/Distributions && tree)
+  - ls -la /Library/TeX/Distributions/Programs
+  - ls -la /Library/TeX/Distributions/.DefaultTeX
+  - ls -la /Library/TeX/Distributions/.DefaultTeX/Contents
+  - ls -la /Library/TeX/Distributions/.DefaultTeX/Contents/Programs
+  - (cd /Library/TeX/Distributions && find . -print | sed -e 's;[^/]*/;|____;g;s;____|; |;g')
   - export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
   - sudo -i tlmgr update --self --all
   - tlmgr conf
