@@ -16,8 +16,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       ci/travis-install-linux.sh;
     fi
-  - which python
-  - python -v
+  - brew install python
   - sudo -i texhash
   - sudo -i tlmgr update --self --all
   - tlmgr conf
