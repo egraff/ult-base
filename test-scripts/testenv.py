@@ -11,9 +11,10 @@ def __unpackAppListToWhichCommand(appList):
 def __locateTestUtility(appName, appCmds):
   whichCommand = __unpackAppListToWhichCommand(appCmds)
   whichApp = subprocess.Popen(["sh", "-c", whichCommand], env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  stdout, stderr = whichApp.communicate()
   whichApp.wait()
 
-  app = whichApp.stdout.readline().strip()
+  app = stdout.strip()
 
   if not len(app):
     raise Exception("The test utility %s could not be found in the system! Have you installed it?" % (appName,))
