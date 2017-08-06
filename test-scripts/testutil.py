@@ -40,8 +40,9 @@ class ComparePngsAsyncTask(asynclib.AsyncTask):
     self.__cmpProc = subprocess.Popen(cmpCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
   def wait(self):
+    _stdout, stderr = self.__cmpProc.communicate()
     self.__cmpProc.wait()
-    lines = self.__cmpProc.stderr.readlines()
+    lines = stderr.splitlines()
     assert self.__cmpProc.returncode <= 1
 
     # Needed because lines[0] could be something like "1.33125e+006"

@@ -13,18 +13,18 @@ from testutil import ComparePngsAsyncTask, PdfFile, mkdirp
 
 
 class debug:
-  NORMAL = "\\033[0m"
-  INFO  = "\\033[1;34m"
-  DEBUG = "\\033[0;32m"
-  WARNING = "\\033[1;33m"
-  YELLOW = "\\033[1;33m"
-  BLUE = "\\033[1;34m"
-  ERROR = "\\033[1;31m"
-  FUCK = "\\033[1;41m"
-  GREEN = "\\033[1;32m"
-  WHITE = "\\033[1;37m"
-  BOLD = "\\033[1m"
-  UNDERLINE = "\\033[4m"
+  NORMAL = "\033[0m"
+  INFO  = "\033[1;34m"
+  DEBUG = "\033[0;32m"
+  WARNING = "\033[1;33m"
+  YELLOW = "\033[1;33m"
+  BLUE = "\033[1;34m"
+  ERROR = "\033[1;31m"
+  FUCK = "\033[1;41m"
+  GREEN = "\033[1;32m"
+  WHITE = "\033[1;37m"
+  BOLD = "\033[1m"
+  UNDERLINE = "\033[4m"
 
 dlvl = [
   debug.INFO,
@@ -75,9 +75,12 @@ class TestPdfPagePair(asynclib.AsyncTask):
     self.wait = self.joinedPdfTask.wait
 
   def _compare(self, results):
-    genPngProcs = results
+    genPngProcResults = results
 
-    genTestPngProc, genProtoPngProc = genPngProcs
+    genTestPngProcResults, genProtoPngProcResults = genPngProcResults
+    genTestPngProc, _stdout, _stderr = genTestPngProcResults
+    genProtoPngProc, _stdout, _stderr = genProtoPngProcResults
+
     assert genTestPngProc.returncode == 0, "Failed to generate PNG %s" % (self.testPngPagePath,)
     assert genProtoPngProc.returncode == 0, "Failed to generate PNG %s" % (self.protoPngPagePath,)
 
@@ -199,11 +202,13 @@ class TestTask(asynclib.AsyncTask):
     task.await(self._makeTaskComplete)
     self.wait = task.wait
 
-  def _makeTaskComplete(self, proc):
+  def _makeTaskComplete(self, procResults):
     self.config.processPoolSemaphore.release()
 
+    proc, stdout, stderr = procResults
+
     if proc.returncode != 0:
-      self.__result = (self.testName, False, None, proc)
+      self.__result = (self.testName, False, None, (proc, stdout, stderr))
       return
 
     try:
@@ -222,7 +227,7 @@ class TestTask(asynclib.AsyncTask):
   # or
   #  (test name, build succeeded = TRUE, exc_info, None)
   # or
-  #  (test name, build succeeded = FALSE, None, build proc)
+  #  (test name, build succeeded = FALSE, None, (build proc, stdout, stderr))
   @property
   def result(self):
     return self.__result
@@ -245,12 +250,9 @@ class TestRunner():
       color = string[0]
       string = string[1:]
 
-    #s = "sh -c \"printf \\\"" + color + " ".join([str(x).replace("\n", "\\n").replace('"', '\\\\\\"') for x in string]) + "\\033[0m\\\"\""
-    asynclib.AsyncPopen([
-      'sh',
-      '-c',
-      'printf "' + color + ' '.join(str(x).replace('\n', '\\n').replace('"', '\\"') for x in string) + '\\033[0m"'
-    ]).wait()
+    with self.config.echoLock:
+      sys.stdout.write(color + ' '.join(str(x) for x in string) + '\033[0m')
+      sys.stdout.flush()
 
   def __testCallback(self, result):
     testName, buildSucceeded, exception, failedPages = result
@@ -305,19 +307,19 @@ class TestRunner():
             failedTestMap['exception'] = False if exc_info is None else True
             self.echo(debug.BOLD, "  %s\n" % (testName,))
             if not buildSucceeded:
-              proc = arg
+              proc, stdout, stderr = arg
               failedTestMap['proc'] = {}
               failedTestMap['proc']['returncode'] = proc.returncode
               failedTestMap['proc']['stdout'] = []
               failedTestMap['proc']['stderr'] = []
               self.echo(debug.ERROR, "    Build failed!\n")
               self.echo(debug.ERROR, "    stdout output:\n")
-              for line in proc.stdout:
+              for line in stdout:
                 line = line.rstrip('\n')
                 failedTestMap['proc']['stdout'].append(line)
                 self.echo(debug.NORMAL, "      %s\n" % (line,))
               self.echo(debug.ERROR, "\n    stderr output:\n")
-              for line in proc.stderr:
+              for line in stderr:
                 line = line.rstrip('\n')
                 failedTestMap['proc']['stderr'].append(line)
                 self.echo(debug.NORMAL, "      %s\n" % (line,))
@@ -385,6 +387,7 @@ class TestConfig():
 
     self.DEBUGLEVEL = debugLevel
 
+    self.echoLock = threading.Lock()
     self.processPoolSemaphore = threading.BoundedSemaphore(8)
 
 
