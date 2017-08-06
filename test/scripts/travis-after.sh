@@ -42,7 +42,9 @@ cp -Rf diffs gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/diffs || true
 cp -Rf tmp/tests gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/tests || true
 cp -Rf tmp/proto gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/proto || true
 
-cp test_result.json gh-pages/_data/travis-builds/${TRAVIS_JOB_NUMBER}.json
+
+
+cp test_result.json gh-pages/_data/travis-builds/${TRAVIS_JOB_NUMBER//\./_}.json
 
 pushd gh-pages
 
