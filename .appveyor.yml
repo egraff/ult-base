@@ -48,6 +48,7 @@ install:
   - initexmf --admin --enable-installer --verbose
   - initexmf --admin --update-fndb --verbose
   - initexmf --admin --mkmaps --verbose
+  - pdflatex -version
   - ps: >-
       $MsysPath = 'C:\MinGW\msys\1.0\bin';
       $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
@@ -61,21 +62,13 @@ install:
       cmd.exe /c "kpsewhich --var-value TEXMFLOCAL 2>&1" 2>&1 | %{ "$_" };
       psexec -l kpsewhich --var-value TEXMFLOCAL 2>&1 | %{ "$_" };
       $ErrorActionPreference = $OldErrorActionPreference;
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 build_script:
-  - tex -version
-  - latex -version
-  - pdflatex -version
   - make install CONTINUE=y
   - initexmf --admin --update-fndb --verbose
 
 test_script:
-  #- make -C test
+  - make -C test
 
-
-on_finish:
+on_failure:
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
-  - dir test\.build
-  - dir test\.build\listings
-  - dir test\.build\listings\test_custom_listings_caption_1
