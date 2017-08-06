@@ -14,7 +14,7 @@ clone_depth: 1
 
 environment:
   deploy_key_secret:
-    secure: oUQd0vmgGMlZagBkEVim8K75YMyxu/bvTi6drd6SGbyo3ek14qnJNB7aJ6iFQOJE
+    secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRHO/CW/AxftosP03YRR7wro
 
 
 # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
