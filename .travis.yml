@@ -30,6 +30,24 @@ install:
   #- export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
   - export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
   - sudo -i tlmgr update --self --all
+  - sudo tlmgr install collection-basic
+  - sudo tlmgr install collection-bibtexextra
+  - sudo tlmgr install collection-binextra
+  - sudo tlmgr install collection-fontsextra
+  - sudo tlmgr install collection-fontsrecommended
+  - sudo tlmgr install collection-fontutils
+  - sudo tlmgr install collection-formatsextra
+  - sudo tlmgr install collection-langenglish
+  - sudo tlmgr install collection-langeuropean
+  - sudo tlmgr install collection-langother
+  - sudo tlmgr install collection-latex
+  - sudo tlmgr install collection-latexextra
+  - sudo tlmgr install collection-latexrecommended
+  - sudo tlmgr install collection-mathscience
+  - sudo tlmgr install collection-metapost
+  - sudo tlmgr install collection-pictures
+  - sudo tlmgr install collection-plaingeneric
+  - sudo tlmgr install collection-pstricks
   - tlmgr conf
   - make install CONTINUE=y
 script:
