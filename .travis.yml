@@ -19,7 +19,8 @@ install:
   - brew uninstall python
   - brew install python --universal --framework
   - python -v
-  - python -c 'import os.path; print os.path.relpath(".", "tests")'
+  - brew install caskroom/cask/brew-cask
+  - brew cask install mactex
   - sudo -i texhash
   - sudo -i tlmgr update --self --all
   - tlmgr conf
