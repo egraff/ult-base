@@ -42,8 +42,9 @@ DEBUG<br/>{{ job_num_string_list }}
     {% assign job_num_string_parts = job_num_string | split: '^' %}
     {% assign travis_job_number = job_num_string_parts[1] %}
     {% for page in pages_list %}
-      <tr>DEBUG JOB NUMBER! STR {{job_num_string}} NUM {{travis_job_number}}</tr>
-      {% if page.travis.job-number == travis_job_number %}
+      {% capture page_job_num_str %}{{ page.travis.job-number }}{% endcapture %}
+      <tr>DEBUG JOB NUMBER! STR {{job_num_string}} NUM {{travis_job_number}} CMP {{page_job_num_str}}</tr>
+      {% if page_job_num_str == travis_job_number %}
         {% if page.travis.test-result == 0 %}
           {% assign passed = true %}
         {% else %}
