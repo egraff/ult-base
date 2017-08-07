@@ -46,6 +46,8 @@ def _convertPdfPageToPngAsync(pdfPath, pageNum, outputPngPath):
 
 class ComparePngsAsyncTask(asynclib.AsyncTask):
   def __init__(self, pngPathFirst, pngPathSecond, outputDiffPath):
+    self.pngPathFirst = pngPathFirst
+    self.pngPathSecond = pngPathSecond
     cmpCmd = [CMP, '-metric', 'ae', pngPathFirst, pngPathSecond, outputDiffPath]
     self.__cmpProc = subprocess.Popen(cmpCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
@@ -59,8 +61,8 @@ class ComparePngsAsyncTask(asynclib.AsyncTask):
     except AssertionError:
       print repr(_stdout)
       print repr(stderr)
-      print get_output([IDENTIFY, '-format', '%f: %wx%h', pngPathFirst])
-      print get_output([IDENTIFY, '-format', '%f: %wx%h', pngPathSecond])
+      print get_output([IDENTIFY, '-format', '%f: %wx%h', self.pngPathFirst])
+      print get_output([IDENTIFY, '-format', '%f: %wx%h', self.pngPathSecond])
       raise
 
     # Needed because lines[0] could be something like "1.33125e+006"
