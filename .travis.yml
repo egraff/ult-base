@@ -20,7 +20,7 @@ install:
   - brew uninstall python
   - brew install python --universal --framework
   - python -v
-  - brew install ghostscript
+  - brew install ghostscript@9.20
   - gs -v
   - brew install imagemagick
   - compare -version
