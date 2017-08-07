@@ -56,6 +56,4 @@ install:
 script:
   - make -C test
 after_script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      ci/travis-after.sh
-    fi
+  - ci/travis-after.sh
