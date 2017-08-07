@@ -29,8 +29,8 @@ install:
   - brew cask install -v basictex
   #- export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
   - export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
-  - sudo -i tlmgr update --self --all
   - sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
+  - sudo -i tlmgr update --self --all
   - sudo tlmgr install
       collection-basic
       collection-bibtexextra

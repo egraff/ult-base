@@ -43,7 +43,13 @@ class ComparePngsAsyncTask(asynclib.AsyncTask):
     _stdout, stderr = self.__cmpProc.communicate()
     self.__cmpProc.wait()
     lines = stderr.splitlines()
-    assert self.__cmpProc.returncode <= 1
+
+    try:
+      assert self.__cmpProc.returncode <= 1
+    except AssertionError:
+      print repr(_stdout)
+      print repr(stderr)
+      raise
 
     # Needed because lines[0] could be something like "1.33125e+006"
     self.__result = int(float(lines[0]))
