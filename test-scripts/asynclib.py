@@ -1,4 +1,5 @@
 import threading
+import traceback
 import subprocess
 import Queue
 import sys
@@ -25,6 +26,19 @@ class Deferrer(threading.Thread):
           self.__exceptionQueue.put(sys.exc_info())
 
 
+class AsyncTaskException(Exception):
+  def __init__(self, exc_type, exc_obj, exc_trace):
+    self.exc_type = exc_type
+    self.exc_obj = exc_obj
+    self.exc_trace = exc_trace
+
+  def __repr__(self):
+    return str(self)
+
+  def __str__(self):
+    return 'AsyncTaskException(\n  %s: %s,\n%s)' % (self.exc_type.__name__, repr(self.exc_obj).replace('\n', '\n  '), ''.join(traceback.format_tb(self.exc_trace)))
+
+
 class AsyncTaskDeferrer():
   def __init__(self, task, callback):
     self.__task = task
@@ -48,9 +62,7 @@ class AsyncTaskDeferrer():
       pass # No exceptions
     else:
       exc_type, exc_obj, exc_trace = exc
-
-      # Re-raise same exception from faulting thread
-      raise exc_type, exc_obj, exc_trace
+      raise AsyncTaskException(exc_type, exc_obj, exc_trace)
 
 
 class AsyncTask(object):

@@ -4,6 +4,7 @@ import os
 import re
 import sys
 import json
+import pipes
 import traceback
 import threading
 import subprocess
@@ -61,34 +62,41 @@ class TestPdfPagePair(asynclib.AsyncTask):
 
     # Start processes for generating PNGs
     config.processPoolSemaphore.acquire()
-    self.testPdfTask = testPdfObj.getPngForPageAsync(pageNum, self.testPngPagePath)
-    self.protoPdfTask = protoPdfObj.getPngForPageAsync(pageNum, self.protoPngPagePath)
+    try:
+      self.testPdfTask = testPdfObj.getPngForPageAsync(pageNum, self.testPngPagePath)
+      self.protoPdfTask = protoPdfObj.getPngForPageAsync(pageNum, self.protoPngPagePath)
 
-    # Wait asynchronously for PNG processes to complete
-    # Note: we start a worker thread with await(), because we want to initiate the
-    # compare operation as soon as possible, rather than after self.wait() has been
-    # called.
-    self.joinedPdfTask = asynclib.JoinedAsyncTask(self.testPdfTask, self.protoPdfTask)
-    self.joinedPdfTask.await(self._compare)
+      # Wait asynchronously for PNG processes to complete
+      # Note: we start a worker thread with await(), because we want to initiate the
+      # compare operation as soon as possible, rather than after self.wait() has been
+      # called.
+      self.joinedPdfTask = asynclib.JoinedAsyncTask(self.testPdfTask, self.protoPdfTask)
+    except:
+      self.config.processPoolSemaphore.release()
+    else:
+      self.joinedPdfTask.await(self._compare)
 
     # Wait routine for this task is thread-join for joined task
     self.wait = self.joinedPdfTask.wait
 
   def _compare(self, results):
-    genPngProcResults = results
+    try:
+      genPngProcResults = results
 
-    genTestPngProcResults, genProtoPngProcResults = genPngProcResults
-    genTestPngProc, _stdout, _stderr = genTestPngProcResults
-    genProtoPngProc, _stdout, _stderr = genProtoPngProcResults
+      genTestPngProcResults, genProtoPngProcResults = genPngProcResults
+      genTestPngProc, _stdout, _stderr = genTestPngProcResults
+      genProtoPngProc, _stdout, _stderr = genProtoPngProcResults
 
-    assert genTestPngProc.returncode == 0, "Failed to generate PNG %s" % (self.testPngPagePath,)
-    assert genProtoPngProc.returncode == 0, "Failed to generate PNG %s" % (self.protoPngPagePath,)
+      assert genTestPngProc.returncode == 0, "Failed to generate PNG %s" % (self.testPngPagePath,)
+      assert genProtoPngProc.returncode == 0, "Failed to generate PNG %s" % (self.protoPngPagePath,)
 
-    task = ComparePngsAsyncTask(self.testPngPagePath, self.protoPngPagePath, self.diffPath)
+      task = ComparePngsAsyncTask(self.testPngPagePath, self.protoPngPagePath, self.diffPath)
 
-    # Wait synchronously since we're already executing in separate thread
-    task.wait()
-    self.config.processPoolSemaphore.release()
+      # Wait synchronously since we're already executing in separate thread
+      task.wait()
+    finally:
+      self.config.processPoolSemaphore.release()
+
     aeDiff = task.result
 
     self.__pngsAreEqual = (aeDiff == 0)
@@ -151,9 +159,11 @@ class TestPdfPair(asynclib.AsyncTask):
     protoPdfPath = "%s/%s.pdf" % (config.PROTODIR, testName)
 
     config.processPoolSemaphore.acquire()
-    testPdfObj = PdfFile(testPdfPath)
-    protoPdfObj = PdfFile(protoPdfPath)
-    config.processPoolSemaphore.release()
+    try:
+      testPdfObj = PdfFile(testPdfPath)
+      protoPdfObj = PdfFile(protoPdfPath)
+    finally:
+      config.processPoolSemaphore.release()
 
     testPageList = determineListOfPagesToTest(testPdfObj)
     protoPageList = determineListOfPagesToTest(protoPdfObj)
@@ -198,8 +208,13 @@ class TestTask(asynclib.AsyncTask):
     self.testName = testName
 
     config.makeTaskSemaphore.acquire()
-    task = makeTestTask(config, self.testName)
-    task.await(self._makeTaskComplete)
+    try:
+      task = makeTestTask(config, self.testName)
+    except:
+      self.config.makeTaskSemaphore.release()
+    else:
+      task.await(self._makeTaskComplete)
+
     self.wait = task.wait
 
   def _makeTaskComplete(self, procResults):
@@ -216,11 +231,15 @@ class TestTask(asynclib.AsyncTask):
     except:
       self.__result = (self.testName, True, sys.exc_info(), None)
       return
-    else:
-      task.wait()
-      _, failedPages = task.result
 
-      self.__result = (self.testName, True, None, failedPages)
+    try:
+      task.wait()
+    except:
+      self.__result = (self.testName, True, sys.exc_info(), None)
+      return
+
+    _, failedPages = task.result
+    self.__result = (self.testName, True, None, failedPages)
 
   # Result is on the form
   #  (test name, build succeeded = TRUE, exception = None, list of failed pages)
@@ -255,7 +274,7 @@ class TestRunner():
       subprocess.Popen([
         'sh',
         '-c',
-        'printf "%s"; printf %r; printf "%s"' % (color, echoStr, '\\033[0m')
+        'printf "%s"; printf %s; printf "%s"' % (color, pipes.quote(echoStr), '\\033[0m')
       ]).wait()
 
   def __testCallback(self, result):
@@ -334,13 +353,15 @@ class TestRunner():
               else:
                 self.echo(debug.BOLD, "\n\n")
             elif exc_info is not None:
+              exc_type, exc_obj, exc_trace = exc_info
               failedTestMap['exc_info'] = {}
-              failedTestMap['exc_info']['type'] = str(exc_info[0])
-              failedTestMap['exc_info']['value'] = str(exc_info[1])
+              failedTestMap['exc_info']['type'] = str(exc_type)
+              failedTestMap['exc_info']['value'] = str(exc_obj)
               failedTestMap['exc_info']['traceback'] = []
-              self.echo(debug.ERROR, "    Got exception %s: %s\n" % (exc_info[0], exc_info[1]))
+              self.echo(debug.ERROR, "    Got exception %s:\n" % (exc_type,))
+              self.echo(debug.NORMAL, "        %s\n" % (repr(exc_obj).replace('\n', '\n        '),))
               self.echo(debug.ERROR, "    Traceback:\n")
-              for frame in traceback.format_tb(exc_info[2]):
+              for frame in traceback.format_tb(exc_trace):
                 for line in frame.split('\n'):
                   line = line.rstrip('\n')
                   failedTestMap['exc_info']['traceback'].append(line)
