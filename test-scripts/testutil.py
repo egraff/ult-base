@@ -10,6 +10,7 @@ import asynclib
 
 GS = testenv.getGhostScript()
 CMP = testenv.getCompare()
+IDENTIFY = testenv.getIdentify()
 PDFINFO = testenv.getPDFInfo()
 
 
@@ -19,6 +20,15 @@ def mkdirp(path):
   except OSError:
     if not os.path.isdir(path):
       raise
+
+
+def get_output(cmd):
+  try:
+    output = subprocess.check_output(cmd, env=os.environ, stderr=subprocess.STDOUT)
+  except subprocess.CalledProcessError as exc:
+    output = exc.output
+
+  return output
 
 
 def _convertPdfPageToPngAsync(pdfPath, pageNum, outputPngPath):
@@ -49,6 +59,8 @@ class ComparePngsAsyncTask(asynclib.AsyncTask):
     except AssertionError:
       print repr(_stdout)
       print repr(stderr)
+      print get_output([IDENTIFY, '-format', '%f: %wx%h', pngPathFirst])
+      print get_output([IDENTIFY, '-format', '%f: %wx%h', pngPathSecond])
       raise
 
     # Needed because lines[0] could be something like "1.33125e+006"
