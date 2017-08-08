@@ -16,13 +16,6 @@ install:
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       ci/travis-install-linux.sh;
     fi
-  - openssl aes-256-cbc -K $encrypted_95d1ac70cca8_key -iv $encrypted_95d1ac70cca8_iv -in ci/travis-deploy-key.enc -out travis-deploy-key -d
-  - chmod 600 travis-deploy-key
-  - eval `ssh-agent -s`
-  - ssh-add travis-deploy-key
-  - ssh-add -l
-  - ssh -o StrictHostKeyChecking=no -T git@github.com
-  - exit 1
   - brew update
   - brew uninstall python
   - brew install python --universal --framework
@@ -63,4 +56,12 @@ install:
 script:
   - make -C test
 after_script:
+  - openssl aes-256-cbc -K $encrypted_95d1ac70cca8_key -iv $encrypted_95d1ac70cca8_iv -in ci/travis-deploy-key.enc -out travis-deploy-key -d
+  - chmod 600 travis-deploy-key
+  - eval `ssh-agent -s`
+  - ssh-add travis-deploy-key
+  - which ssh-add
+  - which git
+  - ssh-add -l
+  - ssh -o StrictHostKeyChecking=no -T git@github.com || (exit 0)
   - ci/travis-after.sh
