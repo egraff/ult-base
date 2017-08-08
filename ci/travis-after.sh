@@ -1,10 +1,30 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Exit on failure, verbose
 set -ev
 
-mkdir gh-pages
-pushd gh-pages
+if [ "$TRAVIS_SECURE_ENV_VARS" = "false" ]; then
+  # Likely a pull request from a forked repository.
+  # Committing the test results can only be done when secure environment
+  # variables are available.
+  exit 0
+fi
+
+cd `dirname "${BASH_SOURCE[0]}"`
+openssl aes-256-cbc -K $encrypted_95d1ac70cca8_key -iv $encrypted_95d1ac70cca8_iv -in travis-deploy-key.enc -out travis-deploy-key -d
+chmod 600 travis-deploy-key
+eval `ssh-agent -s`
+ssh-add travis-deploy-key
+
+# Make sure we're in the top directory
+cd $TRAVIS_BUILD_DIR
+
+# Create a new temp directory for committing test results to gh-pages branch
+GH_PAGES = $(mktemp -d)
+mkdir -p $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}
+
+
+pushd $GH_PAGES
 
 git init
 git config core.autocrlf true
@@ -20,9 +40,8 @@ git checkout -l -f -q -b gh-pages origin/gh-pages
 
 popd
 
-mkdir -p gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}
 
-cat <<EOF > gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/index.md
+cat <<EOF > $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}/index.md
 ---
 layout: test-result
 travis:
@@ -38,16 +57,14 @@ travis:
 ---
 EOF
 
-cp -Rf .build gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/build
-cp -Rf diffs gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/diffs || true
-cp -Rf tmp/tests gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/tests || true
-cp -Rf tmp/proto gh-pages/travis-builds/${TRAVIS_JOB_NUMBER}/proto || true
+cp -Rf test/.build $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}/build
+cp -Rf test/diffs $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}/diffs || true
+cp -Rf test/tmp/tests $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}/tests || true
+cp -Rf test/tmp/proto $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}/proto || true
 
+cp test/test_result.json $GH_PAGES/_data/travis-builds/${TRAVIS_JOB_NUMBER//\./_}.json
 
-
-cp test_result.json gh-pages/_data/travis-builds/${TRAVIS_JOB_NUMBER//\./_}.json
-
-pushd gh-pages
+pushd $GH_PAGES
 
 git add --all .
 git commit -m "Travis: test results from job ${TRAVIS_JOB_NUMBER}"
