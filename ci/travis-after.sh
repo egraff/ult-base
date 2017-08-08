@@ -20,7 +20,7 @@ ssh-add travis-deploy-key
 cd $TRAVIS_BUILD_DIR
 
 # Create a new temp directory for committing test results to gh-pages branch
-GH_PAGES = $(mktemp -d)
+GH_PAGES=$(mktemp -d)
 mkdir -p $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}
 
 
