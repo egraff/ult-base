@@ -51,6 +51,7 @@ install:
       collection-pictures
       collection-plaingeneric
       collection-pstricks
+  - sudo tlmgr paper a4
   - tlmgr conf
   - make install CONTINUE=y
 script:
