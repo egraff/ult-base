@@ -23,9 +23,9 @@ def mkdirp(path):
 
 def _convertPdfPageToPngAsync(pdfPath, pageNum, outputPngPath):
   gsCmd = [
-            GS, '-q', '-dQUIET', '-dSAFER', '-dBATCH', '-dNOPAUSE',
-            '-dNOPROMPT', '-sDEVICE=pngalpha', '-dMaxBitmap=500000000',
-            '-dAlignToPixels=0', '-dGridFitTT=2', '-r150',
+            GS, '-q', '-dQUIET', '-dSAFER', '-dBATCH', '-dNOPAUSE', '-dNOPROMPT',
+            '-sDEVICE=pngalpha', '-sProcessColorModel=DeviceRGB',
+            '-dMaxBitmap=500000000', '-dAlignToPixels=0', '-dGridFitTT=2', '-r150',
             '-o', outputPngPath, '-dFirstPage=%s' % pageNum,
             '-dLastPage=%s' % pageNum, pdfPath
           ]
