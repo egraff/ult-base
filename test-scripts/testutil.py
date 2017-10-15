@@ -36,7 +36,7 @@ def _convertPdfPageToPngAsync(pdfPath, pageNum, outputPngPath):
 
 class ComparePngsAsyncTask(asynclib.AsyncTask):
   def __init__(self, pngPathFirst, pngPathSecond, outputDiffPath):
-    cmpCmd = [CMP, '-metric', 'ae', pngPathFirst, pngPathSecond, outputDiffPath]
+    cmpCmd = [CMP, '-metric', 'ae', pngPathFirst, pngPathSecond, 'PNG24:%s' % outputDiffPath]
     self.__cmpProc = subprocess.Popen(cmpCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
   def wait(self):
