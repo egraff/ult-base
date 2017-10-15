@@ -87,8 +87,11 @@ class TestPdfPagePair(asynclib.AsyncTask):
     task = ComparePngsAsyncTask(self.testPngPagePath, self.protoPngPagePath, self.diffPath)
 
     # Wait synchronously since we're already executing in separate thread
-    task.wait()
-    self.config.processPoolSemaphore.release()
+    try:
+      task.wait()
+    finally:
+      self.config.processPoolSemaphore.release()
+
     aeDiff = task.result
 
     self.__pngsAreEqual = (aeDiff == 0)
@@ -151,9 +154,11 @@ class TestPdfPair(asynclib.AsyncTask):
     protoPdfPath = "%s/%s.pdf" % (config.PROTODIR, testName)
 
     config.processPoolSemaphore.acquire()
-    testPdfObj = PdfFile(testPdfPath)
-    protoPdfObj = PdfFile(protoPdfPath)
-    config.processPoolSemaphore.release()
+    try:
+      testPdfObj = PdfFile(testPdfPath)
+      protoPdfObj = PdfFile(protoPdfPath)
+    finally:
+      config.processPoolSemaphore.release()
 
     testPageList = determineListOfPagesToTest(testPdfObj)
     protoPageList = determineListOfPagesToTest(protoPdfObj)
