@@ -16,11 +16,14 @@ chmod 600 travis-deploy-key
 eval `ssh-agent -s`
 ssh-add travis-deploy-key
 
+ssh-add -l
+ssh -o StrictHostKeyChecking=no -T git@github.com || (exit 0)
+
 # Make sure we're in the top directory
 cd $TRAVIS_BUILD_DIR
 
 # Create a new temp directory for committing test results to gh-pages branch
-GH_PAGES = $(mktemp -d)
+GH_PAGES=$(mktemp -d)
 mkdir -p $GH_PAGES/travis-builds/${TRAVIS_JOB_NUMBER}
 
 
