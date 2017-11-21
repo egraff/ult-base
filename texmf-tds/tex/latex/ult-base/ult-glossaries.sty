@@ -88,8 +88,8 @@
     first={\the\glslongtok\space (\the\glsshorttok)},% \glsfirst, \Glsfirst, \GLSfirst
     plural={\the\glsshorttok\noexpand\acrpluralsuffix},% \glsplural, \Glsplural, \GLSplural
     firstplural={\the\glslongtok\noexpand\acrpluralsuffix\space (\the\glsshorttok)},%
-    short={\upsc{\the\glsshorttok}},% \acs, \Acs, ..., and all use of singular abbrev in parentheses
-    shortplural={\upsc{\the\glsshorttok}\noexpand\acrpluralsuffix},% \acp, \Acp, ..., and all use of singular abbrev in parentheses
+    short={\begingroup\upsc{\the\glsshorttok}\endgroup},% \acs, \Acs, ..., and all use of singular abbrev in parentheses
+    shortplural={\begingroup\upsc{\the\glsshorttok}\endgroup\noexpand\acrpluralsuffix},% \acp, \Acp, ..., and all use of singular abbrev in parentheses
     long={\the\glslongtok},% \acl and \Acl, \acf and \Acf, long-form in first \ac and \Ac
     longplural={\the\glslongtok\noexpand\acrpluralsuffix},% \aclp, \Aclp, and all long plural forms in \acf, \Acf, \ac, \Ac, ... Note: this may be overridden in \newacronym
     description={\the\glslongtok},% description is long form (how it appears in 'List of Abbreviations')
