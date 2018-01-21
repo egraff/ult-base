@@ -118,7 +118,26 @@ title: Last 25 test results
     {% for page in appveyor_pages_list %}
       {% capture page_build_num_str %}{{ page.appveyor.build-number }}{% endcapture %}
       {% if page_build_num_str == appveyor_build_number %}
-        HERE!
+        {% if page.appveyor.test-result == 0 %}
+          {% assign passed = true %}
+        {% else %}
+          {% assign passed = false %}
+        {% endif %}
+        {% capture appveyor_build_data_name %}{{ page.appveyor.build-number }}{% endcapture %}
+        {% assign result_map = site.data.appveyor-builds[appveyor_build_data_name] %}
+        {% capture commit_hash %}{{ page.appveyor.commit }}{% endcapture %}
+        <tr class="{% if passed %}passed{% else %}failed{% endif %}">
+          <td><a href="{{ site.baseurl }}{{ page.url }}">#{{ page.appveyor.build-number }}</a></td>
+          <td><a href="https://github.com/egraff/ult-base/tree/{{ page.appveyor.branch }}">{{ page.appveyor.branch }}</a></td>
+          <td><a href="https://github.com/egraff/ult-base/commit/{{ commit_hash }}">{{ commit_hash | truncate: 9 }}</a></td>
+          <td>
+            {% unless result_map %}
+              N/A
+            {% else %}
+              {{ result_map.num_tests | minus: result_map.failed_tests.size }}/{{ result_map.num_tests }}
+            {% endunless %}
+          </td>
+        </tr>
       {% endif %}
     {% endfor %}
   {% endfor %}
