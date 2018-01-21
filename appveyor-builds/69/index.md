@@ -1,5 +1,5 @@
 ---
-layout: test-result
+layout: appveyor-build
 appveyor:
   branch: master
   build-id: 13357267
