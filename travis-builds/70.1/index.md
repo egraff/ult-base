@@ -1,5 +1,5 @@
 ---
-layout: test-result
+layout: travis-job
 travis:
   branch: appveyor
   build-id: 261294707
