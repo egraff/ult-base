@@ -62,7 +62,7 @@ appveyor:
 ---
 "@ | Set-Content -Path "$JobDir\index.md"
 
-# XXX: DEBUG
+
 Get-Content -Path "$JobDir\index.md" | Out-String
 
 
@@ -71,15 +71,21 @@ cp test\diffs "$JobDir\diffs" -Recurse -ErrorAction Ignore
 cp test\tmp\tests "$JobDir\tests" -Recurse -ErrorAction Ignore
 cp test\tmp\proto "$JobDir\proto" -Recurse -ErrorAction Ignore
 
-md "$GhPages\_data\appveyor-builds" -Force
+md "$GhPages\_data\appveyor-builds" -Force | Out-Null
 cp test\test_result.json "$GhPages\_data\appveyor-builds\$($env:APPVEYOR_BUILD_NUMBER -replace '.','_').json"
 
 
 Push-Location -Path $GhPages
 
+$ErrorActionPreference = "Continue"
+
 git add --all . 2>&1 | %{ "$_" }
 git commit -m "AppVeyor: test results from build ${env:APPVEYOR_BUILD_NUMBER}" 2>&1 | %{ "$_" }
 
+$ErrorActionPreference = "Stop"
 
+
+# XXX: Debug
+Write-Host "HERE"
 
 Pop-Location
