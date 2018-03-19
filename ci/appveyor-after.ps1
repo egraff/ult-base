@@ -72,7 +72,7 @@ cp test\tmp\tests "$JobDir\tests" -Recurse -ErrorAction Ignore
 cp test\tmp\proto "$JobDir\proto" -Recurse -ErrorAction Ignore
 
 md "$GhPages\_data\appveyor-builds" -Force | Out-Null
-cp test\test_result.json "$GhPages\_data\appveyor-builds\$($env:APPVEYOR_BUILD_NUMBER -replace '.','_').json"
+cp test\test_result.json "$GhPages\_data\appveyor-builds\${env:APPVEYOR_BUILD_NUMBER}.json"
 
 
 Push-Location -Path $GhPages
@@ -84,8 +84,7 @@ git commit -m "AppVeyor: test results from build ${env:APPVEYOR_BUILD_NUMBER}" 2
 
 $ErrorActionPreference = "Stop"
 
-
-# XXX: Debug
-Write-Host "HERE"
+# XXX: DEBUG
+tree
 
 Pop-Location
