@@ -73,7 +73,15 @@ test_script:
   - make -C test
 
 on_success:
-  - ps: . .\ci\appveyor-after.ps1 -TestResult 0
+  - ps: >-
+      try
+      {
+        . .\ci\appveyor-after.ps1 -TestResult 0
+      }
+      catch [Exception]
+      {
+        echo $_.Exception | FL -Force
+      }
 
 on_failure:
   - ps: . .\ci\appveyor-after.ps1 -TestResult 1
