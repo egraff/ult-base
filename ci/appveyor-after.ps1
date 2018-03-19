@@ -15,7 +15,6 @@ if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
 
 $ErrorActionPreference = "Continue"
 ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" }
-
 $ErrorActionPreference = "Stop"
 
 # Make sure we're in the top directory
@@ -26,6 +25,8 @@ $GhPages = md (Join-Path ([System.IO.Path]::GetTempPath()) ([string][System.Guid
 
 
 Push-Location -Path $GhPages
+
+$ErrorActionPreference = "Continue"
 
 git init
 git config core.autocrlf true
@@ -38,6 +39,8 @@ git config branch.gh-pages.merge refs/heads/gh-pages
 
 git fetch
 git checkout -l -f -q -b gh-pages origin/gh-pages
+
+$ErrorActionPreference = "Stop"
 
 Pop-Location
 
