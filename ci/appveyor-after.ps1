@@ -82,9 +82,19 @@ $ErrorActionPreference = "Continue"
 git add --all . 2>&1 | %{ "$_" }
 git commit -m "AppVeyor: test results from build ${env:APPVEYOR_BUILD_NUMBER}" 2>&1 | %{ "$_" }
 
-$ErrorActionPreference = "Stop"
+$maxAttempts = 10
+$numAttempts = 0
 
-# XXX: DEBUG
-tree
+while ($numAttempts -lt $maxAttempts) {
+    $numAttempts++
+    git push -q origin gh-pages 2>&1 | %{ "$_" }
+    if (-not $?) {
+        git pull --rebase origin gh-pages 2>&1 | %{ "$_" }
+    } else {
+        break
+    }
+}
+
+$ErrorActionPreference = "Stop"
 
 Pop-Location
