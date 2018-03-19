@@ -7,7 +7,7 @@ if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
     exit 0
 }
 
-ssh -o StrictHostKeyChecking=no -T git@github.com
+ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" }
 
 # Make sure we're in the top directory
 cd $env:TRAVIS_BUILD_DIR
