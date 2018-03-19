@@ -1,3 +1,9 @@
+Param(
+    [Parameter(Mandatory=$true)]
+    [int]
+    $TestResult
+)
+
 $ErrorActionPreference = "Stop"
 
 if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
@@ -13,7 +19,7 @@ ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" }
 $ErrorActionPreference = "Stop"
 
 # Make sure we're in the top directory
-cd $env:TRAVIS_BUILD_DIR
+cd $env:APPVEYOR_BUILD_FOLDER
 
 Write-Host "Creating temporary directory"
 $GhPages = md (Join-Path ([System.IO.Path]::GetTempPath()) ([string][System.Guid]::NewGuid())) -Force | %{ $_.FullName }
@@ -41,7 +47,7 @@ $JobDir = md "$GhPages\appveyor-builds\${env:APPVEYOR_JOB_NUMBER}" | %{ $_.FullN
 @"
 ---
 layout: test-result
-travis:
+appveyor:
   branch: ${env:APPVEYOR_REPO_BRANCH}
   build-id: ${env:APPVEYOR_BUILD_ID}
   build-number: ${env:APPVEYOR_BUILD_NUMBER}
@@ -49,7 +55,7 @@ travis:
   job-id: ${env:APPVEYOR_JOB_ID}
   job-number: ${env:APPVEYOR_JOB_NUMBER}
   os-name: Windows
-  test-result: ${TRAVIS_TEST_RESULT}
+  test-result: $TestResult
 ---
 "@ | Set-Content -Path "$JobDir\index.md"
 
