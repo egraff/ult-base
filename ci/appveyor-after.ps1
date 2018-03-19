@@ -7,13 +7,16 @@ if ($env:APPVEYOR_PULL_REQUEST_NUMBER) {
     exit 0
 }
 
+$ErrorActionPreference = "Continue"
 ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" }
+
+$ErrorActionPreference = "Stop"
 
 # Make sure we're in the top directory
 cd $env:TRAVIS_BUILD_DIR
 
+Write-Host "Creating temporary directory"
 $GhPages = md (Join-Path ([System.IO.Path]::GetTempPath()) ([string][System.Guid]::NewGuid())) -Force | %{ $_.FullName }
-$JobDir = md "$GhPages\appveyor-builds\${env:APPVEYOR_JOB_NUMBER}" | %{ $_.FullName }
 
 
 Push-Location -Path $GhPages
@@ -31,6 +34,9 @@ git fetch
 git checkout -l -f -q -b gh-pages origin/gh-pages
 
 Pop-Location
+
+
+$JobDir = md "$GhPages\appveyor-builds\${env:APPVEYOR_JOB_NUMBER}" | %{ $_.FullName }
 
 @"
 ---
