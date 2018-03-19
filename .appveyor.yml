@@ -72,9 +72,10 @@ build_script:
 test_script:
   - make -C test
 
-after_test:
+on_success:
   - ps: ci\appveyor-after.ps1
 
-# https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
 on_failure:
+  - ps: ci\appveyor-after.ps1 
+  # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
   - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
