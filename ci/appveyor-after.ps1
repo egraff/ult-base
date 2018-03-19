@@ -37,7 +37,7 @@ git config remote.origin.fetch +refs/heads/gh-pages:refs/remotes/origin/gh-pages
 git config branch.gh-pages.remote origin
 git config branch.gh-pages.merge refs/heads/gh-pages
 
-git fetch
+git fetch 2>&1 | %{ "$_" }
 git checkout -l -f -q -b gh-pages origin/gh-pages
 
 $ErrorActionPreference = "Stop"
@@ -66,10 +66,10 @@ appveyor:
 Get-Content -Path "$JobDir\index.md" | Out-String
 
 
-cp -Rf test\.build "$JobDir\build" -Recurse -ErrorAction Ignore
-cp -Rf test\diffs "$JobDir\diffs" -Recurse -ErrorAction Ignore
-cp -Rf test\tmp\tests "$JobDir\tests" -Recurse -ErrorAction Ignore
-cp -Rf test\tmp\proto "$JobDir\proto" -Recurse -ErrorAction Ignore
+cp test\.build "$JobDir\build" -Recurse -ErrorAction Ignore
+cp test\diffs "$JobDir\diffs" -Recurse -ErrorAction Ignore
+cp test\tmp\tests "$JobDir\tests" -Recurse -ErrorAction Ignore
+cp test\tmp\proto "$JobDir\proto" -Recurse -ErrorAction Ignore
 
 md "$GhPages\_data\appveyor-builds" -Force
 cp test\test_result.json "$GhPages\_data\appveyor-builds\$($env:APPVEYOR_JOB_NUMBER -replace '.','_').json"
