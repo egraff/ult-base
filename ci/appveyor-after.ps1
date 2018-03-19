@@ -49,7 +49,7 @@ $JobDir = md "$GhPages\appveyor-builds\${env:APPVEYOR_BUILD_NUMBER}" | %{ $_.Ful
 
 @"
 ---
-layout: test-result
+layout: appveyor-build
 appveyor:
   branch: ${env:APPVEYOR_REPO_BRANCH}
   build-id: ${env:APPVEYOR_BUILD_ID}
