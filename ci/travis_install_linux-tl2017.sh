@@ -12,8 +12,14 @@ pdfinfo -v
 compare -version
 gs -v
 
-curl --disable-epsv --ftp-pret --ftp-method nocwd ftp://tug.org/historic/systems/texlive/2017/tlnet-final/install-tl-unx.tar.gz.sha512 -o install-tl-unx.tar.gz.sha512 -v
-curl --disable-epsv --ftp-pret --ftp-method nocwd ftp://tug.org/historic/systems/texlive/2017/tlnet-final/install-tl-unx.tar.gz -o install-tl-unx.tar.gz -v
+ftp -A tug.org << eof
+verbose
+literal SYST
+binary
+get /historic/systems/texlive/2017/tlnet-final/install-tl-unx.tar.gz
+bye
+eof
+
 tar -xf install-tl-unx.tar.gz
 export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
 
