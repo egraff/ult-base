@@ -10,6 +10,11 @@ matrix:
       os: linux
       sudo: required
       python: 2.7
+    - name: "Linux - TeX Live 2017"
+      env: TEST_SUITE=linux-tl2017
+      os: linux
+      sudo: required
+      python: 2.7
 
 install:
   - ci/travis_install_${TEST_SUITE}.sh
