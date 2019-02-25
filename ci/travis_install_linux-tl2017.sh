@@ -12,7 +12,7 @@ pdfinfo -v
 compare -version
 gs -v
 
-curl ftp://tug.org/historic/systems/texlive/2017/tlnet-final/install-tl-unx.tar.gz -o install-tl-unx.tar.gz
+curl --disable-epsv ftp://tug.org/historic/systems/texlive/2017/tlnet-final/install-tl-unx.tar.gz -o install-tl-unx.tar.gz -v
 tar -xf install-tl-unx.tar.gz
 export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
 
