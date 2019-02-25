@@ -17,6 +17,7 @@ tar -xf "install-tl-unx.tar.gz"
 export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
 
 cd "${tl_dir}"
+chmod +x ./install-tl
 echo "i" | sudo -s ./install-tl -logfile install-tl.log -repository ftp://tug.org/historic/systems/texlive/2017/tlnet-final -profile ../texlive.profile
 export MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
 sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
