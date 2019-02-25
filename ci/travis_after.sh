@@ -7,6 +7,7 @@ if [ "$TRAVIS_SECURE_ENV_VARS" = "false" ]; then
   # Likely a pull request from a forked repository.
   # Committing the test results can only be done when secure environment
   # variables are available.
+  echo "Insecure environment, test result will not be persisted..."
   exit 0
 fi
 

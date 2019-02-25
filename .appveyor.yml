@@ -27,14 +27,14 @@ install:
       ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" };
       $ErrorActionPreference = $OldErrorActionPreference;
 
-  - cinst imagemagick -PackageParameters LegacySupport=true
-  - cinst ghostscript
+  - cinst -y imagemagick -PackageParameters LegacySupport=true
+  - cinst -y ghostscript
   - ps: >-
       $GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | select -f 1).FullName;
       $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
       $NewPath = $OldPath + ';' + $GsPath;
       [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
-  - cinst xpdf-utils
+  - cinst -y xpdf-utils
   - cinst -y miktex
   - refreshenv
   - set
@@ -49,6 +49,7 @@ install:
         $host.SetShouldExit($LastExitCode);
       }
       $ErrorActionPreference = $OldErrorActionPreference;
+
   - mpm --admin --update-db
   #- mpm --admin --upgrade --package-level=basic
   # ps
@@ -76,7 +77,7 @@ on_success:
   - ps: >-
       try
       {
-        . .\ci\appveyor-after.ps1 -TestResult 0
+        . .\ci\appveyor_after.ps1 -TestResult 0
       }
       catch [Exception]
       {
@@ -84,6 +85,14 @@ on_success:
       }
 
 on_failure:
-  - ps: . .\ci\appveyor-after.ps1 -TestResult 1
+  - ps: >-
+      try
+      {
+        . .\ci\appveyor_after.ps1 -TestResult 1
+      }
+      catch [Exception]
+      {
+        echo $_.Exception | FL -Force
+      }
   # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
-  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))

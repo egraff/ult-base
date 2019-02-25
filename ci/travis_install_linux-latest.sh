@@ -14,8 +14,6 @@ pdfinfo -v
 compare -version
 gs -v
 
-export WGETRC="$(readlink -f .wgetrc)"
-
 sudo ./install-tl-ubuntu --only-apt-and-dpkg
 sudo wget http://mirror.utexas.edu/ctan/systems/texlive/tlnet/install-tl-unx.tar.gz -O install-tl-unx.tar.gz
 tar -xf "install-tl-unx.tar.gz"
@@ -28,10 +26,6 @@ sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
 sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
 cd ..
 
-source /etc/environment
-source /etc/profile
-source ~/.profile
-unset _OLD_VIRTUAL_PATH
-source ~/virtualenv/python2.7/bin/activate
+export PATH=/opt/texbin:$PATH
 
-export PATH
+sudo -i tlmgr update --self --all
