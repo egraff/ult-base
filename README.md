@@ -5,10 +5,10 @@
 
 | Build                     | Build status                               |
 | ------------------------- | ------------------------------------------ |
-| Linux - TeX Live (latest) | ![][travis-linux-tl-latest-badge]          |
-| Linux - TeX Live 2017     | ![][travis-linux-tl-2017-badge]            |
-| macOs - Tex Live (latest) | ![][travis-macos-tl-latest-badge]          |
-| Windows - MiKTeX (latest) | ![][appveyor-badge]                        |
+| Linux - TeX Live (latest) | [![][travis-linux-tl-latest-badge]](#)     |
+| Linux - TeX Live 2017     | [![][travis-linux-tl-2017-badge]](#)       |
+| macOs - Tex Live (latest) | [![][travis-macos-tl-latest-badge]](#)     |
+| Windows - MiKTeX (latest) | [![][appveyor-badge]](#)                   |
 
 
 [travis-badge]: https://travis-ci.org/egraff/ult-base.svg?branch=master
