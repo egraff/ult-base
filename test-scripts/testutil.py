@@ -37,16 +37,18 @@ def _convertPdfPageToPngAsync(pdfPath, pageNum, outputPngPath):
 
 class GetPngSizeAsyncTask(asynclib.AsyncTask):
   def __init__(self, pngPath):
-    identifyCmd = [IDENT, '-format', '"%G"', pngPath]
-    self.__identifyProc = subprocess.Popen(cmpCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    identifyCmd = [IDENT, '-format', '%G', pngPath]
+    self.__identifyProc = subprocess.Popen(identifyCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
   def wait(self):
-    _stdout, stderr = self.__identifyProc.communicate()
+    stdout, _stderr = self.__identifyProc.communicate()
     self.__identifyProc.wait()
-    lines = stderr.splitlines()
+    lines = stdout.splitlines()
     assert self.__identifyProc.returncode <= 1
 
     match = re.match(r'^(\d+)x(\d+)$', lines[0])
+    assert match is not None
+
     self.__result = tuple(int(x) for x in match.groups())
 
   # Result is (width, height)
