@@ -9,6 +9,8 @@
 | Linux - TeX Live 2018     | [![][travis-linux-tl-2018-badge]](#)       |
 | Linux - TeX Live 2017     | [![][travis-linux-tl-2017-badge]](#)       |
 | macOs - Tex Live (latest) | [![][travis-macos-tl-latest-badge]](#)     |
+| macOs - Tex Live 2018     | [![][travis-macos-tl-2018-badge]](#)       |
+| macOs - Tex Live 2017     | [![][travis-macos-tl-2017-badge]](#)       |
 | Windows - MiKTeX (latest) | [![][appveyor-badge]](#)                   |
 
 
@@ -21,3 +23,5 @@
 [travis-linux-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/2
 [travis-linux-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/3
 [travis-macos-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/4
+[travis-macos-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/5
+[travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/6
