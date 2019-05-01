@@ -3,7 +3,7 @@
 # Exit on failure
 set -e
 
-wget http://ftp.math.utah.edu/pub/tex/historic/systems/mactex/2018/mactex-20180417.pkg
+wget --quiet http://ftp.math.utah.edu/pub/tex/historic/systems/mactex/2018/mactex-basictex-20180417.pkg
 sudo installer -verbose -pkg ./mactex-20180417.pkg -target /
 
 # export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
