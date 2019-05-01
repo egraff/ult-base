@@ -1,0 +1,1 @@
+{"failed_tests": [{"build_succeeded": true, "exception": false, "failed_pages": [1, 2, 3], "test_name": "test_printglossary_with_fix"}, {"build_succeeded": true, "exception": false, "failed_pages": [1, 2, 3, 4, 5], "test_name": "test_printglossary_without_fix"}, {"build_succeeded": true, "exception": false, "failed_pages": [1], "test_name": "test_upsc"}], "num_tests": 25}
