@@ -37,6 +37,23 @@ matrix:
         - compare -version
         - brew install xpdf
         - pdfinfo -v || (exit 0)
+    - name: "OS X - TeX Live 2018"
+      env: TEST_SUITE=osx-tl2018
+      os: osx
+      sudo: required
+      language: generic
+      osx_image: xcode10
+      before_install:
+        - sw_vers
+        - brew update
+        - python2.7 --version
+        - brew install libidn
+        - brew install ghostscript
+        - gs -v
+        - brew install imagemagick
+        - compare -version
+        - brew install xpdf
+        - pdfinfo -v || (exit 0)
 
 install:
   - ci/travis_install_${TEST_SUITE}.sh
