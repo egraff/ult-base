@@ -10,6 +10,7 @@ import asynclib
 
 GS = testenv.getGhostScript()
 CMP = testenv.getCompare()
+IDENT = testenv.getIdentify()
 PDFINFO = testenv.getPDFInfo()
 
 
@@ -32,6 +33,26 @@ def _convertPdfPageToPngAsync(pdfPath, pageNum, outputPngPath):
 
   task = asynclib.AsyncPopen(gsCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
   return task
+
+
+class GetPngSizeAsyncTask(asynclib.AsyncTask):
+  def __init__(self, pngPath):
+    identifyCmd = [IDENT, '-format', '"%G"', pngPath]
+    self.__identifyProc = subprocess.Popen(cmpCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+  def wait(self):
+    _stdout, stderr = self.__identifyProc.communicate()
+    self.__identifyProc.wait()
+    lines = stderr.splitlines()
+    assert self.__identifyProc.returncode <= 1
+
+    match = re.match(r'^(\d+)x(\d+)$', lines[0])
+    self.__result = tuple(int(x) for x in match.groups())
+
+  # Result is (width, height)
+  @property
+  def result(self):
+    return self.__result
 
 
 class ComparePngsAsyncTask(asynclib.AsyncTask):

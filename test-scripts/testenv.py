@@ -32,3 +32,7 @@ def getGhostScript():
 
 def getCompare():
   return __locateTestUtility("Compare (ImageMagick)", "compare")
+
+
+def getIdentify():
+  return __locateTestUtility("Identify (ImageMagick)", "identify")

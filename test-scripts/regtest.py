@@ -9,7 +9,7 @@ import threading
 import subprocess
 
 import asynclib
-from testutil import ComparePngsAsyncTask, PdfFile, mkdirp
+from testutil import ComparePngsAsyncTask, GetPngSizeAsyncTask, PdfFile, mkdirp
 
 
 class debug:
@@ -75,36 +75,47 @@ class TestPdfPagePair(asynclib.AsyncTask):
     self.wait = self.joinedPdfTask.wait
 
   def _compare(self, results):
-    genPngProcResults = results
-
-    genTestPngProcResults, genProtoPngProcResults = genPngProcResults
-    genTestPngProc, _stdout, _stderr = genTestPngProcResults
-    genProtoPngProc, _stdout, _stderr = genProtoPngProcResults
-
-    assert genTestPngProc.returncode == 0, "Failed to generate PNG %s" % (self.testPngPagePath,)
-    assert genProtoPngProc.returncode == 0, "Failed to generate PNG %s" % (self.protoPngPagePath,)
-
-    task = ComparePngsAsyncTask(self.testPngPagePath, self.protoPngPagePath, self.diffPath)
-
-    # Wait synchronously since we're already executing in separate thread
     try:
+      genPngProcResults = results
+
+      genTestPngProcResults, genProtoPngProcResults = genPngProcResults
+      genTestPngProc, _stdout, _stderr = genTestPngProcResults
+      genProtoPngProc, _stdout, _stderr = genProtoPngProcResults
+
+      assert genTestPngProc.returncode == 0, "Failed to generate PNG %s" % (self.testPngPagePath,)
+      assert genProtoPngProc.returncode == 0, "Failed to generate PNG %s" % (self.protoPngPagePath,)
+
+      # FIXME: should probably have chained each png task to each png size task, but getting the image sizes should be quick...
+      task = GetPngSizeAsyncTask(self.testPngPagePath)
       task.wait()
+      testPngSize = task.result
+
+      task = GetPngSizeAsyncTask(self.protoPngPagePath)
+      task.wait()
+      protoPngSize = task.result
+
+      if testPngSize != protoPngSize:
+        self.__result = (self.pageNum, False)
+        return
+
+      task = ComparePngsAsyncTask(self.testPngPagePath, self.protoPngPagePath, self.diffPath)
+      # Wait synchronously since we're already executing in separate thread
+      task.wait()
+
+      aeDiff = task.result
+      self.__pngsAreEqual = (aeDiff == 0)
+
+      if self.__pngsAreEqual:
+        os.remove(self.testPngPagePath)
+        os.remove(self.protoPngPagePath)
+        try:
+          os.remove(self.diffPath)
+        except OSError:
+          pass
+
+      self.__result = (self.pageNum, self.__pngsAreEqual)
     finally:
       self.config.processPoolSemaphore.release()
-
-    aeDiff = task.result
-
-    self.__pngsAreEqual = (aeDiff == 0)
-
-    if self.__pngsAreEqual:
-      os.remove(self.testPngPagePath)
-      os.remove(self.protoPngPagePath)
-      try:
-        os.remove(self.diffPath)
-      except OSError:
-        pass
-
-    self.__result = (self.pageNum, self.__pngsAreEqual)
 
   # Result is on the form (pagenum, PNGs are equal)
   @property
