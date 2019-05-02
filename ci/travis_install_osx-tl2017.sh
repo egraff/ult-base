@@ -9,7 +9,7 @@ sudo installer -verbose -pkg ./mactex-basictex-20170607.pkg -target /
 # export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
 export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
 
-sudo tlmgr option repository http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2018/tlnet-final
+sudo tlmgr option repository http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2017/tlnet-final
 sudo -i tlmgr update --self --all
 sudo tlmgr install            \
   collection-basic            \
