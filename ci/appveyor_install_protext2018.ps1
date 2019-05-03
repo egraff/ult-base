@@ -35,11 +35,11 @@ if ($exitCode -ne 0)
 
 $protextDir = [string](Resolve-Path "$scriptRoot\protext")
 
-$protextDir\MiKTeX\setup\setup-2.9.6406-x64.exe `
+. "${protextDir}\MiKTeX\setup\setup-2.9.6406-x64.exe" `
   --unattended `
   --shared `
   --package-set=complete `
   --install-from-local-repository `
-  --local-package-repository="$protextDir\MiKTeX\tm\packages" `
+  --local-package-repository="${protextDir}\MiKTeX\tm\packages" `
   --auto-install=yes `
   --paper-size=A4
