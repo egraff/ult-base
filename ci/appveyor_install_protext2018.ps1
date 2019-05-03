@@ -2,8 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 
-$installerPath = [string](Resolve-Path ".\ProTeXt-3.1.9-121317.exe")
-
+$installerPath = "$scriptRoot\ProTeXt-3.1.9-121317.exe"
 (New-Object System.Net.WebClient).DownloadFile('http://ftp.math.utah.edu/pub/tex/historic/systems/protext/2018-3.1.9/ProTeXt-3.1.9-121317.exe', $installerPath)
 
 $pinfo = New-Object System.Diagnostics.ProcessStartInfo

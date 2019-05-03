@@ -16,8 +16,8 @@ environment:
     secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRF5qU3bakG0+sgJiC4nSsx8
 
   matrix:
-    - TEST_SUITE: miktex-latest
     - TEST_SUITE: protext2018
+    - TEST_SUITE: miktex-latest
 
 install:
   # Decrypt deploy key
