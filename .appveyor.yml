@@ -17,6 +17,7 @@ environment:
 
   matrix:
     - TEST_SUITE: miktex-latest
+    - TEST_SUITE: protext2018
 
 install:
   # Decrypt deploy key
