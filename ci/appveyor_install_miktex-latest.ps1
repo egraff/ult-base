@@ -2,32 +2,35 @@ $ErrorActionPreference = "Stop"
 
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 
-$installerPath = "$scriptRoot\basic-miktex-x64.exe"
-(New-Object System.Net.WebClient).DownloadFile('http://mirrors.rit.edu/CTAN/systems/win32/miktex/setup/windows-x64/basic-miktex-2.9.7031-x64.exe', $installerPath)
+$setupZipPath = "$scriptRoot\miktexsetup.zip"
+(New-Object System.Net.WebClient).DownloadFile('http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/setup/windows-x64/miktexsetup-2.9.6942-x64.zip', $setupZipPath)
 
-$pinfo = New-Object System.Diagnostics.ProcessStartInfo
-$pinfo.FileName = $installerPath
-$pinfo.Arguments = "--unattended --shared --package-set=complete --remote-package-repository=http://mirrors.rit.edu/CTAN/systems/win32/miktex/tm/packages --auto-install=yes --paper-size=A4"
-$pinfo.RedirectStandardError = $true
-$pinfo.RedirectStandardOutput = $true
-$pinfo.UseShellExecute = $false
-$pinfo.WorkingDirectory = $scriptRoot
+Expand-Archive $setupZipPath -DestinationPath $scriptRoot -Force
 
-Write-Host "Starting MiKTeX installer"
-$p = New-Object System.Diagnostics.Process
-$p.StartInfo = $pinfo
-$p.Start() | Out-Null
+$pkgDir = md "miktex-packages" -Force | %{ $_.FullName }
 
-Write-Host "Waiting for MiKTeX installer to finish..."
+. "$scriptRoot\miktexsetup.exe" `
+  download `
+  --package-set=complete `
+  --local-package-repository="$pkgDir" `
+  --remote-package-repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ `
+  --verbose
 
-# Start async reads of output streams to avoid deadlock
-$p.BeginOutputReadLine()
-$p.BeginErrorReadLine()
+$exitCode = $LastExitCode
+if ($exitCode -ne 0)
+{
+  throw "Failed to download MiKTeX packages"
+}
 
-$p.WaitForExit()
-$exitCode = $p.ExitCode
-Write-Host "MiKTeX installer exited with code $exitCode"
+. "$scriptRoot\miktexsetup.exe" `
+  install `
+  --shared `
+  --modify-path `
+  --package-set=complete `
+  --local-package-repository="$pkgDir" `
+  --verbose
 
+$exitCode = $LastExitCode
 if ($exitCode -ne 0)
 {
   throw "MiKTeX installer failed"
@@ -45,5 +48,11 @@ mpm --admin --update-db
 # mpm --admin --update-some=upd-packages.txt --verbose
 
 initexmf --admin --enable-installer --verbose
+initexmf --admin --default-paper-size=a4 --verbose
 initexmf --admin --update-fndb --verbose
 initexmf --admin --mkmaps --verbose
+
+initexmf --enable-installer --verbose
+initexmf --default-paper-size=a4 --verbose
+initexmf --update-fndb --verbose
+initexmf --mkmaps --verbose
