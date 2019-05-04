@@ -63,8 +63,12 @@ if ($exitCode -ne 0)
   throw "MiKTeX installer failed"
 }
 
-# refreshenv
+$env:Path = [System.Environment]::ExpandEnvironmentVariables(
+    [System.Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
+    [System.Environment]::GetEnvironmentVariable('Path', 'User')
+)
+refreshenv
 
-# initexmf --admin --enable-installer --verbose
-# initexmf --admin --update-fndb --verbose
-# initexmf --admin --mkmaps --verbose
+initexmf --admin --enable-installer --verbose
+initexmf --admin --update-fndb --verbose
+initexmf --admin --mkmaps --verbose
