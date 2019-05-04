@@ -37,7 +37,7 @@ $protextDir = [string](Resolve-Path "$scriptRoot\protext")
 
 $pinfo = New-Object System.Diagnostics.ProcessStartInfo
 $pinfo.FileName = "${protextDir}\MiKTeX\setup\setup-2.9.6406-x64.exe"
-$pinfo.Arguments = "--unattended --shared --package-set=complete --install-from-local-repository --local-package-repository='${protextDir}\MiKTeX\tm\packages' --auto-install=yes --paper-size=A4"
+$pinfo.Arguments = "--unattended --shared --package-set=complete --install-from-local-repository --local-package-repository=`"${protextDir}\MiKTeX\tm\packages`" --auto-install=yes --paper-size=A4"
 $pinfo.RedirectStandardError = $true
 $pinfo.RedirectStandardOutput = $true
 $pinfo.UseShellExecute = $false
