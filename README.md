@@ -13,7 +13,7 @@
 | macOS - Tex Live 2017     | [![][travis-macos-tl-2017-badge]](#)       |
 | Windows - MiKTeX (latest) | [![][appveyor-miktex-latest-badge]](#)     |
 | Windows - proTeXt 2018    | [![][appveyor-protext-2018-badge]](#)      |
-| Windows - proTeXt 2018    | [![][appveyor-protext-2017-badge]](#)      |
+| Windows - proTeXt 2017    | [![][appveyor-protext-2017-badge]](#)      |
 
 
 [travis-badge]: https://travis-ci.org/egraff/ult-base.svg?branch=master
