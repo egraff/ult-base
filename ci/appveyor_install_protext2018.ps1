@@ -62,3 +62,9 @@ if ($exitCode -ne 0)
 {
   throw "MiKTeX installer failed"
 }
+
+refreshenv
+
+initexmf --admin --enable-installer --verbose
+initexmf --admin --update-fndb --verbose
+initexmf --admin --mkmaps --verbose
