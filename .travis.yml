@@ -1,7 +1,7 @@
 language: python
 
 git:
-  depth: 1
+  depth: 10
 
 matrix:
   include:
