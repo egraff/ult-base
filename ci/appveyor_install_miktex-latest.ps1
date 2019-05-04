@@ -42,6 +42,8 @@ $env:Path = [System.Environment]::ExpandEnvironmentVariables(
 )
 refreshenv
 
+$ErrorActionPreference = "Continue"
+
 mpm --admin --update-db
 # mpm --admin --upgrade --package-level=basic
 # mpm --admin --find-updates | foreach { $_.ToString() } | select-string "^(?!miktex.*$)" > upd-packages.txt
