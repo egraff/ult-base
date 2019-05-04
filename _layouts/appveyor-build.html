@@ -17,7 +17,7 @@ layout: default
 {% capture title %}Test results for Appveyor job #{{ page.appveyor.build-number }}.{{ page.appveyor.job-number }}{% endcapture %}
 <div class="page">
   <h1 class="page-title">Test results for
-    <a href="https://ci.appveyor.com/project/egraff/ult-base/build/job/{{ page.appveyor.job-id }}">Appveyor job #{{ page.appveyor.build-number }}.{{ page.appveyor.job-number }}</a>
+    <a href="https://ci.appveyor.com/project/egraff/ult-base/builds/{{ page.appveyor.build-id }}/job/{{ page.appveyor.job-id }}">Appveyor job #{{ page.appveyor.build-number }}.{{ page.appveyor.job-number }}</a>
   </h1>
   <p>
   {% if passed %}
