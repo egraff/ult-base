@@ -63,8 +63,8 @@ if ($exitCode -ne 0)
   throw "MiKTeX installer failed"
 }
 
-refreshenv
+# refreshenv
 
-initexmf --admin --enable-installer --verbose
-initexmf --admin --update-fndb --verbose
-initexmf --admin --mkmaps --verbose
+# initexmf --admin --enable-installer --verbose
+# initexmf --admin --update-fndb --verbose
+# initexmf --admin --mkmaps --verbose

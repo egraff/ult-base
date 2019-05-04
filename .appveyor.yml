@@ -51,6 +51,7 @@ install:
 
   - ps: . ".\ci\appveyor_install_${env:TEST_SUITE}.ps1"
   - refreshenv
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - pdflatex -version
 
   - ps: >-
