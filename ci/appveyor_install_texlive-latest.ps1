@@ -12,7 +12,7 @@ $tl_dir = Get-ChildItem -Path "$scriptRoot\install-tl" | ?{ $_.Name -like 'insta
 
 $profilePath = [string](Resolve-Path $scriptRoot\..\texlive-win.profile)
 
-. "${tl_dir}\install-tl-windows.bat" `
+cmd /c "${tl_dir}\install-tl-windows.bat 2>&1" `
   -no-gui `
   -logfile install-tl.log `
   -repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet `
