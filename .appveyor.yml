@@ -7,8 +7,6 @@ skip_commits:
 
 image: Visual Studio 2015
 
-clone_depth: 1
-
 environment:
   deploy_key_secret:
     secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRF5qU3bakG0+sgJiC4nSsx8
@@ -49,6 +47,7 @@ install:
       }
       $ErrorActionPreference = $OldErrorActionPreference;
 
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
   - ps: . ".\ci\appveyor_install_${env:TEST_SUITE}.ps1"
   - refreshenv
   - pdflatex -version
