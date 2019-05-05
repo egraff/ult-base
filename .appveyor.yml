@@ -53,6 +53,7 @@ install:
   - ps: . ".\ci\appveyor_install_${env:TEST_SUITE}.ps1"
   - refreshenv
   - pdflatex -version
+  - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
   - ps: >-
       $MsysPath = 'C:\MinGW\msys\1.0\bin';
