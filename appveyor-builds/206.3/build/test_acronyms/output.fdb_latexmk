@@ -1,0 +1,10 @@
+# Fdb version 3
+["pdflatex"] 1557086656 "./test_acronyms.tex" "../.build/./test_acronyms/output.pdf" "output" 1557086656
+  "../.build/./test_acronyms/output.aux" 1557086654 1082 8a777796e2b5a001fd32bc34541ad3b6 "pdflatex"
+  "./test_acronyms.tex" 1557084433 5072 971b09cb4b21abc7d75c92e332425aff ""
+  "c:/texlive/2019/texmf-dist/web2c/texmf.cnf" 1557086241 35430 ca24fb44b873d21ac4c63d01600decd4 ""
+  "c:/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt" 1557086629 2822776 12a11bd3271aaeba84ac2d67a5060166 ""
+  "c:/texlive/2019/texmf.cnf" 1557086585 673 2e5aa3ac564c6f70f54d6752d765c05d ""
+  (generated)
+  "../.build/./test_acronyms/output.pdf"
+  "../.build/./test_acronyms/output.log"

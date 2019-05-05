@@ -1,0 +1,10 @@
+# Fdb version 3
+["pdflatex"] 1557086667 "./test_tikz_externalize_fix.tex" "../.build/./test_tikz_externalize_fix/output.pdf" "output" 1557086667
+  "../.build/./test_tikz_externalize_fix/output.aux" 1557086666 128 64ad8951a155547497e2a7ab93ee8d1c "pdflatex"
+  "./test_tikz_externalize_fix.tex" 1557084433 792 8d324e82074cc006d6887fc83ea34c0b ""
+  "c:/texlive/2019/texmf-dist/web2c/texmf.cnf" 1557086241 35430 ca24fb44b873d21ac4c63d01600decd4 ""
+  "c:/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt" 1557086629 2822776 12a11bd3271aaeba84ac2d67a5060166 ""
+  "c:/texlive/2019/texmf.cnf" 1557086585 673 2e5aa3ac564c6f70f54d6752d765c05d ""
+  (generated)
+  "../.build/./test_tikz_externalize_fix/output.pdf"
+  "../.build/./test_tikz_externalize_fix/output.log"

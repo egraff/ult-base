@@ -1,0 +1,10 @@
+# Fdb version 3
+["pdflatex"] 1557086658 "./test_custom_autoref.tex" "../.build/./test_custom_autoref/output.pdf" "output" 1557086658
+  "../.build/./test_custom_autoref/output.aux" 1557086658 886 82024e482a5b37be31b1ddd15ccf3133 "pdflatex"
+  "./test_custom_autoref.tex" 1557084433 649 9cc5a00e5c7aa8dd29ef016d370e8917 ""
+  "c:/texlive/2019/texmf-dist/web2c/texmf.cnf" 1557086241 35430 ca24fb44b873d21ac4c63d01600decd4 ""
+  "c:/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt" 1557086629 2822776 12a11bd3271aaeba84ac2d67a5060166 ""
+  "c:/texlive/2019/texmf.cnf" 1557086585 673 2e5aa3ac564c6f70f54d6752d765c05d ""
+  (generated)
+  "../.build/./test_custom_autoref/output.pdf"
+  "../.build/./test_custom_autoref/output.log"

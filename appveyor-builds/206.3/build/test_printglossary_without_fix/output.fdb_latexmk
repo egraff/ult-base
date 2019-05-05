@@ -1,0 +1,10 @@
+# Fdb version 3
+["pdflatex"] 1557086661 "./test_printglossary_without_fix.tex" "../.build/./test_printglossary_without_fix/output.pdf" "output" 1557086661
+  "../.build/./test_printglossary_without_fix/output.aux" 1557086660 223 f632e6c7d2591cdc0e47b11799bae97d "pdflatex"
+  "./test_printglossary_without_fix.tex" 1557084433 348 0a4a2c911e6fe09fd0bda244223d3dc9 ""
+  "c:/texlive/2019/texmf-dist/web2c/texmf.cnf" 1557086241 35430 ca24fb44b873d21ac4c63d01600decd4 ""
+  "c:/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt" 1557086629 2822776 12a11bd3271aaeba84ac2d67a5060166 ""
+  "c:/texlive/2019/texmf.cnf" 1557086585 673 2e5aa3ac564c6f70f54d6752d765c05d ""
+  (generated)
+  "../.build/./test_printglossary_without_fix/output.log"
+  "../.build/./test_printglossary_without_fix/output.pdf"
