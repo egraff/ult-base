@@ -4,7 +4,7 @@ PDFLATEX := "$(shell which pdflatex 2>/dev/null)"
 MAKEGLOSSARIES := "$(shell which makeglossaries 2>/dev/null)"
 
 PY := "$(shell which py 2>/dev/null)"
-ifeq ($(PY),)
+ifeq ($(PY),"")
   PYTHON := "$(shell which python2.7 2>/dev/null || which python2 2>/dev/null || which python 2>/dev/null)"
 else
   PYTHON := $(PY) -2
