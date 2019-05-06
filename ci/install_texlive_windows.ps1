@@ -22,7 +22,7 @@ Expand-Archive $installZipPath -DestinationPath "${scriptRoot}\install-tl"
 
 $tl_dir = Get-ChildItem -Path "${scriptRoot}\install-tl" | ?{ $_.Name -like 'install-tl-*' } | Select-Object -ExpandProperty FullName -First 1
 
-cmd /c "${tl_dir}\install-tl-windows.bat 2>&1" `
+cmd /c "echo ^M | ${tl_dir}\install-tl-windows.bat 2>&1" `
     -no-gui `
     -logfile install-tl.log `
     -repository "$Repository" `
