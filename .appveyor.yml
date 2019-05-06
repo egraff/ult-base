@@ -9,12 +9,16 @@ image: Visual Studio 2015
 
 clone_depth: 10
 
+max_jobs: 5
+
 environment:
   deploy_key_secret:
     secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRF5qU3bakG0+sgJiC4nSsx8
 
   matrix:
     - TEST_SUITE: texlive-latest
+    - TEST_SUITE: texlive-2018
+    - TEST_SUITE: texlive-2017
     - TEST_SUITE: miktex-latest
     - TEST_SUITE: protext2018
 

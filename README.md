@@ -12,6 +12,8 @@
 | macOS - Tex Live 2018       | [![][travis-macos-tl-2018-badge]](#)       |
 | macOS - Tex Live 2017       | [![][travis-macos-tl-2017-badge]](#)       |
 | Windows - TeX Live (latest) | [![][appveyor-texlive-latest-badge]](#)    |
+| Windows - TeX Live 2018     | [![][appveyor-texlive-2018-badge]](#)      |
+| Windows - TeX Live 2017     | [![][appveyor-texlive-2017-badge]](#)      |
 | Windows - MiKTeX (latest)   | [![][appveyor-miktex-latest-badge]](#)     |
 | Windows - proTeXt 2018      | [![][appveyor-protext-2018-badge]](#)      |
 
@@ -29,5 +31,7 @@
 [travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/6
 
 [appveyor-texlive-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/1
-[appveyor-miktex-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/2
-[appveyor-protext-2018-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/3
+[appveyor-texlive-2018-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/2
+[appveyor-texlive-2017-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/3
+[appveyor-miktex-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/4
+[appveyor-protext-2018-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/5
