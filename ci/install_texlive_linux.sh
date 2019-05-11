@@ -4,6 +4,7 @@
 set -ev
 
 TLNET_REPO=$1
+TLPROFILE=$2
 
 sudo apt-get update
 sudo apt-get install --fix-missing
@@ -19,7 +20,7 @@ tar -xf "install-tl-unx.tar.gz"
 export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 )
 
 cd "${tl_dir}"
-echo "i" | sudo -s ./install-tl -logfile install-tl.log -repository ${TLNET_REPO} -profile ../texlive.profile
+echo "i" | sudo -s ./install-tl -logfile install-tl.log -repository ${TLNET_REPO} -profile ${TLPROFILE}
 export MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }')
 sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin"
 sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment

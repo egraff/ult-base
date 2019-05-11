@@ -4,4 +4,4 @@
 set -ev
 
 SCRIPT_DIR="$(dirname "$(readlink -f "$0")")"
-. ${SCRIPT_DIR}/install_texlive_linux.sh http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2018/tlnet-final
+. ${SCRIPT_DIR}/install_texlive_linux.sh http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2018/tlnet-final ${SCRIPT_DIR}/texlive.profile
