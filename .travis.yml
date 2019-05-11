@@ -20,6 +20,11 @@ matrix:
       os: linux
       sudo: required
       python: 2.7
+    - name: "Linux - TeX Live 2016"
+      env: TEST_SUITE=linux-tl2016
+      os: linux
+      sudo: required
+      python: 2.7
     - name: "OS X - Latest TeX Live"
       env: TEST_SUITE=osx-latest
       os: osx
