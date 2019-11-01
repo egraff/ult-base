@@ -3,9 +3,6 @@ language: python
 git:
   depth: 10
 
-allow_failures:
-  - env: TEST_SUITE=linux-tl2016
-
 matrix:
   include:
     - name: "Linux - Latest TeX Live"
