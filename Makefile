@@ -15,34 +15,64 @@ help:
 	@echo "     uninstall  -  remove the ult-base packages from your home texmf tree"
 
 define prompt-texmf
-	@while [ -z "$$CONTINUE" ]; do \
-		read -r -p "Is this correct? [y/N] " CONTINUE; \
-	done ; \
-	if [ $$CONTINUE != "y" ] && [ $$CONTINUE != "Y" ]; then \
-		echo "Exiting." ; exit 1 ; \
+	@while [ -z "$$CONTINUE" ]; do                                          \
+	    read -r -p "Is this correct? [y/N] " CONTINUE;                      \
+	done ;                                                                  \
+	if [ $$CONTINUE != "y" ] && [ $$CONTINUE != "Y" ]; then                 \
+	    echo "Exiting." ; exit 1 ;                                          \
 	fi
 endef
 
-# If TEXMFHOME is defined, we use it! Else, we try TEXMFLOCAL
-try-texmf-local:
-# If neither TEXMFHOME nor TEXMFLOCAL is defined
-ifeq ($(ULTTEXMFLOCAL),)
-	@echo -e "Cannot locate your home texmf tree. Specify manually with\n\n    make install TEXMF=/path/to/texmf\n"
-	@exit 1
-else
-  TEXMF = $(ULTTEXMFLOCAL)
-endif
 
-# Try TEXMFHOME first. If TEXMFHOME is defined, it will override ULTTEXMFLOCAL
-try-texmf-home: try-texmf-local
+# If ULTTEXMFLOCAL is on the kpathsea form {dir1:dir2:dir3} or {dir1;dir2;dir3} or {dir1,dir2,dir3},
+# then select the first directory that looks like a texmf tree. Otherwise, use ULTTEXMFLOCAL verbatim.
+define parse-ulttexmflocal
+	MULTI_PATHS=$$(echo "$(ULTTEXMFLOCAL)" | sed 's/^{\(.*\)}/\1/') ;       \
+	if [ ! -z "$$MULTI_PATHS" ]; then                                       \
+	    IFS='\;:,' ;                                                        \
+	    for p in $$MULTI_PATHS; do                                          \
+	        if [ -d "$$p" ] && [ -d "$$p/tex" ]; then                       \
+	            echo "$$p" ;                                                \
+	            break ;                                                     \
+	        fi ;                                                            \
+	    done ;                                                              \
+	else                                                                    \
+	    echo "$(ULTTEXMFLOCAL)" ;                                           \
+	fi
+endef
+
+
+# TEXMFHOME is prioritized. ULTTEXMFLOCAL is initially set to TEXMFLOCAL, but
+# if TEXMFHOME is defined, it will override ULTTEXMFLOCAL
+try-texmf-home:
 ifneq ($(ULTTEXMFHOME),)
   ULTTEXMFLOCAL = $(ULTTEXMFHOME)
 endif
 
+# If either TEXMFHOME or TEXMFLOCAL is defined, try to parse it
+try-texmf-local: try-texmf-home
+ifneq ($(ULTTEXMFLOCAL),)
+  ULTPARSEDTEXMF = $(shell $(parse-ulttexmflocal))
+endif
+
+# If neither TEXMFHOME nor TEXMFLOCAL is defined
+check-ulttexmf: try-texmf-local
+ifeq ($(ULTPARSEDTEXMF),)
+	@echo "Cannot locate your home texmf tree. Specify manually with\n\n    make install TEXMF=/path/to/texmf\n"
+	@exit 1
+else
+  TEXMF = $(ULTPARSEDTEXMF)
+endif
+
+
 ifdef TEXMF
 detect-texmf:
+	@if [ ! -d "$(TEXMF)" ] || [ ! -d "$(TEXMF)/tex" ]; then \
+	    echo "Invalid texmf tree \"$(TEXMF)\"\n" ; \
+	    exit 1 ; \
+	fi
 else
-detect-texmf: try-texmf-home
+detect-texmf: check-ulttexmf
 endif
 	@echo "Using texmf tree in \"$(TEXMF)\"."
 	$(prompt-texmf)
@@ -56,10 +86,10 @@ check-texmf: detect-texmf
 uninstall: check-texmf
 	@echo "$(ULTTEXMF)/tex/latex/$(NAME)"
 	@if [ -d "$(LATEXROOT)" ]; then \
-		echo "Uninstalling..." ; \
-		rm -rf "$(LATEXROOT)" ; \
-		echo "Uninstalled." ; \
-		echo "You might have to run 'texhash' to update your texmf database." ; \
+	    echo "Uninstalling..." ; \
+	    rm -rf "$(LATEXROOT)" ; \
+	    echo "Uninstalled." ; \
+	    echo "You might have to run 'texhash' to update your texmf database." ; \
 	fi
 
 install: check-texmf uninstall
@@ -67,8 +97,8 @@ install: check-texmf uninstall
 	@test -d "$(LATEXROOT)" || mkdir -p "$(LATEXROOT)"
 	@cp -r -v "$(LOCALLATEXROOT)"/* "$(LATEXROOT)/"
 	@if [ $$? -ne 0 ]; then \
-		echo "Failed to copy class files to texmf directory" ; \
-		exit 1 ; \
+	    echo "Failed to copy class files to texmf directory" ; \
+	    exit 1 ; \
 	fi
 	@git rev-parse --verify HEAD > "$(LATEXROOT)/REVISION"
 	@echo "Done."
