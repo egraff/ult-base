@@ -31,7 +31,7 @@ define parse-ulttexmflocal
 	if [ ! -z "$$MULTI_PATHS" ]; then                                       \
 	    IFS='\;:,' ;                                                        \
 	    for p in $$MULTI_PATHS; do                                          \
-	        if [ -d "$$p" ] && [ -d "$$p/tex" ]; then                       \
+	        if [ -d "$$p" ]; then                                           \
 	            echo "$$p" ;                                                \
 	            break ;                                                     \
 	        fi ;                                                            \
@@ -67,7 +67,7 @@ endif
 
 ifdef TEXMF
 detect-texmf:
-	@if [ ! -d "$(TEXMF)" ] || [ ! -d "$(TEXMF)/tex" ]; then \
+	@if [ ! -d "$(TEXMF)" ]; then \
 	    echo "Invalid texmf tree \"$(TEXMF)\"\n" ; \
 	    exit 1 ; \
 	fi
