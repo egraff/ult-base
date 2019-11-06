@@ -25,16 +25,14 @@ endef
 
 
 # If ULTTEXMFLOCAL is on the kpathsea form {dir1:dir2:dir3} or {dir1;dir2;dir3} or {dir1,dir2,dir3},
-# then select the first directory that looks like a texmf tree. Otherwise, use ULTTEXMFLOCAL verbatim.
+# then select the first directory from the list. Otherwise, use ULTTEXMFLOCAL verbatim.
 define parse-ulttexmflocal
 	MULTI_PATHS=$$(echo "$(ULTTEXMFLOCAL)" | sed 's/^{\(.*\)}/\1/') ;       \
 	if [ ! -z "$$MULTI_PATHS" ]; then                                       \
 	    IFS='\;:,' ;                                                        \
 	    for p in $$MULTI_PATHS; do                                          \
-	        if [ -d "$$p" ]; then                                           \
-	            echo "$$p" ;                                                \
-	            break ;                                                     \
-	        fi ;                                                            \
+	        echo "$$p" ;                                                    \
+	        break ;                                                         \
 	    done ;                                                              \
 	else                                                                    \
 	    echo "$(ULTTEXMFLOCAL)" ;                                           \
@@ -67,10 +65,6 @@ endif
 
 ifdef TEXMF
 detect-texmf:
-	@if [ ! -d "$(TEXMF)" ]; then \
-	    echo "Invalid texmf tree \"$(TEXMF)\"\n" ; \
-	    exit 1 ; \
-	fi
 else
 detect-texmf: check-ulttexmf
 endif
