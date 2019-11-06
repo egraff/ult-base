@@ -3,7 +3,9 @@ $ErrorActionPreference = "Stop"
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 
 $installerPath = "$scriptRoot\basic-miktex-x64.exe"
-(New-Object System.Net.WebClient).DownloadFile('http://mirrors.rit.edu/CTAN/systems/win32/miktex/setup/windows-x64/basic-miktex-2.9.7031-x64.exe', $installerPath)
+$installerUrl = 'http://mirrors.rit.edu/CTAN/systems/win32/miktex/setup/windows-x64/basic-miktex-2.9.7219-x64.exe'
+
+(New-Object System.Net.WebClient).DownloadFile($installerUrl, $installerPath)
 
 $pinfo = New-Object System.Diagnostics.ProcessStartInfo
 $pinfo.FileName = $installerPath

@@ -6,6 +6,15 @@
 \RequirePackage{xparse}
 \RequirePackage{expl3}
 
+\@ifpackagelater{expl3}{2017/05/29}
+{%
+  % l3regex package was deprecated, after functionality was embedded into expl3 package
+  % See http://www.tug.org/svn/texlive?limit_changes=0&view=revision&revision=44483
+}%
+{%
+  \RequirePackage{l3regex}
+}%
+
 % Magic to define \upsc{} command that replaces upper-case letters with lower-case small-caps
 \ExplSyntaxOn
 \cs_generate_variant:Nn \tl_rescan:nn { nV }
