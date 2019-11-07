@@ -3,6 +3,10 @@ language: python
 git:
   depth: 10
 
+branches:
+  except:
+  - miktex-user-roots-fix
+
 matrix:
   include:
     - name: "Linux - Latest TeX Live"
