@@ -20,81 +20,102 @@ environment:
     - TEST_SUITE: texlive-2018
     - TEST_SUITE: texlive-2017
     - TEST_SUITE: miktex-latest
+    - TEST_SUITE: miktex_install_tests
     - TEST_SUITE: protext2018
 
-install:
-  # Decrypt deploy key
-  - nuget install secure-file -ExcludeVersion
-  - secure-file\tools\secure-file -decrypt ci\appveyor-deploy-key.enc -secret %deploy_key_secret% -out %USERPROFILE%\.ssh\id_rsa
-  - ps: >-
-      $OldErrorActionPreference = $ErrorActionPreference;
-      $ErrorActionPreference = "Continue";
-      ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" };
-      $ErrorActionPreference = $OldErrorActionPreference;
+for:
+  - matrix:
+      only:
+        - TEST_SUITE: miktex_install_tests
 
-  - cinst -y imagemagick -PackageParameters LegacySupport=true
-  - cinst -y ghostscript
-  - ps: >-
-      $GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | select -f 1).FullName;
-      $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
-      $NewPath = $OldPath + ';' + $GsPath;
-      [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
-  - cinst -y xpdf-utils
-  - refreshenv
-  - set
-  - compare -version
-  - gswin64c -v
-  - where pdfinfo
-  - ps: >-
-      $OldErrorActionPreference = $ErrorActionPreference;
-      $ErrorActionPreference = "Continue";
-      pdfinfo -v 2>&1 | %{ "$_" };
-      if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
-        $host.SetShouldExit($LastExitCode);
-      }
-      $ErrorActionPreference = $OldErrorActionPreference;
+    install:
+      - ps: . ".\ci\appveyor_install_miktex-latest-minimal.ps1"
+      - refreshenv
+      - pdflatex -version
 
-  - ps: . ".\ci\appveyor_install_${env:TEST_SUITE}.ps1"
-  - refreshenv
-  - pdflatex -version
+    build_script:
 
-  - ps: >-
-      $MsysPath = 'C:\MinGW\msys\1.0\bin';
-      $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
-      $NewPath = $OldPath + ';' + $MsysPath;
-      [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
-  - refreshenv
+    test_script:
+      - make install CONTINUE=y
 
-build_script:
-  - make install CONTINUE=y
-  - ps: >-
-      if (Test-Path -Path ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1") {
-        . ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1"
-      }
 
-test_script:
-  - make -C test
+  - matrix:
+      except:
+        - TEST_SUITE: miktex_install_tests
 
-on_success:
-  - ps: >-
-      try
-      {
-        . .\ci\appveyor_after.ps1 -TestResult 0
-      }
-      catch [Exception]
-      {
-        echo $_.Exception | FL -Force
-      }
+    install:
+      # Decrypt deploy key
+      - nuget install secure-file -ExcludeVersion
+      - secure-file\tools\secure-file -decrypt ci\appveyor-deploy-key.enc -secret %deploy_key_secret% -out %USERPROFILE%\.ssh\id_rsa
+      - ps: >-
+          $OldErrorActionPreference = $ErrorActionPreference;
+          $ErrorActionPreference = "Continue";
+          ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" };
+          $ErrorActionPreference = $OldErrorActionPreference;
+    
+      - cinst -y imagemagick -PackageParameters LegacySupport=true
+      - cinst -y ghostscript
+      - ps: >-
+          $GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | select -f 1).FullName;
+          $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
+          $NewPath = $OldPath + ';' + $GsPath;
+          [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
+      - cinst -y xpdf-utils
+      - refreshenv
+      - set
+      - compare -version
+      - gswin64c -v
+      - where pdfinfo
+      - ps: >-
+          $OldErrorActionPreference = $ErrorActionPreference;
+          $ErrorActionPreference = "Continue";
+          pdfinfo -v 2>&1 | %{ "$_" };
+          if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
+            $host.SetShouldExit($LastExitCode);
+          }
+          $ErrorActionPreference = $OldErrorActionPreference;
+    
+      - ps: . ".\ci\appveyor_install_${env:TEST_SUITE}.ps1"
+      - refreshenv
+      - pdflatex -version
+    
+      - ps: >-
+          $MsysPath = 'C:\MinGW\msys\1.0\bin';
+          $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
+          $NewPath = $OldPath + ';' + $MsysPath;
+          [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
+      - refreshenv
 
-on_failure:
-  - ps: >-
-      try
-      {
-        . .\ci\appveyor_after.ps1 -TestResult 1
-      }
-      catch [Exception]
-      {
-        echo $_.Exception | FL -Force
-      }
-  # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
-  #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+    build_script:
+      - make install CONTINUE=y
+      - ps: >-
+          if (Test-Path -Path ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1") {
+            . ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1"
+          }
+    
+    test_script:
+      - make -C test
+    
+    on_success:
+      - ps: >-
+          try
+          {
+            . .\ci\appveyor_after.ps1 -TestResult 0
+          }
+          catch [Exception]
+          {
+            echo $_.Exception | FL -Force
+          }
+    
+    on_failure:
+      - ps: >-
+          try
+          {
+            . .\ci\appveyor_after.ps1 -TestResult 1
+          }
+          catch [Exception]
+          {
+            echo $_.Exception | FL -Force
+          }
+      # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
+      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
