@@ -30,7 +30,7 @@ define parse-ulttexmflocal
 	MULTI_PATHS=$$(echo "$(ULTTEXMFLOCAL)" | sed -n 's/^{\(.*\)}/\1/p') ;   \
 	if [ ! -z "$$MULTI_PATHS" ]; then                                       \
 	    if [ "$(OS)" = "Windows_NT" ]; then                                 \
-		    IFS=';,' ;                                                      \
+	        IFS=';,' ;                                                      \
 	    else                                                                \
 	        IFS=';:,' ;                                                     \
 	    fi ;                                                                \
