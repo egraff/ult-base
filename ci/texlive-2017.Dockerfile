@@ -1,7 +1,8 @@
 FROM ubuntu:bionic
 
 RUN \
-  apt-get update
+  apt-get update && \
+  apt-get install -y wget software-properties-common
 
 RUN \
   apt-get install --no-install-recommends -y poppler-utils ghostscript imagemagick --fix-missing && \
