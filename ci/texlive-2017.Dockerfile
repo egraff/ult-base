@@ -2,7 +2,7 @@ FROM ubuntu:bionic
 
 RUN \
   apt-get update && \
-  apt-get install -y wget software-properties-common
+  apt-get install -y wget apt-utils software-properties-common
 
 RUN \
   apt-get install --no-install-recommends -y poppler-utils ghostscript imagemagick --fix-missing && \
@@ -15,7 +15,7 @@ RUN \
   tar -xf "install-tl-unx.tar.gz" && \
   export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 ) && \
   cd "${tl_dir}" && \
-  echo "i" | sudo -s ./install-tl -logfile install-tl.log -repository http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2017/tlnet-final -profile ../texlive.profile && \
+  echo "i" | ./install-tl -logfile install-tl.log -repository http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2017/tlnet-final -profile ../texlive.profile && \
   export MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }') && \
-  sudo ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin" && \
-  sudo sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
+  ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin" && \
+  sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment
