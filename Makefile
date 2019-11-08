@@ -56,7 +56,10 @@ endif
 # If neither TEXMFHOME nor TEXMFLOCAL is defined
 check-ulttexmf: try-texmf-local
 ifeq ($(ULTPARSEDTEXMF),)
-	@echo "Cannot locate your home texmf tree. Specify manually with\n\n    make install TEXMF=/path/to/texmf\n"
+	@echo "Cannot locate your home texmf tree. Specify manually with"
+	@echo " "
+	@echo "    make install TEXMF=/path/to/texmf"
+	@echo " "
 	@exit 1
 else
   TEXMF = $(ULTPARSEDTEXMF)
