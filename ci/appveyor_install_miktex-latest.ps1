@@ -51,4 +51,4 @@ initexmf --admin --update-fndb --verbose
 initexmf --admin --mkmaps --verbose
 
 # Manually register TEXMFHOME (see https://github.com/MiKTeX/miktex/issues/272)
-initexmf --user-roots="${env:USERPROFILE}/texmf"
+initexmf --user-roots="${env:USERPROFILE}/texmf" 2>&1 | %{ "$_" }
