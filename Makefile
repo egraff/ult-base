@@ -27,7 +27,7 @@ endef
 # If ULTTEXMFLOCAL is on the kpathsea form {dir1:dir2:dir3} or {dir1;dir2;dir3} or {dir1,dir2,dir3},
 # then select the first directory from the list. Otherwise, use ULTTEXMFLOCAL verbatim.
 define parse-ulttexmflocal
-	MULTI_PATHS=$$(echo "$(ULTTEXMFLOCAL)" | sed 's/^{\(.*\)}/\1/') ;       \
+	MULTI_PATHS=$$(echo "$(ULTTEXMFLOCAL)" | sed -n 's/^{\(.*\)}/\1/p') ;   \
 	if [ ! -z "$$MULTI_PATHS" ]; then                                       \
 	    IFS='\;:,' ;                                                        \
 	    for p in $$MULTI_PATHS; do                                          \
