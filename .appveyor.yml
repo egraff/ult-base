@@ -36,7 +36,7 @@ for:
     build: off
 
     test_script:
-      - ps: initexmf --user-roots="${env:USERPROFILE}/texmf"
+      - initexmf --user-roots="%USERPROFILE%/texmf"
       - C:\msys64\usr\bin\bash.exe --login -c "cd $APPVEYOR_BUILD_FOLDER && make install CONTINUE=y"
 
 
