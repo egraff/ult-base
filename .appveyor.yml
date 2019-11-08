@@ -33,7 +33,7 @@ for:
       - refreshenv
       - pdflatex -version
 
-    build_script:
+    build: off
 
     test_script:
       - make install CONTINUE=y
