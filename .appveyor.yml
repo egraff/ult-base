@@ -37,7 +37,9 @@ for:
 
     test_script:
       - initexmf --user-roots="%USERPROFILE%/texmf"
+      - kpsewhich --var-value TEXMFHOME
       - C:\msys64\usr\bin\bash.exe --login -c "cd $APPVEYOR_BUILD_FOLDER && make install CONTINUE=y"
+      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
 
 
   - matrix:
