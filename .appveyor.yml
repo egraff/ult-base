@@ -36,7 +36,7 @@ for:
     build: off
 
     test_script:
-      - C:\msys64\usr\bin\bash.exe --login -c "make install CONTINUE=y"
+      - C:\msys64\usr\bin\bash.exe --login -c "cd $APPVEYOR_BUILD_FOLDER && make install CONTINUE=y"
 
 
   - matrix:
