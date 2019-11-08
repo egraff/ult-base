@@ -1,0 +1,25 @@
+task:
+  matrix:
+    - name: "Linux - TeX Live 2018"
+      container:
+        dockerfile: ci/texlive-2018-linux.Dockerfile
+
+    - name: "Linux - TeX Live 2017"
+      container:
+        dockerfile: ci/texlive-2017-linux.Dockerfile
+
+    - name: "Linux - TeX Live 2016"
+      container:
+        dockerfile: ci/texlive-2016-linux.Dockerfile
+
+  install_script:
+    - pdfinfo -v
+    - compare -version
+    - gs -v
+    - pdflatex -version
+    - tlmgr conf
+    - make install CONTINUE=y
+    - texhash
+
+  test_script:
+    - make -C test
