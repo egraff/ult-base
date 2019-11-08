@@ -1,8 +1,16 @@
 task:
   matrix:
-    - name: "Test"
+    - name: "Linux - TeX Live 2018"
+      container:
+        dockerfile: ci/texlive-2018.Dockerfile
+
+    - name: "Linux - TeX Live 2017"
       container:
         dockerfile: ci/texlive-2017.Dockerfile
+
+    - name: "Linux - TeX Live 2016"
+      container:
+        dockerfile: ci/texlive-2016.Dockerfile
 
   install_script:
     - pdfinfo -v
