@@ -49,3 +49,6 @@ initexmf --admin --enable-installer --verbose
 initexmf --admin --default-paper-size=a4 --verbose
 initexmf --admin --update-fndb --verbose
 initexmf --admin --mkmaps --verbose
+
+# Manually register TEXMFHOME (see https://github.com/MiKTeX/miktex/issues/272)
+initexmf --user-roots="${env:USERPROFILE}/texmf"
