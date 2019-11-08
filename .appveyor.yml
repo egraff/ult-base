@@ -42,7 +42,7 @@ for:
       - ps: if (-not (Test-Path "${env:USERPROFILE}\texmf\tex\latex" -PathType Container)) { throw "FAILED!" }
       - ps: rm "${env:USERPROFILE}\texmf\tex" -Recurse -Force
 
-      - initexmf --user-roots="%USERPROFILE%/texmf2,%USERPROFILE%/texmf"
+      - initexmf --user-roots="%USERPROFILE%/texmf2;%USERPROFILE%/texmf"
       - kpsewhich --var-value TEXMFHOME
       - C:\msys64\usr\bin\bash.exe --login -c "cd $APPVEYOR_BUILD_FOLDER && make install CONTINUE=y"
       - ps: if (-not (Test-Path "${env:USERPROFILE}\texmf\tex\latex" -PathType Container)) { throw "FAILED!" }
