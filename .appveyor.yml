@@ -32,18 +32,11 @@ for:
       - ps: . ".\ci\appveyor_install_miktex-latest-minimal.ps1"
       - refreshenv
       - pdflatex -version
-    
-      - ps: >-
-          $MsysPath = 'C:\MinGW\msys\1.0\bin';
-          $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
-          $NewPath = $OldPath + ';' + $MsysPath;
-          [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
-      - refreshenv
 
     build: off
 
     test_script:
-      - make install CONTINUE=y
+      - C:\msys64\usr\bin\bash.exe --login -c "make install CONTINUE=y"
 
 
   - matrix:
