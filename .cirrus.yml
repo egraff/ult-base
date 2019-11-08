@@ -4,8 +4,14 @@ task:
       container:
         dockerfile: ci/texlive-2017.Dockerfile
 
-  script:
+  install_script:
     - pdfinfo -v
     - compare -version
     - gs -v
     - pdflatex -version
+    - tlmgr conf
+    - make install CONTINUE=y
+    - texhash
+
+  test_script:
+    - make -C test
