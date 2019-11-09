@@ -3,6 +3,10 @@ language: python
 git:
   depth: 10
 
+branches:
+  except:
+  - debug-miktex-tikz-failure
+
 matrix:
   include:
     - name: "Linux - Latest TeX Live"
