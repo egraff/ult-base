@@ -50,5 +50,15 @@ initexmf --admin --default-paper-size=a4 --verbose
 initexmf --admin --update-fndb --verbose
 initexmf --admin --mkmaps --verbose
 
+
+$OldErrorActionPreference = $ErrorActionPreference;
+$ErrorActionPreference = "Continue";
+
 # Manually register TEXMFHOME (see https://github.com/MiKTeX/miktex/issues/272)
 initexmf --user-roots="${env:USERPROFILE}/texmf" 2>&1 | %{ "$_" }
+$exitCode = $LastExitCode
+$ErrorActionPreference = $OldErrorActionPreference;
+
+if ($exitCode -ne 0) {
+    throw "initexmf failed with exit code ${exitCode}"
+}
