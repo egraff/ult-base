@@ -16,7 +16,12 @@ environment:
     secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRF5qU3bakG0+sgJiC4nSsx8
 
   matrix:
+    - TEST_SUITE: texlive-latest
+    - TEST_SUITE: texlive-2018
+    - TEST_SUITE: texlive-2017
     - TEST_SUITE: miktex-latest
+    - TEST_SUITE: miktex_install_tests
+    - TEST_SUITE: protext2018
 
 for:
   - matrix:
@@ -123,4 +128,4 @@ for:
             echo $_.Exception | FL -Force
           }
       # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
-      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      #- ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
