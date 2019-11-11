@@ -6,12 +6,29 @@
 \RequirePackage{tikz}
 \RequirePackage{currfile-abspath}
 \RequirePackage{xpatch}
+\RequirePackage{xstring}
 
 \usetikzlibrary{external}
 
-% Fix output/aux directory
+% Get directory path of aux file
 \getabspath{\jobname.aux}
 \let\ult@auxdir\theabsdir
+
+% Strip trailing slash from directory path
+\IfEndWith{\ult@auxdir}{/}{%
+  \StrGobbleRight{\ult@auxdir}{1}[\ult@auxdir]%
+}{}
+
+% Strip trailing backslash from directory path
+%
+% This is esp. important on Windows, where the effect of a trailing backslash would be to escape a following quotation
+% mark character, if the path is quoted (which it will be in this case).
+%
+\IfEndWith{\ult@auxdir}{\@backslashchar}{%
+  \StrGobbleRight{\ult@auxdir}{1}[\ult@auxdir]%
+}{}
+
+% Fix output/aux directory
 \let\ult@old@tikzexternalcheckshellescape\tikzexternalcheckshellescape
 \edef\tikzexternalcheckshellescape{\ult@old@tikzexternalcheckshellescape -output-directory="\ult@auxdir" -aux-directory="\ult@auxdir"\space}
 
