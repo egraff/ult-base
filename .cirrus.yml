@@ -1,4 +1,4 @@
-task:
+linux_task:
   matrix:
     - name: "Linux - TeX Live 2018"
       container:
@@ -23,3 +23,22 @@ task:
 
   test_script:
     - make -C test
+
+
+windows_task:
+  env:
+    CIRRUS_SHELL: powershell
+
+  matrix:
+    - name: "Windows - TeX Live 2018"
+      windows_container:
+        dockerfile: ci/texlive-2018-win.Dockerfile
+        os_version: 2019
+
+  install_script:
+    - pdfinfo -v
+    - compare -version
+    - gswin64c -v
+
+  test_script:
+    - echo "TEST"
