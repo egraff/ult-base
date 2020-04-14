@@ -3,20 +3,21 @@
 
 ## Build/test matrix
 
-| Build                       | Build status                               |
-| --------------------------- | ------------------------------------------ |
-| Linux - TeX Live (latest)   | [![][travis-linux-tl-latest-badge]](#)     |
-| Linux - TeX Live 2018       | [![][travis-linux-tl-2018-badge]](#)       |
-| Linux - TeX Live 2017       | [![][travis-linux-tl-2017-badge]](#)       |
-| Linux - TeX Live 2016       | [![][travis-linux-tl-2016-badge]](#)       |
-| macOS - Tex Live (latest)   | [![][travis-macos-tl-latest-badge]](#)     |
-| macOS - Tex Live 2018       | [![][travis-macos-tl-2018-badge]](#)       |
-| macOS - Tex Live 2017       | [![][travis-macos-tl-2017-badge]](#)       |
-| Windows - TeX Live (latest) | [![][appveyor-texlive-latest-badge]](#)    |
-| Windows - TeX Live 2018     | [![][appveyor-texlive-2018-badge]](#)      |
-| Windows - TeX Live 2017     | [![][appveyor-texlive-2017-badge]](#)      |
-| Windows - MiKTeX (latest)   | [![][appveyor-miktex-latest-badge]](#)     |
-| Windows - proTeXt 2018      | [![][appveyor-protext-2018-badge]](#)      |
+| Build                           | Build status                               |
+| ------------------------------- | ------------------------------------------ |
+| Linux - TeX Live (latest)       | [![][travis-linux-tl-latest-badge]](#)     |
+| Linux - TeX Live 2018           | [![][travis-linux-tl-2018-badge]](#)       |
+| Linux - TeX Live 2017           | [![][travis-linux-tl-2017-badge]](#)       |
+| Linux - TeX Live 2016           | [![][travis-linux-tl-2016-badge]](#)       |
+| macOS - Tex Live (latest)       | [![][travis-macos-tl-latest-badge]](#)     |
+| macOS - Tex Live 2018           | [![][travis-macos-tl-2018-badge]](#)       |
+| macOS - Tex Live 2017           | [![][travis-macos-tl-2017-badge]](#)       |
+| Windows - TeX Live (latest)     | [![][appveyor-texlive-latest-badge]](#)    |
+| Windows - TeX Live 2018         | [![][appveyor-texlive-2018-badge]](#)      |
+| Windows - TeX Live 2017         | [![][appveyor-texlive-2017-badge]](#)      |
+| Windows - MiKTeX (latest)       | [![][appveyor-miktex-latest-badge]](#)     |
+| Windows - MiKTeX install tests  | [![][appveyor-miktex-install-badge]](#)    |
+| Windows - proTeXt 2018          | [![][appveyor-protext-2018-badge]](#)      |
 
 
 [travis-badge]: https://travis-ci.org/egraff/ult-base.svg?branch=master
@@ -38,4 +39,5 @@
 [appveyor-texlive-2018-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/2
 [appveyor-texlive-2017-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/3
 [appveyor-miktex-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/4
-[appveyor-protext-2018-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/5
+[appveyor-miktex-install-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/5
+[appveyor-protext-2018-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/6
