@@ -17,6 +17,7 @@ environment:
 
   matrix:
     - TEST_SUITE: texlive-latest
+    - TEST_SUITE: texlive-2019
     - TEST_SUITE: texlive-2018
     - TEST_SUITE: texlive-2017
     - TEST_SUITE: miktex-latest
