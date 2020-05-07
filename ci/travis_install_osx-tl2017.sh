@@ -3,13 +3,18 @@
 # Exit on failure
 set -e
 
+TLNET_REPO="http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2017/tlnet-final"
+
 wget http://ftp.math.utah.edu/pub/tex/historic/systems/mactex/2017/mactex-basictex-20170607.pkg
 sudo installer -verbose -pkg ./mactex-basictex-20170607.pkg -target /
 
 # export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
 export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
 
-sudo tlmgr option repository http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2017/tlnet-final
+wget ${TLNET_REPO}/update-tlmgr-latest.sh
+sudo sh ./update-tlmgr-latest.sh
+
+sudo tlmgr option repository ${TLNET_REPO}
 sudo -i tlmgr update --self --all
 sudo tlmgr install            \
   collection-basic            \
