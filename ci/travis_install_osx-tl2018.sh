@@ -11,6 +11,7 @@ sudo installer -verbose -pkg ./mactex-basictex-20180417.pkg -target /
 # export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
 export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
 
+# See https://tug.org/pipermail/tex-live/2020-May/045610.html
 wget ${TLNET_REPO}/update-tlmgr-latest.sh
 sudo sh ./update-tlmgr-latest.sh
 
