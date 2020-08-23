@@ -3,11 +3,17 @@
 # Exit on failure
 set -e
 
+TLNET_REPO="http://mirrors.rit.edu/CTAN/systems/texlive/tlnet"
+
 brew cask install basictex
 # export PATH=/Library/TeX/Distributions/.DefaultTeX/Contents/Programs/texbin:$PATH
 export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
 
-sudo tlmgr option repository http://mirrors.rit.edu/CTAN/systems/texlive/tlnet
+# See https://tug.org/pipermail/tex-live/2020-May/045610.html
+wget ${TLNET_REPO}/update-tlmgr-latest.sh
+sudo sh ./update-tlmgr-latest.sh
+
+sudo tlmgr option repository ${TLNET_REPO}
 sudo -i tlmgr update --self --all
 sudo tlmgr install            \
   collection-basic            \
