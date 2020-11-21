@@ -17,8 +17,8 @@ export PATH=/Library/TeX/Distributions/Programs/texbin:$PATH
 #sudo sh ./update-tlmgr-latest.sh
 
 sudo tlmgr option repository ${TLNET_REPO}
-#sudo -i tlmgr update --self --all
-sudo -i tlmgr update --all
+sudo -i tlmgr update --self --all
+echo "tlmgr update completed"
 sudo tlmgr install            \
   collection-basic            \
   collection-bibtexextra      \
