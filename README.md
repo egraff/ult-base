@@ -3,24 +3,24 @@
 
 ## Build/test matrix
 
-| Build                           | Build status                               |
-| ------------------------------- | ------------------------------------------ |
-| Linux - TeX Live (latest)       | [![][travis-linux-tl-latest-badge]](#)     |
-| Linux - TeX Live 2019           | [![][travis-linux-tl-2019-badge]](#)       |
-| Linux - TeX Live 2018           | [![][travis-linux-tl-2018-badge]](#)       |
-| Linux - TeX Live 2017           | [![][travis-linux-tl-2017-badge]](#)       |
-| Linux - TeX Live 2016           | [![][travis-linux-tl-2016-badge]](#)       |
-| macOS - Tex Live (latest)       | [![][travis-macos-tl-latest-badge]](#)     |
-| macOS - Tex Live 2019           | [![][travis-macos-tl-2019-badge]](#)       |
-| macOS - Tex Live 2018           | [![][travis-macos-tl-2018-badge]](#)       |
-| macOS - Tex Live 2017           | [![][travis-macos-tl-2017-badge]](#)       |
-| Windows - TeX Live (latest)     | [![][appveyor-texlive-latest-badge]](#)    |
-| Windows - TeX Live 2019         | [![][appveyor-texlive-2019-badge]](#)      |
-| Windows - TeX Live 2018         | [![][appveyor-texlive-2018-badge]](#)      |
-| Windows - TeX Live 2017         | [![][appveyor-texlive-2017-badge]](#)      |
-| Windows - MiKTeX (latest)       | [![][appveyor-miktex-latest-badge]](#)     |
-| Windows - MiKTeX install tests  | [![][appveyor-miktex-install-badge]](#)    |
-| Windows - proTeXt 2018          | [![][appveyor-protext-2018-badge]](#)      |
+| Build                           | Build status                                                                    |
+| ------------------------------- | ------------------------------------------------------------------------------- |
+| Linux - TeX Live (latest)       | [![][travis-linux-tl-latest-badge]](#)                                          |
+| Linux - TeX Live 2019           | [![][travis-linux-tl-2019-badge]](#) [![][cirrus-linux-tl-2019-badge]](#)       |
+| Linux - TeX Live 2018           | [![][travis-linux-tl-2018-badge]](#) [![][cirrus-linux-tl-2018-badge]](#)       |
+| Linux - TeX Live 2017           | [![][travis-linux-tl-2017-badge]](#) [![][cirrus-linux-tl-2017-badge]](#)       |
+| Linux - TeX Live 2016           | [![][travis-linux-tl-2016-badge]](#) [![][cirrus-linux-tl-2016-badge]](#)       |
+| macOS - Tex Live (latest)       | [![][travis-macos-tl-latest-badge]](#)                                          |
+| macOS - Tex Live 2019           | [![][travis-macos-tl-2019-badge]](#)                                            |
+| macOS - Tex Live 2018           | [![][travis-macos-tl-2018-badge]](#)                                            |
+| macOS - Tex Live 2017           | [![][travis-macos-tl-2017-badge]](#)                                            |
+| Windows - TeX Live (latest)     | [![][appveyor-texlive-latest-badge]](#)                                         |
+| Windows - TeX Live 2019         | [![][appveyor-texlive-2019-badge]](#)                                           |
+| Windows - TeX Live 2018         | [![][appveyor-texlive-2018-badge]](#)                                           |
+| Windows - TeX Live 2017         | [![][appveyor-texlive-2017-badge]](#)                                           |
+| Windows - MiKTeX (latest)       | [![][appveyor-miktex-latest-badge]](#)                                          |
+| Windows - MiKTeX install tests  | [![][appveyor-miktex-install-badge]](#)                                         |
+| Windows - proTeXt 2018          | [![][appveyor-protext-2018-badge]](#)                                           |
 
 
 [travis-badge]: https://travis-ci.com/egraff/ult-base.svg?branch=master
@@ -39,6 +39,11 @@
 [travis-macos-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/7?use_travis_com=true
 [travis-macos-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/8?use_travis_com=true
 [travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/9?use_travis_com=true
+
+[cirrus-linux-tl-2019-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202019
+[cirrus-linux-tl-2018-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202018
+[cirrus-linux-tl-2017-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202017
+[cirrus-linux-tl-2016-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202016
 
 [appveyor-texlive-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/1
 [appveyor-texlive-2019-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/2
