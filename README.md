@@ -23,22 +23,22 @@
 | Windows - proTeXt 2018          | [![][appveyor-protext-2018-badge]](#)      |
 
 
-[travis-badge]: https://travis-ci.org/egraff/ult-base.svg?branch=master
-[travis-url]: https://travis-ci.org/egraff/ult-base
+[travis-badge]: https://travis-ci.com/egraff/ult-base.svg?branch=master
+[travis-url]: https://travis-ci.com/egraff/ult-base
 [cirrus-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?branch=master
 [cirrus-url]: https://cirrus-ci.com/github/egraff/ult-base
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/2i4xagf9s92eoxwu/branch/master?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/egraff/ult-base/branch/master
 
-[travis-linux-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/1
-[travis-linux-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/2
-[travis-linux-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/3
-[travis-linux-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/4
-[travis-linux-tl-2016-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/5
-[travis-macos-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/6
-[travis-macos-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/7
-[travis-macos-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/8
-[travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/9
+[travis-linux-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/1?use_travis_com=true
+[travis-linux-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/2?use_travis_com=true
+[travis-linux-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/3?use_travis_com=true
+[travis-linux-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/4?use_travis_com=true
+[travis-linux-tl-2016-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/5?use_travis_com=true
+[travis-macos-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/6?use_travis_com=true
+[travis-macos-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/7?use_travis_com=true
+[travis-macos-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/8?use_travis_com=true
+[travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/9?use_travis_com=true
 
 [appveyor-texlive-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/1
 [appveyor-texlive-2019-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/2
