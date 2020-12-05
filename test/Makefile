@@ -15,7 +15,7 @@ BASENAME = $(shell basename $(FILE) .tex)
 DIRNAME = $(shell dirname $(FILE))
 
 TESTSDIR = tests
-MAINDIR_REL2_DIRNAME = $(shell $(PYTHON) -c 'import os.path; print os.path.relpath(".", "$(TESTSDIR)/$(DIRNAME)").replace("\\", "/")')
+MAINDIR_REL2_DIRNAME = $(shell $(PYTHON) -c 'import os.path; print(os.path.relpath(".", "$(TESTSDIR)/$(DIRNAME)").replace("\\", "/"))')
 PDFFLD = pdfs
 
 # Placement of all produced files
