@@ -231,7 +231,7 @@ async def make_test_tex_file_async(
         "RETAINBUILDFLD=y",
         "FILE=%s.tex" % (test_name,),
     ]
-    return await asynclib.popen_async(cmd, timeout=30, raise_exception_on_timeout=True)
+    return await asynclib.popen_async(cmd, timeout=120, raise_exception_on_timeout=True)
 
 
 async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestResult]:

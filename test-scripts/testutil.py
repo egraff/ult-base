@@ -48,14 +48,12 @@ def _convert_pdf_page_to_png_async(
         pdf_path,
     ]
 
-    return asynclib.popen_async(gs_cmd, timeout=5)
+    return asynclib.popen_async(gs_cmd)
 
 
 async def get_png_size_async(png_path) -> Awaitable[Tuple[int, int]]:
     identify_cmd = [IDENT, "-format", "%G", png_path]
-    returncode, stdout, _stderr = await asynclib.popen_async(
-        identify_cmd, timeout=10, raise_exception_on_timeout=True
-    )
+    returncode, stdout, _stderr = await asynclib.popen_async(identify_cmd)
 
     assert returncode <= 1
 
@@ -77,9 +75,7 @@ async def compare_pngs_async(
         png_path_second,
         "PNG24:%s" % output_diff_path,
     ]
-    returncode, _stdout, stderr = await asynclib.popen_async(
-        cmp_cmd, timeout=10, raise_exception_on_timeout=True
-    )
+    returncode, _stdout, stderr = await asynclib.popen_async(cmp_cmd)
 
     assert returncode <= 1
 
@@ -106,9 +102,7 @@ class PdfFile(object):
     @staticmethod
     async def _determine_num_pages_in_pdf_async(path: str) -> Awaitable[int]:
         # use pdfinfo to extract number of pages in pdf file
-        returncode, stdout, _stderr = await asynclib.popen_async(
-            [PDFINFO, path], timeout=10, raise_exception_on_timeout=True
-        )
+        returncode, stdout, _stderr = await asynclib.popen_async([PDFINFO, path])
 
         assert returncode <= 1
 
