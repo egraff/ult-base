@@ -1,94 +1,125 @@
-import threading
-import subprocess
-import Queue
-import sys
+import asyncio
+import os
+from typing import Awaitable, List, Tuple
 
-class Deferrer(threading.Thread):
-  def __init__(self, taskFunc, onComplete=None, exceptionQueue=None):
-    threading.Thread.__init__(self)
-    self.__taskFunc = taskFunc
-    self.__onComplete = onComplete
-    self.__exceptionQueue = exceptionQueue
 
-  def run(self):
+class _AsyncProcessProtocol(asyncio.SubprocessProtocol):
+    STDOUT = 1
+    STDERR = 2
+
+    def __init__(self, completed_future):
+        self._completed_future = completed_future
+        self._stdout = bytearray()
+        self._stderr = bytearray()
+        self._transport = None
+
+    def connection_made(self, transport):
+        self._transport = transport
+
+    def pipe_data_received(self, fd: int, data: bytes):
+        if fd == self.STDOUT:
+            self._stdout.extend(data)
+        elif fd == self.STDERR:
+            self._stderr.extend(data)
+
+    # Note: we use connection_lost() instead of process_exited(), because it seems that stdout and stderr data might
+    # not be flushed when process_exited() is called, and we've also observed errors like:
+    #   RuntimeError: Event loop is closed
+    #   Task was destroyed but it is pending!
+    #   task: <Task pending coro=<BaseSubprocessTransport._connect_pipes() done, defined at /usr/lib/python3.6/asyncio/base_subprocess.py:162> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f36d82e4e28>()]>>
+    #
+    # whereas the Python documentation states that
+    #   "After all buffered data is flushed, the protocol’s protocol.connection_lost() method will be called with None as its argument."
+    # and we have not seen problems when relying on connection_lost() instead of process_exited().
+    def connection_lost(self, exc):
+        returncode = self._transport.get_returncode()
+        stdout = self._stdout.splitlines() if self._stdout is not None else []
+        stderr = self._stderr.splitlines() if self._stderr is not None else []
+
+        self._completed_future.set_result((returncode, stdout, stderr))
+
+
+class AsyncPopenTimeoutError(Exception):
+    def __init__(self, returncode, stdout, stderr):
+        super().__init__(self, "The wait for the process to complete timed out")
+        self._returncode = returncode
+        self._stdout = stdout
+        self._stderr = stderr
+
+    @property
+    def returncode(self):
+        return self._returncode
+
+    @property
+    def stdout(self):
+        return self._stdout
+
+    @property
+    def stderr(self):
+        return self._stderr
+
+
+async def popen_async_old(
+    args: List[str], timeout: float = 0
+) -> Awaitable[Tuple[int, List[str], List[str]]]:
+    proc = await asyncio.create_subprocess_exec(
+        *args,
+        env=os.environ,
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE
+    )
+
     try:
-      self.__taskFunc()
-    except Exception:
-      if self.__exceptionQueue:
-        self.__exceptionQueue.put(sys.exc_info())
-    else:
-      try:
-        if self.__onComplete:
-          self.__onComplete()
-      except Exception:
-        if self.__exceptionQueue:
-          self.__exceptionQueue.put(sys.exc_info())
+        task = asyncio.ensure_future(proc.communicate())
+        if timeout > 0:
+            task = asyncio.wait_for(task, timeout)
+
+        stdout, stderr = await task
+    except (asyncio.CancelledError, asyncio.TimeoutError):
+        proc.kill()
+        raise
+
+    stdout = stdout.splitlines() if stdout is not None else []
+    stderr = stderr.splitlines() if stderr is not None else []
+
+    return (proc.returncode, stdout, stderr)
 
 
-class AsyncTaskDeferrer():
-  def __init__(self, task, callback):
-    self.__task = task
-    self.__callback = callback
-    self.__exceptionQueue = Queue.Queue()
-
-    self.__thread = Deferrer(task.wait, self._taskDoneCallback, self.__exceptionQueue)
-    self.__thread.start()
-
-  def _taskDoneCallback(self):
-    if self.__callback:
-      self.__callback(self.__task.result)
-
-  def join(self):
-    self.__thread.join()
-
-    # See if joined thread generated exception
+async def popen_async(
+    args: List[str], timeout: float = 0, raise_exception_on_timeout=False
+) -> Awaitable[Tuple[int, List[str], List[str]]]:
     try:
-      exc = self.__exceptionQueue.get(block=False)
-    except Queue.Empty:
-      pass # No exceptions
+        loop = asyncio.get_running_loop()
+    except AttributeError:
+        loop = asyncio.get_event_loop()
+
+    completed_future = loop.create_future()
+
+    transport, protocol = await loop.subprocess_exec(
+        lambda: _AsyncProcessProtocol(completed_future), *args, env=os.environ
+    )
+
+    try:
+        task = asyncio.ensure_future(completed_future)
+        if timeout > 0:
+            # Note: need to shield the completed_future, to be able to do another
+            # await for it below without getting an InvalidStateError
+            task = asyncio.wait_for(asyncio.shield(task), timeout)
+
+        returncode, stdout, stderr = await task
+    except (asyncio.CancelledError, asyncio.TimeoutError):
+        did_timeout = True
+
+        transport.close()
+        returncode, stdout, stderr = await completed_future
+
+        if did_timeout and raise_exception_on_timeout:
+            raise AsyncPopenTimeoutError(returncode, stdout, stderr)
+
+        # Instead of re-raising exception, ensure non-zero returncode
+        if returncode == 0:
+            returncode = -9
     else:
-      exc_type, exc_obj, exc_trace = exc
+        transport.close()
 
-      # Re-raise same exception from faulting thread
-      raise exc_type, exc_obj, exc_trace
-
-
-class AsyncTask(object):
-  def wait(self):
-    raise NotImplementedError()
-
-  @property
-  def result(self):
-    raise NotImplementedError()
-
-  def await(self, callback=None):
-    deferrer = AsyncTaskDeferrer(self, callback)
-    self.wait = deferrer.join
-
-
-class JoinedAsyncTask(AsyncTask):
-  def __init__(self, *tasks):
-    self.__tasks = tasks
-
-  def wait(self):
-    for task in self.__tasks:
-      task.wait()
-
-  @property
-  def result(self):
-    return (task.result for task in self.__tasks)
-
-
-class AsyncPopen(AsyncTask):
-  def __init__(self, *args, **kwargs):
-    self.__proc = subprocess.Popen(*args, **kwargs)
-
-  def wait(self):
-    stdout, stderr = self.__proc.communicate()
-    self.__proc.wait()
-    self.__stdout = stdout.splitlines() if stdout is not None else []
-    self.__stderr = stderr.splitlines() if stderr is not None else []
-
-  @property
-  def result(self):
-    return (self.__proc, self.__stdout, self.__stderr)
+    return (returncode, stdout, stderr)

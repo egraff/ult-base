@@ -1,108 +1,132 @@
 #!/usr/bin/env python
 
+import asyncio
 import os
 import re
 import errno
 import subprocess
+from typing import Awaitable, List, Tuple
 
-import testenv
 import asynclib
+import testenv
 
-GS = testenv.getGhostScript()
-CMP = testenv.getCompare()
-IDENT = testenv.getIdentify()
-PDFINFO = testenv.getPDFInfo()
+GS = testenv.find_ghostscript()
+CMP = testenv.find_compare()
+IDENT = testenv.find_identify()
+PDFINFO = testenv.find_pdfinfo()
 
 
 def mkdirp(path):
-  try:
-    os.makedirs(path)
-  except OSError:
-    if not os.path.isdir(path):
-      raise
+    try:
+        os.makedirs(path)
+    except OSError:
+        if not os.path.isdir(path):
+            raise
 
 
-def _convertPdfPageToPngAsync(pdfPath, pageNum, outputPngPath):
-  gsCmd = [
-            GS, '-q', '-dQUIET', '-dSAFER', '-dBATCH', '-dNOPAUSE', '-dNOPROMPT',
-            '-sDEVICE=png16m', '-dPDFUseOldCMS=false',
-            '-dMaxBitmap=500000000', '-dAlignToPixels=0', '-dGridFitTT=2', '-r150',
-            '-o', outputPngPath, '-dFirstPage=%s' % pageNum,
-            '-dLastPage=%s' % pageNum, pdfPath
-          ]
+def _convert_pdf_page_to_png_async(
+    pdf_path: str, page_num: int, output_png_path: str
+) -> Awaitable[Tuple[int, List[str], List[str]]]:
+    gs_cmd = [
+        GS,
+        "-q",
+        "-dQUIET",
+        "-dSAFER",
+        "-dBATCH",
+        "-dNOPAUSE",
+        "-dNOPROMPT",
+        "-sDEVICE=png16m",
+        "-dPDFUseOldCMS=false",
+        "-dMaxBitmap=500000000",
+        "-dAlignToPixels=0",
+        "-dGridFitTT=2",
+        "-r150",
+        "-o",
+        output_png_path,
+        "-dFirstPage=%s" % page_num,
+        "-dLastPage=%s" % page_num,
+        pdf_path,
+    ]
 
-  task = asynclib.AsyncPopen(gsCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  return task
+    return asynclib.popen_async(gs_cmd, timeout=5)
 
 
-class GetPngSizeAsyncTask(asynclib.AsyncTask):
-  def __init__(self, pngPath):
-    identifyCmd = [IDENT, '-format', '%G', pngPath]
-    self.__identifyProc = subprocess.Popen(identifyCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+async def get_png_size_async(png_path) -> Awaitable[Tuple[int, int]]:
+    identify_cmd = [IDENT, "-format", "%G", png_path]
+    returncode, stdout, _stderr = await asynclib.popen_async(identify_cmd, timeout=3)
 
-  def wait(self):
-    stdout, _stderr = self.__identifyProc.communicate()
-    self.__identifyProc.wait()
-    lines = stdout.splitlines()
-    assert self.__identifyProc.returncode <= 1
+    assert returncode <= 1
 
-    match = re.match(r'^(\d+)x(\d+)$', lines[0])
+    match = re.match(r"^(\d+)x(\d+)$", stdout[0].decode("ascii"))
     assert match is not None
 
-    self.__result = tuple(int(x) for x in match.groups())
-
-  # Result is (width, height)
-  @property
-  def result(self):
-    return self.__result
+    # Result is (width, height)
+    return tuple(int(x) for x in match.groups())
 
 
-class ComparePngsAsyncTask(asynclib.AsyncTask):
-  def __init__(self, pngPathFirst, pngPathSecond, outputDiffPath):
-    cmpCmd = [CMP, '-metric', 'ae', pngPathFirst, pngPathSecond, 'PNG24:%s' % outputDiffPath]
-    self.__cmpProc = subprocess.Popen(cmpCmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+async def compare_pngs_async(
+    png_path_first: str, png_path_second: str, output_diff_path: str
+) -> Awaitable[int]:
+    cmp_cmd = [
+        CMP,
+        "-metric",
+        "ae",
+        png_path_first,
+        png_path_second,
+        "PNG24:%s" % output_diff_path,
+    ]
+    returncode, _stdout, stderr = await asynclib.popen_async(cmp_cmd, timeout=5)
 
-  def wait(self):
-    _stdout, stderr = self.__cmpProc.communicate()
-    self.__cmpProc.wait()
-    lines = stderr.splitlines()
-    assert self.__cmpProc.returncode <= 1
+    assert returncode <= 1
 
-    # Needed because lines[0] could be something like "1.33125e+006"
-    self.__result = int(float(lines[0]))
+    # Needed because stderr[0] could be something like "1.33125e+006"
+    result = int(float(stderr[0]))
 
-  # Result is diff (0 means equal)
-  @property
-  def result(self):
-    return self.__result
+    # Result is diff (0 means equal)
+    return result
 
 
 class PdfFile(object):
-  def __init__(self, path):
-    if not os.path.exists(path):
-      raise OSError(errno.ENOENT, os.strerror(errno.ENOENT), path)
+    def __init__(self, path: str, num_pages: int):
+        self._path = path
+        self._num_pages = num_pages
 
-    self.path = path
-    self.__determineNumPagesInPdf()
+    @classmethod
+    async def create(cls, path: str):
+        if not os.path.exists(path):
+            raise OSError(errno.ENOENT, os.strerror(errno.ENOENT), path)
 
-  def __determineNumPagesInPdf(self):
-    # use pdfinfo to extract number of pages in pdf file
-    output = subprocess.check_output([PDFINFO, self.path])
-    pages = re.findall(r"\d+", re.search(r"Pages:.*", output).group())[0]
+        num_pages = await cls._determine_num_pages_in_pdf_async(path)
+        return cls(path, num_pages)
 
-    self.__numPages = int(pages)
+    @staticmethod
+    async def _determine_num_pages_in_pdf_async(path: str) -> Awaitable[int]:
+        # use pdfinfo to extract number of pages in pdf file
+        returncode, stdout, _stderr = await asynclib.popen_async(
+            [PDFINFO, path], timeout=3
+        )
 
-  def numPhysicalPages(self):
-    return self.__numPages
+        assert returncode <= 1
 
-  # Generate PNG for given page number in PDF
-  def getPngForPageAsync(self, pageNum, outputPngPath):
-    assert pageNum >= 1
-    assert pageNum <= self.numPhysicalPages()
+        output = b"\n".join(stdout).decode("utf-8")
+        pages = re.findall(r"\d+", re.search(r"Pages:.*", output).group())[0]
+        return int(pages)
 
-    return _convertPdfPageToPngAsync(self.path, pageNum, outputPngPath)
+    @property
+    def path(self) -> str:
+        return self._path
 
-  # Generate PNG for given page number in PDF
-  def getPngForPage(self, pageNum, outputPngPath, callback):
-    task = self.getPngForPageAsync(pageNum, outputPngPath)
-    task.await(callback)
+    @property
+    def num_physical_pages(self) -> int:
+        return self._num_pages
+
+    # Generate PNG for given page number in PDF
+    async def get_png_for_page_async(
+        self, page_num: int, output_png_path: str
+    ) -> Awaitable[Tuple[int, List[str], List[str]]]:
+        assert page_num >= 1
+        assert page_num <= self._num_pages
+
+        return await _convert_pdf_page_to_png_async(
+            self.path, page_num, output_png_path
+        )

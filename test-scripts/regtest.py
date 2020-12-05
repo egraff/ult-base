@@ -1,433 +1,534 @@
 #!/usr/bin/env python
 
+import asyncio
+import json
 import os
 import re
-import sys
-import json
-import traceback
-import threading
 import subprocess
+import sys
+import traceback
+from types import TracebackType
+from typing import Any, Awaitable, List, Optional, Tuple, Type
+import threading
 
 import asynclib
-from testutil import ComparePngsAsyncTask, GetPngSizeAsyncTask, PdfFile, mkdirp
+from testutil import compare_pngs_async, get_png_size_async, PdfFile, mkdirp
 
 
 class debug:
-  NORMAL = "\\033[0m"
-  INFO  = "\\033[1;34m"
-  DEBUG = "\\033[0;32m"
-  WARNING = "\\033[1;33m"
-  YELLOW = "\\033[1;33m"
-  BLUE = "\\033[1;34m"
-  ERROR = "\\033[1;31m"
-  FUCK = "\\033[1;41m"
-  GREEN = "\\033[1;32m"
-  WHITE = "\\033[1;37m"
-  BOLD = "\\033[1m"
-  UNDERLINE = "\\033[4m"
+    NORMAL = "\\033[0m"
+    INFO = "\\033[1;34m"
+    DEBUG = "\\033[0;32m"
+    WARNING = "\\033[1;33m"
+    YELLOW = "\\033[1;33m"
+    BLUE = "\\033[1;34m"
+    ERROR = "\\033[1;31m"
+    FUCK = "\\033[1;41m"
+    GREEN = "\\033[1;32m"
+    WHITE = "\\033[1;37m"
+    BOLD = "\\033[1m"
+    UNDERLINE = "\\033[4m"
+
 
 dlvl = [
-  debug.INFO,
-  debug.DEBUG,
-  debug.WARNING,
-  debug.FUCK,
-  debug.NORMAL,
-  debug.BOLD,
-  debug.UNDERLINE,
-  debug.WHITE,
-  debug.GREEN,
-  debug.YELLOW,
-  debug.BLUE,
-  debug.ERROR
+    debug.INFO,
+    debug.DEBUG,
+    debug.WARNING,
+    debug.FUCK,
+    debug.NORMAL,
+    debug.BOLD,
+    debug.UNDERLINE,
+    debug.WHITE,
+    debug.GREEN,
+    debug.YELLOW,
+    debug.BLUE,
+    debug.ERROR,
 ]
 
 
-class TestPdfPagePair(asynclib.AsyncTask):
-  def __init__(self, config, testPdfObj, protoPdfObj, pageNum, testName):
-    self.config = config
-    self.pageNum = pageNum
+class TestConfig:
+    def __init__(self, test_dir, num_dots_per_line=80, debug_level=debug.INFO):
+        test_dir = os.path.relpath(os.path.realpath(test_dir)).replace("\\", "/")
+        assert os.path.isdir(test_dir)
 
-    tmpTestsDir = "%s/tests" % (config.TMPDIR,)
-    tmpProtoDir = "%s/proto" % (config.TMPDIR,)
-    diffDir = config.DIFFDIR
+        self.TESTDIR = test_dir
+        self.PDFSDIR = os.path.join(test_dir, "pdfs").replace("\\", "/")
+        self.PROTODIR = os.path.join(test_dir, "proto").replace("\\", "/")
+        self.TMPDIR = os.path.join(test_dir, "tmp").replace("\\", "/")
+        self.DIFFDIR = os.path.join(test_dir, "diffs").replace("\\", "/")
 
-    self.testPngPagePath = "%s/%s_%s.png" % (tmpTestsDir, testName, self.pageNum)
-    self.protoPngPagePath = "%s/%s_%s.png" % (tmpProtoDir, testName, self.pageNum)
-    self.diffPath = "%s/%s_%s.png" % (diffDir, testName, self.pageNum)
+        self.NUM_DOTS_PER_LINE = num_dots_per_line
 
-    mkdirp(os.path.dirname(self.testPngPagePath))
-    mkdirp(os.path.dirname(self.protoPngPagePath))
-    mkdirp(os.path.dirname(self.diffPath))
+        self.DEBUGLEVEL = debug_level
+
+        self.echo_lock = threading.Lock()
+        self.make_task_semaphore = asyncio.BoundedSemaphore(1)
+        self.process_pool_semaphore = asyncio.BoundedSemaphore(8)
+
+
+class TestResult:
+    def __init__(
+        self,
+        test_name: str,
+        build_succeeded: bool,
+        build_timed_out: bool = False,
+        exc_info: Optional[
+            Tuple[Type[BaseException], BaseException, TracebackType]
+        ] = None,
+        build_returncode: int = 0,
+        build_stdout: Optional[List[str]] = None,
+        build_stderr: Optional[List[str]] = None,
+        failed_pages: Optional[List[int]] = None,
+    ):
+        self.test_name = test_name
+        self.build_succeeded = build_succeeded
+        self.build_timed_out = build_timed_out
+        self.exc_info = exc_info
+        self.build_returncode = build_returncode
+        self.build_stdout = build_stdout or []
+        self.build_stderr = build_stderr or []
+        self.failed_pages = failed_pages or []
+
+
+async def test_pdf_page_pair_async(
+    config: TestConfig,
+    test_pdf_obj: PdfFile,
+    proto_pdf_obj: PdfFile,
+    page_num: int,
+    test_name: str,
+) -> Awaitable[Tuple[int, bool]]:
+    tmp_tests_dir = "%s/tests" % (config.TMPDIR,)
+    tmp_proto_dir = "%s/proto" % (config.TMPDIR,)
+    diff_dir = config.DIFFDIR
+
+    test_png_page_path = "%s/%s_%s.png" % (tmp_tests_dir, test_name, page_num)
+    proto_png_page_path = "%s/%s_%s.png" % (tmp_proto_dir, test_name, page_num)
+    diff_path = "%s/%s_%s.png" % (diff_dir, test_name, page_num)
+
+    mkdirp(os.path.dirname(test_png_page_path))
+    mkdirp(os.path.dirname(proto_png_page_path))
+    mkdirp(os.path.dirname(diff_path))
 
     # Start processes for generating PNGs
-    config.processPoolSemaphore.acquire()
-    self.testPdfTask = testPdfObj.getPngForPageAsync(pageNum, self.testPngPagePath)
-    self.protoPdfTask = protoPdfObj.getPngForPageAsync(pageNum, self.protoPngPagePath)
+    async with config.process_pool_semaphore:
+        test_pdf_task = asyncio.ensure_future(
+            test_pdf_obj.get_png_for_page_async(page_num, test_png_page_path)
+        )
+        proto_pdf_task = asyncio.ensure_future(
+            proto_pdf_obj.get_png_for_page_async(page_num, proto_png_page_path)
+        )
 
-    # Wait asynchronously for PNG processes to complete
-    # Note: we start a worker thread with await(), because we want to initiate the
-    # compare operation as soon as possible, rather than after self.wait() has been
-    # called.
-    self.joinedPdfTask = asynclib.JoinedAsyncTask(self.testPdfTask, self.protoPdfTask)
-    self.joinedPdfTask.await(self._compare)
+        gen_png_results = await asyncio.gather(test_pdf_task, proto_pdf_task)
+        gen_test_png_results, gen_proto_png_results = gen_png_results
+        gen_test_png_returncode, _stdout, _stderr = gen_test_png_results
+        gen_proto_png_returncode, _stdout, _stderr = gen_proto_png_results
 
-    # Wait routine for this task is thread-join for joined task
-    self.wait = self.joinedPdfTask.wait
+        assert gen_test_png_returncode == 0, "Failed to generate PNG %s" % (
+            test_png_page_path,
+        )
+        assert gen_proto_png_returncode == 0, "Failed to generate PNG %s" % (
+            proto_png_page_path,
+        )
 
-  def _compare(self, results):
-    try:
-      genPngProcResults = results
+        # FIXME: should probably have chained each png task to each png size task, but getting the image sizes should be quick...
+        test_png_size = await get_png_size_async(test_png_page_path)
+        proto_png_size = await get_png_size_async(proto_png_page_path)
 
-      genTestPngProcResults, genProtoPngProcResults = genPngProcResults
-      genTestPngProc, _stdout, _stderr = genTestPngProcResults
-      genProtoPngProc, _stdout, _stderr = genProtoPngProcResults
+        if test_png_size != proto_png_size:
+            return page_num, False
 
-      assert genTestPngProc.returncode == 0, "Failed to generate PNG %s" % (self.testPngPagePath,)
-      assert genProtoPngProc.returncode == 0, "Failed to generate PNG %s" % (self.protoPngPagePath,)
+        ae_diff = await compare_pngs_async(
+            test_png_page_path, proto_png_page_path, diff_path
+        )
+        pngs_are_equal = ae_diff == 0
 
-      # FIXME: should probably have chained each png task to each png size task, but getting the image sizes should be quick...
-      task = GetPngSizeAsyncTask(self.testPngPagePath)
-      task.wait()
-      testPngSize = task.result
-
-      task = GetPngSizeAsyncTask(self.protoPngPagePath)
-      task.wait()
-      protoPngSize = task.result
-
-      if testPngSize != protoPngSize:
-        self.__result = (self.pageNum, False)
-        return
-
-      task = ComparePngsAsyncTask(self.testPngPagePath, self.protoPngPagePath, self.diffPath)
-      # Wait synchronously since we're already executing in separate thread
-      task.wait()
-
-      aeDiff = task.result
-      self.__pngsAreEqual = (aeDiff == 0)
-
-      if self.__pngsAreEqual:
-        os.remove(self.testPngPagePath)
-        os.remove(self.protoPngPagePath)
-        try:
-          os.remove(self.diffPath)
-        except OSError:
-          pass
-
-      self.__result = (self.pageNum, self.__pngsAreEqual)
-    finally:
-      self.config.processPoolSemaphore.release()
-
-  # Result is on the form (pagenum, PNGs are equal)
-  @property
-  def result(self):
-    return self.__result
+    return (page_num, pngs_are_equal)
 
 
 # Use file name of PDF to determine which pages we want to test
-def determineListOfPagesToTest(pdfObj):
-  numPages = pdfObj.numPhysicalPages()
-  basename = os.path.basename(pdfObj.path)
-  noext = os.path.splitext(basename)[0]
+def determine_list_of_pages_to_test(pdf_obj: PdfFile) -> List[int]:
+    num_pages = pdf_obj.num_physical_pages
+    basename = os.path.basename(pdf_obj.path)
+    noext = os.path.splitext(basename)[0]
 
-  # search for a range in filename ( denoted with [ ] ) and save only the range
-  textrange = re.search(r"\[.*\]", noext)
-  if textrange is not None:
-    # remove brackets and commas
-    textrange = re.sub(r"([\[\]])", r"", textrange.group()).replace(r",", " ")
-    pageList = []
+    # search for a range in filename ( denoted with [ ] ) and save only the range
+    textrange = re.search(r"\[.*\]", noext)
+    if textrange is not None:
+        # remove brackets and commas
+        textrange = re.sub(r"([\[\]])", r"", textrange.group()).replace(r",", " ")
+        page_list = []
 
-    # make list and translate hyphen into a sequence, e.g 3-6 -> "3 4 5 6"
-    for num in textrange.split(" "):
-      if "-" in num:
-        numrange = num.split("-")
-        assert len(numrange) == 2
+        # make list and translate hyphen into a sequence, e.g 3-6 -> "3 4 5 6"
+        for num in textrange.split(" "):
+            if "-" in num:
+                numrange = num.split("-")
+                assert len(numrange) == 2
 
-        numrange = range(int(numrange[0]), int(numrange[1]) + 1)
-        pageList.extend(numrange)
-      else:
-        pageList.append(int(num))
-
-    pageList = sorted(set(pageList))
-
-    for pageNum in pageList:
-      assert pageNum <= numPages
-  else:
-    pageList = range(1, numPages + 1)
-
-  return pageList
-
-
-class TestPdfPair(asynclib.AsyncTask):
-  def __init__(self, config, testName):
-    self.testName = testName
-
-    testPdfPath = "%s/%s.pdf" % (config.PDFSDIR, testName)
-    protoPdfPath = "%s/%s.pdf" % (config.PROTODIR, testName)
-
-    config.processPoolSemaphore.acquire()
-    try:
-      testPdfObj = PdfFile(testPdfPath)
-      protoPdfObj = PdfFile(protoPdfPath)
-    finally:
-      config.processPoolSemaphore.release()
-
-    testPageList = determineListOfPagesToTest(testPdfObj)
-    protoPageList = determineListOfPagesToTest(protoPdfObj)
-
-    pageList = set(testPageList + protoPageList)
-
-    self.failedPages = []
-
-    testTasks = []
-    for pageNum in pageList:
-      if pageNum not in testPageList or pageNum not in protoPageList:
-        self.failedPages.append(pageNum)
-        continue
-
-      task = TestPdfPagePair(config, testPdfObj, protoPdfObj, pageNum, testName)
-      testTasks.append(task)
-
-    self.__joinedTestTask = asynclib.JoinedAsyncTask(*testTasks)
-    self.wait = self.__joinedTestTask.wait
-
-  # Result is on the form (testname, list of failed pages)
-  @property
-  def result(self):
-    pngResults = self.__joinedTestTask.result
-
-    for pageNum, pngsAreEqual in pngResults:
-      if not pngsAreEqual:
-        self.failedPages.append(pageNum)
-
-    return (self.testName, self.failedPages)
-
-
-def makeTestTask(config, testName):
-  cmd = ['make', '-C', config.TESTDIR, '--no-print-directory', '_file', 'RETAINBUILDFLD=y', 'FILE=%s.tex' % (testName,)]
-  task = asynclib.AsyncPopen(cmd, shell=False, env=os.environ, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-  return task
-
-
-class TestTask(asynclib.AsyncTask):
-  def __init__(self, config, testName):
-    self.config = config
-    self.testName = testName
-
-    config.makeTaskSemaphore.acquire()
-    task = makeTestTask(config, self.testName)
-    task.await(self._makeTaskComplete)
-    self.wait = task.wait
-
-  def _makeTaskComplete(self, procResults):
-    self.config.makeTaskSemaphore.release()
-
-    proc, stdout, stderr = procResults
-
-    if proc.returncode != 0:
-      self.__result = (self.testName, False, None, (proc, stdout, stderr))
-      return
-
-    try:
-      task = TestPdfPair(self.config, self.testName)
-    except:
-      self.__result = (self.testName, True, sys.exc_info(), None)
-      return
-    else:
-      task.wait()
-      _, failedPages = task.result
-
-      self.__result = (self.testName, True, None, failedPages)
-
-  # Result is on the form
-  #  (test name, build succeeded = TRUE, exception = None, list of failed pages)
-  # or
-  #  (test name, build succeeded = TRUE, exc_info, None)
-  # or
-  #  (test name, build succeeded = FALSE, None, (build proc, stdout, stderr))
-  @property
-  def result(self):
-    return self.__result
-
-
-class TestRunner():
-  def __init__(self, config):
-    self.testResultLock = threading.Lock()
-    self.numTestsCompleted = 0
-    self.failedTests = []
-    self.tasks = []
-    self.config = config
-
-  def echo(self, *string):
-    color = ""
-    if string[0] in dlvl:
-      if dlvl.index(string[0]) < dlvl.index(self.config.DEBUGLEVEL):
-        return
-
-      color = string[0]
-      string = string[1:]
-
-    echoStr = ' '.join(str(x) for x in string)
-    with self.config.echoLock:
-      subprocess.Popen([
-        'sh',
-        '-c',
-        'printf "%s"; printf %r; printf "%s"' % (color, echoStr, '\\033[0m')
-      ]).wait()
-
-  def __testCallback(self, result):
-    testName, buildSucceeded, exception, failedPages = result
-    testPassed = buildSucceeded and (exception is None) and (len(failedPages) == 0)
-
-    with self.testResultLock:
-      if self.numTestsCompleted % self.config.NUM_DOTS_PER_LINE == 0:
-        self.echo(debug.BOLD, "\n")
-
-      self.numTestsCompleted += 1
-
-      if testPassed:
-        self.echo(debug.GREEN, ".")
-      else:
-        if not buildSucceeded:
-          self.echo(debug.ERROR, "B")
-        elif exception:
-          self.echo(debug.ERROR, "E")
-        else:
-          self.echo(debug.ERROR, "F")
-        self.failedTests.append(result)
-
-  def run(self, testNames):
-    for testName in testNames:
-      task = TestTask(self.config, testName)
-      task.await(self.__testCallback)
-      self.tasks.append(task)
-
-  def waitForSummary(self):
-    asynclib.JoinedAsyncTask(*self.tasks).wait()
-    
-    resultMap = {}
-
-    with self.testResultLock:
-      with open(os.path.join(self.config.TESTDIR, "test_result.json").replace("\\", "/"), 'wb') as fp:
-        resultMap['num_tests'] = self.numTestsCompleted
-        resultMap['failed_tests'] = []
-        self.echo(debug.BOLD, "\n\n\nRan %s tests, " % (self.numTestsCompleted,))
-
-        if len(self.failedTests) == 0:
-          self.echo(debug.GREEN, "all succeeded!\n\n")
-          json.dump(resultMap, fp)
-          sys.exit(0)
-        else:
-          self.echo(debug.ERROR, "%s failed" % (len(self.failedTests),))
-          self.echo(debug.BOLD, ".\n\nError summary:\n\n")
-
-          for testName, buildSucceeded, exc_info, arg in self.failedTests:
-            failedTestMap = {}
-            failedTestMap['test_name'] = testName
-            failedTestMap['build_succeeded'] = buildSucceeded
-            failedTestMap['exception'] = False if exc_info is None else True
-            self.echo(debug.BOLD, "  %s\n" % (testName,))
-            if not buildSucceeded:
-              proc, stdout, stderr = arg
-              failedTestMap['proc'] = {}
-              failedTestMap['proc']['returncode'] = proc.returncode
-              failedTestMap['proc']['stdout'] = []
-              failedTestMap['proc']['stderr'] = []
-              self.echo(debug.ERROR, "    Build failed!\n")
-              self.echo(debug.ERROR, "    stdout output:\n")
-              for line in stdout:
-                line = line.rstrip('\n')
-                failedTestMap['proc']['stdout'].append(line)
-                self.echo(debug.NORMAL, "      %s\n" % (line,))
-              self.echo(debug.ERROR, "\n    stderr output:\n")
-              for line in stderr:
-                line = line.rstrip('\n')
-                failedTestMap['proc']['stderr'].append(line)
-                self.echo(debug.NORMAL, "      %s\n" % (line,))
-              latexLogFile = ".build/%s/output.log" % (testName,)
-              if os.path.exists(latexLogFile):
-                failedTestMap['log_file'] = latexLogFile
-                self.echo(debug.BOLD, "\n    see %s for more info.\n\n" % (latexLogFile,))
-              else:
-                self.echo(debug.BOLD, "\n\n")
-            elif exc_info is not None:
-              failedTestMap['exc_info'] = {}
-              failedTestMap['exc_info']['type'] = str(exc_info[0])
-              failedTestMap['exc_info']['value'] = str(exc_info[1])
-              failedTestMap['exc_info']['traceback'] = []
-              self.echo(debug.ERROR, "    Got exception %s: %s\n" % (exc_info[0], exc_info[1]))
-              self.echo(debug.ERROR, "    Traceback:\n")
-              for frame in traceback.format_tb(exc_info[2]):
-                for line in frame.split('\n'):
-                  line = line.rstrip('\n')
-                  failedTestMap['exc_info']['traceback'].append(line)
-                  self.echo(debug.NORMAL, "      %s\n" % (line,))
+                numrange = range(int(numrange[0]), int(numrange[1]) + 1)
+                page_list.extend(numrange)
             else:
-              failedPages = arg
-              failedTestMap['failed_pages'] = failedPages
-              failedPagesString = ", ".join(str(x) for x in failedPages)
-              self.echo(debug.ERROR, "    Pages with diff: %s.\n\n" % (failedPagesString,))
-            resultMap['failed_tests'].append(failedTestMap)
+                page_list.append(int(num))
 
-          self.echo(debug.BLUE, "PNGs containing diffs are available in '%s'\n\n" % (self.config.DIFFDIR,))
-          json.dump(resultMap, fp)
-          sys.exit(1)
+        page_list = sorted(set(page_list))
 
+        for page_num in page_list:
+            assert page_num <= num_pages
+    else:
+        page_list = list(range(1, num_pages + 1))
 
-def testGenerator(texTestsRootDir, testFilePrefix='test'):
-  for dirPath, dirNames, fileNames in os.walk(texTestsRootDir):
-    for fileName in fileNames:
-      # Ignore files that contain spaces
-      if " " in fileName:
-        continue
-
-      if not fileName.startswith(testFilePrefix):
-        continue
-
-      if not fileName.endswith(".tex"):
-        continue
-
-      filebasename = os.path.splitext(fileName)[0]
-      test_name = os.path.relpath(os.path.join(dirPath, filebasename), texTestsRootDir).replace("\\", "/")
-
-      yield test_name
+    return page_list
 
 
-class TestConfig():
-  def __init__(self, testDir, numDotsPerLine=80, debugLevel=debug.INFO):
-    testDir = os.path.relpath(os.path.realpath(testDir)).replace("\\", "/")
-    assert os.path.isdir(testDir)
+async def test_pdf_pair_async(
+    config: TestConfig, test_name: str
+) -> Awaitable[Tuple[str, List[int]]]:
+    test_pdf_path = "%s/%s.pdf" % (config.PDFSDIR, test_name)
+    proto_pdf_path = "%s/%s.pdf" % (config.PROTODIR, test_name)
 
-    self.TESTDIR     = testDir
-    self.PDFSDIR     = os.path.join(testDir, "pdfs").replace("\\", "/")
-    self.PROTODIR    = os.path.join(testDir, "proto").replace("\\", "/")
-    self.TMPDIR      = os.path.join(testDir, "tmp").replace("\\", "/")
-    self.DIFFDIR     = os.path.join(testDir, "diffs").replace("\\", "/")
+    async with config.process_pool_semaphore:
+        test_pdf_obj = await PdfFile.create(test_pdf_path)
+        proto_pdf_obj = await PdfFile.create(proto_pdf_path)
 
-    self.NUM_DOTS_PER_LINE = numDotsPerLine
+    test_page_list = determine_list_of_pages_to_test(test_pdf_obj)
+    proto_page_list = determine_list_of_pages_to_test(proto_pdf_obj)
 
-    self.DEBUGLEVEL = debugLevel
+    page_list = set(test_page_list + proto_page_list)
 
-    self.echoLock = threading.Lock()
-    self.makeTaskSemaphore = threading.BoundedSemaphore(1)
-    self.processPoolSemaphore = threading.BoundedSemaphore(8)
+    failed_pages = []
+
+    test_tasks = []
+    for page_num in page_list:
+        if page_num not in test_page_list or page_num not in proto_page_list:
+            failed_pages.append(page_num)
+            continue
+
+        task = asyncio.ensure_future(
+            test_pdf_page_pair_async(
+                config, test_pdf_obj, proto_pdf_obj, page_num, test_name
+            )
+        )
+        test_tasks.append(task)
+
+    png_results = await asyncio.gather(*test_tasks)
+
+    for page_num, pngs_are_equal in png_results:
+        if not pngs_are_equal:
+            failed_pages.append(page_num)
+
+    # Result is on the form (testname, list of failed pages)
+    return (test_name, failed_pages)
 
 
-if __name__ == '__main__':
-  if len(sys.argv) not in [2, 3]:
-    print "Usage: %s <test base folder> [<test name>]" % sys.argv[0]
-    sys.exit(1)
+async def make_test_tex_file_async(
+    config: TestConfig, test_name: str
+) -> Awaitable[Tuple[int, List[str], List[str]]]:
+    cmd = [
+        "make",
+        "-C",
+        config.TESTDIR,
+        "--no-print-directory",
+        "_file",
+        "RETAINBUILDFLD=y",
+        "FILE=%s.tex" % (test_name,),
+    ]
+    return await asynclib.popen_async(cmd, timeout=30, raise_exception_on_timeout=True)
 
-  testDir = sys.argv[1]
-  texTestsRootDir = os.path.join(testDir, "tests").replace("\\", "/")
 
-  config = TestConfig(testDir)
-  runner = TestRunner(config)
+async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestResult]:
+    async with config.make_task_semaphore:
+        try:
+            returncode, stdout, stderr = await make_test_tex_file_async(
+                config, test_name
+            )
+        except asynclib.AsyncPopenTimeoutError as err:
+            return TestResult(
+                test_name,
+                False,
+                build_timed_out=True,
+                build_returncode=err.returncode,
+                build_stdout=err.stdout,
+                build_stderr=err.stderr,
+            )
+        except:
+            return TestResult(test_name, False, exc_info=sys.exc_info())
 
-  if len(sys.argv) == 3:
-    testName = sys.argv[2]
-    tests = [testName]
-  else:
-    tests = [tup for tup in testGenerator(texTestsRootDir)]
+    if returncode != 0:
+        return TestResult(
+            test_name,
+            False,
+            build_returncode=returncode,
+            build_stdout=stdout,
+            build_stderr=stderr,
+        )
 
-  runner.run(tests)
-  runner.waitForSummary()
+    try:
+        _, failed_pages = await test_pdf_pair_async(config, test_name)
+        return TestResult(test_name, True, failed_pages=failed_pages)
+    except:
+        return TestResult(test_name, True, exc_info=sys.exc_info())
+
+
+class TestRunner:
+    def __init__(self, config):
+        self.test_result_lock = asyncio.Lock()
+        self.num_tests_completed = 0
+        self.failed_tests = []
+        self.tasks = []
+        self.config = config
+
+    def echo(self, *string):
+        color = ""
+        if string[0] in dlvl:
+            if dlvl.index(string[0]) < dlvl.index(self.config.DEBUGLEVEL):
+                return
+
+            color = string[0]
+            string = string[1:]
+
+        echo_str = " ".join(str(x) for x in string)
+        with self.config.echo_lock:
+            subprocess.Popen(
+                [
+                    "sh",
+                    "-c",
+                    'printf "{}"; printf "{}"; printf "{}"'.format(
+                        color,
+                        echo_str.encode("unicode_escape")
+                        .decode("utf-8")
+                        .replace('"', r"\""),
+                        "\\033[0m",
+                    ),
+                ]
+            ).wait()
+
+    async def _run_test(self, test_name):
+        test_result = await run_test_async(self.config, test_name)
+        test_passed = (
+            test_result.build_succeeded
+            and (test_result.exc_info is None)
+            and (len(test_result.failed_pages) == 0)
+        )
+
+        async with self.test_result_lock:
+            if self.num_tests_completed % self.config.NUM_DOTS_PER_LINE == 0:
+                self.echo(debug.BOLD, "\n")
+
+            self.num_tests_completed += 1
+
+            if test_passed:
+                self.echo(debug.GREEN, ".")
+            else:
+                if test_result.build_timed_out:
+                    self.echo(debug.ERROR, "T")
+                elif test_result.exc_info:
+                    self.echo(debug.ERROR, "E")
+                elif not test_result.build_succeeded:
+                    self.echo(debug.ERROR, "B")
+                else:
+                    self.echo(debug.ERROR, "F")
+
+                self.failed_tests.append(test_result)
+
+    async def run(self, test_names):
+        tasks = []
+        for test_name in test_names:
+            task = asyncio.ensure_future(self._run_test(test_name))
+            tasks.append(task)
+
+        await asyncio.gather(*tasks)
+
+        result_map = {}
+
+        async with self.test_result_lock:
+            with open(
+                os.path.join(self.config.TESTDIR, "test_result.json").replace(
+                    "\\", "/"
+                ),
+                "w",
+                encoding="utf8",
+            ) as fp:
+                result_map["num_tests"] = self.num_tests_completed
+                result_map["failed_tests"] = []
+                self.echo(
+                    debug.BOLD, "\n\n\nRan %s tests, " % (self.num_tests_completed,)
+                )
+
+                if len(self.failed_tests) == 0:
+                    self.echo(debug.GREEN, "all succeeded!\n\n")
+                    json.dump(result_map, fp)
+                    return 0
+
+                self.echo(debug.ERROR, "%s failed" % (len(self.failed_tests),))
+                self.echo(debug.BOLD, ".\n\nError summary:\n\n")
+
+                for test_result in self.failed_tests:
+                    failed_test_map = {}
+                    failed_test_map["test_name"] = test_result.test_name
+                    failed_test_map["build_succeeded"] = test_result.build_succeeded
+                    failed_test_map["build_timed_out"] = test_result.build_timed_out
+                    failed_test_map["exception"] = (
+                        False if test_result.exc_info is None else True
+                    )
+
+                    self.echo(debug.BOLD, "  %s\n" % (test_result.test_name,))
+
+                    if test_result.build_timed_out:
+                        failed_test_map["proc"] = {}
+                        failed_test_map["proc"][
+                            "returncode"
+                        ] = test_result.build_returncode
+                        failed_test_map["proc"]["stdout"] = []
+                        failed_test_map["proc"]["stderr"] = []
+
+                        self.echo(debug.ERROR, "    Build timed out!\n")
+
+                        self.echo(debug.ERROR, "    stdout output:\n")
+                        for line in test_result.build_stdout:
+                            line = line.rstrip(b"\n").decode("utf-8")
+                            failed_test_map["proc"]["stdout"].append(line)
+                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+
+                        self.echo(debug.ERROR, "\n    stderr output:\n")
+                        for line in test_result.build_stderr:
+                            line = line.rstrip(b"\n").decode("utf-8")
+                            failed_test_map["proc"]["stderr"].append(line)
+                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+
+                        latex_log_file = ".build/%s/output.log" % (
+                            test_result.test_name,
+                        )
+                        if os.path.exists(latex_log_file):
+                            failed_test_map["log_file"] = latex_log_file
+                            self.echo(
+                                debug.BOLD,
+                                "\n    see %s for more info.\n\n" % (latex_log_file,),
+                            )
+                        else:
+                            self.echo(debug.BOLD, "\n\n")
+                    elif test_result.exc_info is not None:
+                        failed_test_map["exc_info"] = {}
+                        failed_test_map["exc_info"]["type"] = str(
+                            test_result.exc_info[0]
+                        )
+                        failed_test_map["exc_info"]["value"] = str(
+                            test_result.exc_info[1]
+                        )
+                        failed_test_map["exc_info"]["traceback"] = []
+
+                        self.echo(
+                            debug.ERROR,
+                            "    Got exception %s: %s\n"
+                            % (test_result.exc_info[0], test_result.exc_info[1]),
+                        )
+                        self.echo(debug.ERROR, "    Traceback:\n")
+                        for frame in traceback.format_tb(test_result.exc_info[2]):
+                            for line in frame.split("\n"):
+                                line = line.rstrip("\n")
+                                failed_test_map["exc_info"]["traceback"].append(line)
+                                self.echo(debug.NORMAL, "      %s\n" % (line,))
+                    elif not test_result.build_succeeded:
+                        failed_test_map["proc"] = {}
+                        failed_test_map["proc"][
+                            "returncode"
+                        ] = test_result.build_returncode
+                        failed_test_map["proc"]["stdout"] = []
+                        failed_test_map["proc"]["stderr"] = []
+
+                        self.echo(debug.ERROR, "    Build failed!\n")
+
+                        self.echo(debug.ERROR, "    stdout output:\n")
+                        for line in test_result.build_stdout:
+                            line = line.rstrip(b"\n").decode("utf-8")
+                            failed_test_map["proc"]["stdout"].append(line)
+                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+
+                        self.echo(debug.ERROR, "\n    stderr output:\n")
+                        for line in test_result.build_stderr:
+                            line = line.rstrip(b"\n").decode("utf-8")
+                            failed_test_map["proc"]["stderr"].append(line)
+                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+
+                        latex_log_file = ".build/%s/output.log" % (
+                            test_result.test_name,
+                        )
+                        if os.path.exists(latex_log_file):
+                            failed_test_map["log_file"] = latex_log_file
+                            self.echo(
+                                debug.BOLD,
+                                "\n    see %s for more info.\n\n" % (latex_log_file,),
+                            )
+                        else:
+                            self.echo(debug.BOLD, "\n\n")
+                    else:
+                        failed_test_map["failed_pages"] = test_result.failed_pages
+                        failed_pages_string = ", ".join(
+                            str(x) for x in test_result.failed_pages
+                        )
+
+                        self.echo(
+                            debug.ERROR,
+                            "    Pages with diff: %s.\n\n" % (failed_pages_string,),
+                        )
+
+                    result_map["failed_tests"].append(failed_test_map)
+
+                self.echo(
+                    debug.BLUE,
+                    "PNGs containing diffs are available in '%s'\n\n"
+                    % (self.config.DIFFDIR,),
+                )
+                json.dump(result_map, fp)
+                return 1
+
+
+def test_generator(tex_tests_root_dir: str, test_file_prefix="test"):
+    for dir_path, dir_names, file_names in os.walk(tex_tests_root_dir):
+        for file_name in file_names:
+            # Ignore files that contain spaces
+            if " " in file_name:
+                continue
+
+            if not file_name.startswith(test_file_prefix):
+                continue
+
+            if not file_name.endswith(".tex"):
+                continue
+
+            filebasename = os.path.splitext(file_name)[0]
+            test_name = os.path.relpath(
+                os.path.join(dir_path, filebasename), tex_tests_root_dir
+            ).replace("\\", "/")
+
+            yield test_name
+
+
+if __name__ == "__main__":
+    if len(sys.argv) not in [2, 3]:
+        print("Usage: %s <test base folder> [<test name>]" % sys.argv[0])
+        sys.exit(1)
+
+    if sys.platform == "win32":
+        loop = asyncio.ProactorEventLoop()
+    else:
+        loop = asyncio.SelectorEventLoop()
+
+    asyncio.set_event_loop(loop)
+
+    test_dir = sys.argv[1]
+    tex_tests_root_dir = os.path.join(test_dir, "tests").replace("\\", "/")
+
+    config = TestConfig(test_dir)
+    runner = TestRunner(config)
+
+    if len(sys.argv) == 3:
+        test_name = sys.argv[2]
+        tests = [test_name]
+    else:
+        tests = [tup for tup in test_generator(tex_tests_root_dir)]
+
+    try:
+        retcode = loop.run_until_complete(runner.run(tests))
+    finally:
+        loop.close()
+
+    sys.exit(retcode)
