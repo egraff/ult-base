@@ -48,13 +48,15 @@ dlvl = [
 
 
 class TestConfig:
-    def __init__(self, test_dir, num_dots_per_line=80, debug_level=debug.INFO):
+    def __init__(
+        self, test_dir, proto_dir="proto", num_dots_per_line=80, debug_level=debug.INFO
+    ):
         test_dir = os.path.relpath(os.path.realpath(test_dir)).replace("\\", "/")
         assert os.path.isdir(test_dir)
 
         self.TESTDIR = test_dir
         self.PDFSDIR = os.path.join(test_dir, "pdfs").replace("\\", "/")
-        self.PROTODIR = os.path.join(test_dir, "proto").replace("\\", "/")
+        self.PROTODIR = os.path.join(test_dir, proto_dir).replace("\\", "/")
         self.TMPDIR = os.path.join(test_dir, "tmp").replace("\\", "/")
         self.DIFFDIR = os.path.join(test_dir, "diffs").replace("\\", "/")
 
@@ -555,6 +557,14 @@ if __name__ == "__main__":
         default=None,
         help="the name of a specific test to run",
     )
+    parser.add_argument(
+        "--protodir",
+        dest="proto_dir",
+        type=str,
+        default="proto",
+        help="the name of the test prototype folder",
+    )
+
     args = parser.parse_args()
 
     if sys.platform == "win32":
@@ -567,7 +577,7 @@ if __name__ == "__main__":
     test_dir = args.test_dir
     tex_tests_root_dir = os.path.join(test_dir, "tests").replace("\\", "/")
 
-    config = TestConfig(test_dir)
+    config = TestConfig(test_dir, proto_dir=args.proto_dir)
     runner = TestRunner(config)
 
     if args.test_name is not None:
