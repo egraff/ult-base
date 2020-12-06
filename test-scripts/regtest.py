@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import argparse
 import asyncio
 import json
 import os
@@ -540,9 +541,21 @@ def test_generator(tex_tests_root_dir: str, test_file_prefix="test"):
 
 
 if __name__ == "__main__":
-    if len(sys.argv) not in [2, 3]:
-        print("Usage: %s <test base folder> [<test name>]" % sys.argv[0])
-        sys.exit(1)
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "test_dir",
+        metavar="<test base folder>",
+        type=str,
+        help="the base folder for the tests",
+    )
+    parser.add_argument(
+        "--test",
+        dest="test_name",
+        type=str,
+        default=None,
+        help="the name of a specific test to run",
+    )
+    args = parser.parse_args()
 
     if sys.platform == "win32":
         loop = asyncio.ProactorEventLoop()
@@ -551,15 +564,14 @@ if __name__ == "__main__":
 
     asyncio.set_event_loop(loop)
 
-    test_dir = sys.argv[1]
+    test_dir = args.test_dir
     tex_tests_root_dir = os.path.join(test_dir, "tests").replace("\\", "/")
 
     config = TestConfig(test_dir)
     runner = TestRunner(config)
 
-    if len(sys.argv) == 3:
-        test_name = sys.argv[2]
-        tests = [test_name]
+    if args.test_name is not None:
+        tests = [args.test_name]
     else:
         tests = [tup for tup in test_generator(tex_tests_root_dir)]
 
