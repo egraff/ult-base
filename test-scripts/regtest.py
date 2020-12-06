@@ -6,10 +6,10 @@ import os
 import re
 import subprocess
 import sys
+import threading
 import traceback
 from types import TracebackType
 from typing import Any, Awaitable, List, Optional, Tuple, Type
-import threading
 
 import asynclib
 from testutil import compare_pngs_async, get_png_size_async, PdfFile, mkdirp
@@ -118,10 +118,23 @@ async def test_pdf_page_pair_async(
             proto_pdf_obj.get_png_for_page_async(page_num, proto_png_page_path)
         )
 
-        gen_png_results = await asyncio.gather(test_pdf_task, proto_pdf_task)
-        gen_test_png_results, gen_proto_png_results = gen_png_results
-        gen_test_png_returncode, _stdout, _stderr = gen_test_png_results
-        gen_proto_png_returncode, _stdout, _stderr = gen_proto_png_results
+        done_futures, pending_futures = await asyncio.wait(
+            [test_pdf_task, proto_pdf_task]
+        )
+        assert len(pending_futures) == 0
+
+        gen_test_png_future, gen_proto_png_future = done_futures
+
+        try:
+            gen_test_png_returncode, _stdout, _stderr = await gen_test_png_future
+            gen_proto_png_returncode, _stdout, _stderr = await gen_proto_png_future
+        except:
+            # Observe all exceptions to suppress "Task exception was never retrieved" error
+            # (we are only interested in the first exception)
+            _ = [x.exception() for x in done_futures]
+
+            # Re-raise just the first exception
+            raise
 
         assert gen_test_png_returncode == 0, "Failed to generate PNG %s" % (
             test_png_page_path,
@@ -209,9 +222,20 @@ async def test_pdf_pair_async(
         )
         test_tasks.append(task)
 
-    png_results = await asyncio.gather(*test_tasks)
+    done_futures, pending_futures = await asyncio.wait(test_tasks)
+    assert len(pending_futures) == 0
 
-    for page_num, pngs_are_equal in png_results:
+    for png_future in done_futures:
+        try:
+            page_num, pngs_are_equal = await png_future
+        except:
+            # Observe all exceptions to suppress "Task exception was never retrieved" error
+            # (we are only interested in the first exception)
+            _ = [x.exception() for x in done_futures]
+
+            # Re-raise just the first exception
+            raise
+
         if not pngs_are_equal:
             failed_pages.append(page_num)
 
@@ -335,7 +359,20 @@ class TestRunner:
             task = asyncio.ensure_future(self._run_test(test_name))
             tasks.append(task)
 
-        await asyncio.gather(*tasks)
+        done_futures, pending_futures = await asyncio.wait(tasks)
+        assert len(pending_futures) == 0
+
+        for future in done_futures:
+            # Await to allow a potential exception to propagate
+            try:
+                await future
+            except:
+                # Observe all exceptions to suppress "Task exception was never retrieved" error
+                # (we are only interested in the first exception)
+                _ = [x.exception() for x in done_futures]
+
+                # Re-raise just the first exception
+                raise
 
         result_map = {}
 

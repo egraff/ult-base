@@ -23,12 +23,7 @@ class _AsyncProcessProtocol(asyncio.SubprocessProtocol):
             self._stderr.extend(data)
 
     # Note: we use connection_lost() instead of process_exited(), because it seems that stdout and stderr data might
-    # not be flushed when process_exited() is called, and we've also observed errors like:
-    #   RuntimeError: Event loop is closed
-    #   Task was destroyed but it is pending!
-    #   task: <Task pending coro=<BaseSubprocessTransport._connect_pipes() done, defined at /usr/lib/python3.6/asyncio/base_subprocess.py:162> wait_for=<Future pending cb=[<TaskWakeupMethWrapper object at 0x7f36d82e4e28>()]>>
-    #
-    # whereas the Python documentation states that
+    # not be flushed when process_exited() is called, whereas the Python documentation states that
     #   "After all buffered data is flushed, the protocol’s protocol.connection_lost() method will be called with None as its argument."
     # and we have not seen problems when relying on connection_lost() instead of process_exited().
     def connection_lost(self, exc):
@@ -57,32 +52,6 @@ class AsyncPopenTimeoutError(Exception):
     @property
     def stderr(self):
         return self._stderr
-
-
-async def popen_async_old(
-    args: List[str], timeout: float = 0
-) -> Awaitable[Tuple[int, List[str], List[str]]]:
-    proc = await asyncio.create_subprocess_exec(
-        *args,
-        env=os.environ,
-        stdout=asyncio.subprocess.PIPE,
-        stderr=asyncio.subprocess.PIPE
-    )
-
-    try:
-        task = asyncio.ensure_future(proc.communicate())
-        if timeout > 0:
-            task = asyncio.wait_for(task, timeout)
-
-        stdout, stderr = await task
-    except (asyncio.CancelledError, asyncio.TimeoutError):
-        proc.kill()
-        raise
-
-    stdout = stdout.splitlines() if stdout is not None else []
-    stderr = stderr.splitlines() if stderr is not None else []
-
-    return (proc.returncode, stdout, stderr)
 
 
 async def popen_async(
