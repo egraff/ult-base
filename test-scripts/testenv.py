@@ -23,7 +23,7 @@ def __locate_test_utility(app_name: str, app_cmds: List[str]) -> str:
     stdout, stderr = which_app.communicate()
     which_app.wait()
 
-    app = stdout.strip()
+    app = stdout.strip().decode("utf-8")
 
     if not len(app):
         raise Exception(

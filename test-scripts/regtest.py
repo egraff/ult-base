@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import argparse
 import asyncio
 import contextlib
@@ -379,6 +377,15 @@ class TestRunner:
             string = string[1:]
 
         echo_str = " ".join(str(x) for x in string)
+        encoded_echo_str = (
+            echo_str.encode("unicode_escape").decode("utf-8").replace('"', r"\"")
+        )
+
+        if sys.platform == "win32":
+            encoded_echo_str = encoded_echo_str.replace("\\", r"\\\\").replace(
+                '\\"', '"'
+            )
+
         with self.config.echo_lock:
             subprocess.Popen(
                 [
@@ -386,9 +393,7 @@ class TestRunner:
                     "-c",
                     'printf "{}"; printf "{}"; printf "{}"'.format(
                         color,
-                        echo_str.encode("unicode_escape")
-                        .decode("utf-8")
-                        .replace('"', r"\""),
+                        encoded_echo_str,
                         "\\033[0m",
                     ),
                 ]
