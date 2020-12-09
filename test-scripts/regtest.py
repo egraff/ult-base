@@ -621,6 +621,13 @@ def test_generator(tex_tests_root_dir: str, test_file_prefix="test"):
             yield test_name
 
 
+def _dirname(astring):
+    if (os.path.sep in astring) or ("/" in astring) or (".." in astring):
+        raise argparse.ArgumentTypeError("should be a folder name, not a path")
+
+    return astring
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -639,7 +646,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--protodir",
         dest="proto_dir",
-        type=str,
+        type=_dirname,
         default="proto",
         help="the name of the test prototype folder",
     )
