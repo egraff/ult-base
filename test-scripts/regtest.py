@@ -173,6 +173,11 @@ async def test_pdf_page_pair_async(
         )
         pngs_are_equal = ae_diff == 0
 
+        if pngs_are_equal:
+            os.remove(test_png_page_path)
+            os.remove(proto_png_page_path)
+            os.remove(diff_path)
+
     return (page_num, pngs_are_equal)
 
 
