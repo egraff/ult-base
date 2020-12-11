@@ -16,7 +16,7 @@ IDENT = testenv.find_identify()
 PDFINFO = testenv.find_pdfinfo()
 
 
-DEFAULT_UTIL_TIMEOUT = 30
+DEFAULT_UTIL_TIMEOUT = 60
 
 
 def mkdirp(path):

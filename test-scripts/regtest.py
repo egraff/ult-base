@@ -64,6 +64,7 @@ class TestConfig:
         self,
         test_base_dir,
         proto_dir="proto",
+        num_concurrent_processes=8,
         num_dots_per_line=80,
         debug_level=debug.INFO,
     ):
@@ -284,7 +285,9 @@ async def make_test_tex_file_async(
         "LATEX_OUTPUT_DIR={}".format(latex_output_dir),
         "LATEX_JOBNAME={}".format(latex_jobname),
     ]
-    return await asynclib.popen_async(cmd, timeout=120, raise_exception_on_timeout=True)
+    return await asynclib.popen_async(
+        cmd, timeout=(3 * 60), raise_exception_on_timeout=True
+    )
 
 
 async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestResult]:
@@ -668,7 +671,11 @@ if __name__ == "__main__":
     test_base_dir = args.test_base_dir
     tex_tests_root_dir = path_join(test_base_dir, "tests")
 
-    config = TestConfig(test_base_dir, proto_dir=args.proto_dir)
+    config = TestConfig(
+        test_base_dir,
+        proto_dir=args.proto_dir,
+        num_concurrent_processes=(2 * os.cpu_count()),
+    )
     runner = TestRunner(config)
 
     if args.test_name is not None:
