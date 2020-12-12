@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 import asyncio
 import os
 import re
@@ -16,7 +14,7 @@ IDENT = testenv.find_identify()
 PDFINFO = testenv.find_pdfinfo()
 
 
-DEFAULT_UTIL_TIMEOUT = 60
+DEFAULT_UTIL_TIMEOUT = 2 * 60
 
 
 def mkdirp(path):

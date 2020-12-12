@@ -674,7 +674,7 @@ if __name__ == "__main__":
     config = TestConfig(
         test_base_dir,
         proto_dir=args.proto_dir,
-        num_concurrent_processes=(2 * os.cpu_count()),
+        num_concurrent_processes=min(max(int(1.5 * os.cpu_count()), 2), 16),
     )
     runner = TestRunner(config)
 
