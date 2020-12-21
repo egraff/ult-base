@@ -41,9 +41,9 @@ $env:Path = [System.Environment]::ExpandEnvironmentVariables(
 )
 refreshenv
 
-mpm --admin --update-db --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
-mpm --admin --upgrade --package-level=basic --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
-mpm --admin --update --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
+#mpm --admin --update-db --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
+#mpm --admin --upgrade --package-level=basic --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
+#mpm --admin --update --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
 
 initexmf --admin --enable-installer --verbose
 initexmf --admin --default-paper-size=a4 --verbose
