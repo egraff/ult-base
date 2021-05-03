@@ -6,10 +6,10 @@
 | Build                           | Build status                                                                    |
 | ------------------------------- | ------------------------------------------------------------------------------- |
 | Linux - TeX Live (latest)       | [![][travis-linux-tl-latest-badge]](#)                                          |
-| Linux - TeX Live 2019           | [![][travis-linux-tl-2019-badge]](#) [![][cirrus-linux-tl-2019-badge]](#)       |
-| Linux - TeX Live 2018           | [![][travis-linux-tl-2018-badge]](#) [![][cirrus-linux-tl-2018-badge]](#)       |
-| Linux - TeX Live 2017           | [![][travis-linux-tl-2017-badge]](#) [![][cirrus-linux-tl-2017-badge]](#)       |
-| Linux - TeX Live 2016           | [![][travis-linux-tl-2016-badge]](#) [![][cirrus-linux-tl-2016-badge]](#)       |
+| Linux - TeX Live 2019           | [![][cirrus-linux-tl-2019-badge]](#)                                            |
+| Linux - TeX Live 2018           | [![][cirrus-linux-tl-2018-badge]](#)                                            |
+| Linux - TeX Live 2017           | [![][cirrus-linux-tl-2017-badge]](#)                                            |
+| Linux - TeX Live 2016           | [![][cirrus-linux-tl-2016-badge]](#)                                            |
 | macOS - Tex Live (latest)       | [![][travis-macos-tl-latest-badge]](#)                                          |
 | macOS - Tex Live 2019           | [![][travis-macos-tl-2019-badge]](#)                                            |
 | macOS - Tex Live 2018           | [![][travis-macos-tl-2018-badge]](#)                                            |
