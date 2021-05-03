@@ -1,12 +1,12 @@
-selected_scheme scheme-full
-TEXDIR /usr/local/texlive/2020
-TEXMFCONFIG ~/.texlive2020/texmf-config
+selected_scheme scheme-custom
+TEXDIR C:/texlive/2021
+TEXMFCONFIG ~/.texlive2021/texmf-config
 TEXMFHOME ~/texmf
-TEXMFLOCAL /usr/local/texlive/texmf-local
-TEXMFSYSCONFIG /usr/local/texlive/2020/texmf-config
-TEXMFSYSVAR /usr/local/texlive/2020/texmf-var
-TEXMFVAR ~/.texlive2020/texmf-var
-binary_x86_64-linux 1
+TEXMFLOCAL C:/texlive/texmf-local
+TEXMFSYSCONFIG C:/texlive/2021/texmf-config
+TEXMFSYSVAR C:/texlive/2021/texmf-var
+TEXMFVAR ~/.texlive2021/texmf-var
+binary_win32 1
 collection-basic 1
 collection-bibtexextra 1
 collection-binextra 1
@@ -25,6 +25,7 @@ collection-metapost 1
 collection-pictures 1
 collection-plaingeneric 1
 collection-pstricks 1
+collection-wintools 1
 instopt_adjustpath 1
 instopt_adjustrepo 1
 instopt_letter 0
@@ -39,5 +40,6 @@ tlpdbopt_install_docfiles 0
 tlpdbopt_install_srcfiles 0
 tlpdbopt_post_code 1
 tlpdbopt_sys_bin /usr/local/bin
-tlpdbopt_sys_info /usr/local/info
-tlpdbopt_sys_man /usr/local/man
+tlpdbopt_sys_info /usr/local/share/info
+tlpdbopt_sys_man /usr/local/share/man
+tlpdbopt_w32_multi_user 1

@@ -2,5 +2,5 @@ $ErrorActionPreference = "Stop"
 
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 . "${scriptRoot}\install_texlive_windows.ps1" `
-    -Repository 'http://mirrors.rit.edu/CTAN/systems/texlive/tlnet' `
-    -ProfilePath "${scriptRoot}\texlive2021-win.profile"
+    -Repository 'http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2020/tlnet-final' `
+    -ProfilePath "${scriptRoot}\texlive2020-win.profile"

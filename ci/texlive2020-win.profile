@@ -1,11 +1,11 @@
 selected_scheme scheme-custom
 TEXDIR C:/texlive/2020
-TEXMFCONFIG ~/.texlive2019/texmf-config
+TEXMFCONFIG ~/.texlive2020/texmf-config
 TEXMFHOME ~/texmf
 TEXMFLOCAL C:/texlive/texmf-local
 TEXMFSYSCONFIG C:/texlive/2020/texmf-config
 TEXMFSYSVAR C:/texlive/2020/texmf-var
-TEXMFVAR ~/.texlive2019/texmf-var
+TEXMFVAR ~/.texlive2020/texmf-var
 binary_win32 1
 collection-basic 1
 collection-bibtexextra 1
