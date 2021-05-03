@@ -3,6 +3,9 @@
 \usepackage[norsk,USenglish]{babel}
 \usepackage{hyperref}
 \usepackage{ult-autoref}
+\usepackage{ult-rename}
+
+\renameautorefname[norsk]{figure}{figur}
 
 \begin{document}
 \mainmatter
@@ -14,13 +17,15 @@
 
 \textbf{Test \texttt{\string\Autoref} functionality:}\\
 
-\extrasnorsk
+\selectlanguage{norsk}
+\frenchspacing
 
 \texttt{\string\autoref}: \autoref{fig:test} viser \ldots\\
 
 \texttt{\string\Autoref}: \Autoref{fig:test} viser \ldots\\
 
-\extrasUSenglish
+\selectlanguage{USenglish}
+\frenchspacing
 
 \textbf{Test spacing issue of \texttt{\string\Autoref} macro:}\\
 
