@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import contextlib
+import io
 import json
 import os
 import re
@@ -375,7 +376,17 @@ class TestRunner:
         self.tasks = []
         self.config = config
 
-    def echo(self, *string):
+    def echo_raw(self, echo_str):
+        with self.config.echo_lock:
+            subprocess.Popen(
+                [
+                    "sh",
+                    "-c",
+                    'printf "{}"'.format(echo_str),
+                ]
+            ).wait()
+
+    def colorfmt(self, *string):
         color = ""
         if string[0] in dlvl:
             if dlvl.index(string[0]) < dlvl.index(self.config.DEBUGLEVEL):
@@ -394,18 +405,10 @@ class TestRunner:
                 '\\"', '"'
             )
 
-        with self.config.echo_lock:
-            subprocess.Popen(
-                [
-                    "sh",
-                    "-c",
-                    'printf "{}"; printf "{}"; printf "{}"'.format(
-                        color,
-                        encoded_echo_str,
-                        "\\033[0m",
-                    ),
-                ]
-            ).wait()
+        return (color + encoded_echo_str + "\\033[0m")
+
+    def echo(self, *string):
+        self.echo_raw(self.colorfmt(*string))
 
     async def _run_test(self, test_name):
         test_result = await run_test_async(self.config, test_name)
@@ -479,6 +482,15 @@ class TestRunner:
                 self.echo(debug.BOLD, ".\n\nError summary:\n\n")
 
                 for test_result in self.failed_tests:
+                    # Buffer output in StringIO, to limit the number of echo
+                    # processes being spawned within a short time period
+                    #
+                    # This is done to prevent errors written to stderr looking like this:
+                    #   Exception ignored when trying to write to the signal wakeup fd:
+                    #   BlockingIOError: [Errno 11] Resource temporarily unavailable
+                    echo_out = io.StringIO()
+                    echo = lambda *args: echo_out.write(self.colorfmt(*args))
+
                     failed_test_map = {}
                     failed_test_map["test_name"] = test_result.test_name
                     failed_test_map["build_succeeded"] = test_result.build_succeeded
@@ -487,7 +499,7 @@ class TestRunner:
                         False if test_result.exc_info is None else True
                     )
 
-                    self.echo(debug.BOLD, "  %s\n" % (test_result.test_name,))
+                    echo(debug.BOLD, "  %s\n" % (test_result.test_name,))
 
                     if test_result.build_timed_out:
                         failed_test_map["proc"] = {}
@@ -497,19 +509,19 @@ class TestRunner:
                         failed_test_map["proc"]["stdout"] = []
                         failed_test_map["proc"]["stderr"] = []
 
-                        self.echo(debug.ERROR, "    Build timed out!\n")
+                        echo(debug.ERROR, "    Build timed out!\n")
 
-                        self.echo(debug.ERROR, "    stdout output:\n")
+                        echo(debug.ERROR, "    stdout output:\n")
                         for line in test_result.build_stdout:
                             line = line.rstrip(b"\n").decode("utf-8")
                             failed_test_map["proc"]["stdout"].append(line)
-                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+                            echo(debug.NORMAL, "      %s\n" % (line,))
 
-                        self.echo(debug.ERROR, "\n    stderr output:\n")
+                        echo(debug.ERROR, "\n    stderr output:\n")
                         for line in test_result.build_stderr:
                             line = line.rstrip(b"\n").decode("utf-8")
                             failed_test_map["proc"]["stderr"].append(line)
-                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+                            echo(debug.NORMAL, "      %s\n" % (line,))
 
                         latex_log_file = path_join(
                             config.BUILDDIR, test_result.test_name, "output.log"
@@ -519,14 +531,14 @@ class TestRunner:
                                 latex_log_file, config.TEST_BASE_DIR
                             )
                             failed_test_map["log_file"] = latex_log_file_relpath
-                            self.echo(
+                            echo(
                                 debug.BOLD,
                                 "\n    see {} for more info.\n\n".format(
                                     latex_log_file_relpath
                                 ),
                             )
                         else:
-                            self.echo(debug.BOLD, "\n\n")
+                            echo(debug.BOLD, "\n\n")
                     elif test_result.exc_info is not None:
                         failed_test_map["exc_info"] = {}
                         failed_test_map["exc_info"]["type"] = str(
@@ -537,17 +549,17 @@ class TestRunner:
                         )
                         failed_test_map["exc_info"]["traceback"] = []
 
-                        self.echo(
+                        echo(
                             debug.ERROR,
                             "    Got exception %s: %s\n"
                             % (test_result.exc_info[0], test_result.exc_info[1]),
                         )
-                        self.echo(debug.ERROR, "    Traceback:\n")
+                        echo(debug.ERROR, "    Traceback:\n")
                         for frame in traceback.format_tb(test_result.exc_info[2]):
                             for line in frame.split("\n"):
                                 line = line.rstrip("\n")
                                 failed_test_map["exc_info"]["traceback"].append(line)
-                                self.echo(debug.NORMAL, "      %s\n" % (line,))
+                                echo(debug.NORMAL, "      %s\n" % (line,))
                     elif not test_result.build_succeeded:
                         failed_test_map["proc"] = {}
                         failed_test_map["proc"][
@@ -556,19 +568,19 @@ class TestRunner:
                         failed_test_map["proc"]["stdout"] = []
                         failed_test_map["proc"]["stderr"] = []
 
-                        self.echo(debug.ERROR, "    Build failed!\n")
+                        echo(debug.ERROR, "    Build failed!\n")
 
-                        self.echo(debug.ERROR, "    stdout output:\n")
+                        echo(debug.ERROR, "    stdout output:\n")
                         for line in test_result.build_stdout:
                             line = line.rstrip(b"\n").decode("utf-8")
                             failed_test_map["proc"]["stdout"].append(line)
-                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+                            echo(debug.NORMAL, "      %s\n" % (line,))
 
-                        self.echo(debug.ERROR, "\n    stderr output:\n")
+                        echo(debug.ERROR, "\n    stderr output:\n")
                         for line in test_result.build_stderr:
                             line = line.rstrip(b"\n").decode("utf-8")
                             failed_test_map["proc"]["stderr"].append(line)
-                            self.echo(debug.NORMAL, "      %s\n" % (line,))
+                            echo(debug.NORMAL, "      %s\n" % (line,))
 
                         latex_log_file = path_join(
                             config.BUILDDIR, test_result.test_name, "output.log"
@@ -578,24 +590,26 @@ class TestRunner:
                                 latex_log_file, config.TEST_BASE_DIR
                             )
                             failed_test_map["log_file"] = latex_log_file_relpath
-                            self.echo(
+                            echo(
                                 debug.BOLD,
                                 "\n    see {} for more info.\n\n".format(
                                     latex_log_file_relpath
                                 ),
                             )
                         else:
-                            self.echo(debug.BOLD, "\n\n")
+                            echo(debug.BOLD, "\n\n")
                     else:
                         failed_test_map["failed_pages"] = test_result.failed_pages
                         failed_pages_string = ", ".join(
                             str(x) for x in test_result.failed_pages
                         )
 
-                        self.echo(
+                        echo(
                             debug.ERROR,
                             "    Pages with diff: %s.\n\n" % (failed_pages_string,),
                         )
+
+                    self.echo_raw(echo_out.getvalue())
 
                     result_map["failed_tests"].append(failed_test_map)
 
