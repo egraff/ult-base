@@ -261,6 +261,8 @@ async def test_pdf_pair_async(
         if not pngs_are_equal:
             failed_pages.append(page_num)
 
+    failed_pages.sort()
+
     # Result is on the form (testname, list of failed pages)
     return (test_name, failed_pages)
 
