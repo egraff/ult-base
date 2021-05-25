@@ -6,11 +6,11 @@
 | Build                           | Build status                                                                    |
 | ------------------------------- | ------------------------------------------------------------------------------- |
 | Linux - TeX Live (latest)       | [![][travis-linux-tl-latest-badge]](#)                                          |
-| Linux - TeX Live 2020           | [![][cirrus-linux-tl-2020-badge]](#)                                            |
-| Linux - TeX Live 2019           | [![][cirrus-linux-tl-2019-badge]](#)                                            |
-| Linux - TeX Live 2018           | [![][cirrus-linux-tl-2018-badge]](#)                                            |
-| Linux - TeX Live 2017           | [![][cirrus-linux-tl-2017-badge]](#)                                            |
-| Linux - TeX Live 2016           | [![][cirrus-linux-tl-2016-badge]](#)                                            |
+| Linux - TeX Live 2020           | [![][cirrus-linux-tl-2020-badge]][cirrus-url]                                   |
+| Linux - TeX Live 2019           | [![][cirrus-linux-tl-2019-badge]][cirrus-url]                                   |
+| Linux - TeX Live 2018           | [![][cirrus-linux-tl-2018-badge]][cirrus-url]                                   |
+| Linux - TeX Live 2017           | [![][cirrus-linux-tl-2017-badge]][cirrus-url]                                   |
+| Linux - TeX Live 2016           | [![][cirrus-linux-tl-2016-badge]][cirrus-url]                                   |
 | macOS - Tex Live (latest)       | [![][travis-macos-tl-latest-badge]](#)                                          |
 | macOS - Tex Live 2019           | [![][travis-macos-tl-2019-badge]](#)                                            |
 | macOS - Tex Live 2018           | [![][travis-macos-tl-2018-badge]](#)                                            |
@@ -32,14 +32,10 @@
 [appveyor-url]: https://ci.appveyor.com/project/egraff/ult-base/branch/master
 
 [travis-linux-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/1?use_travis_com=true
-[travis-linux-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/2?use_travis_com=true
-[travis-linux-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/3?use_travis_com=true
-[travis-linux-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/4?use_travis_com=true
-[travis-linux-tl-2016-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/5?use_travis_com=true
-[travis-macos-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/6?use_travis_com=true
-[travis-macos-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/7?use_travis_com=true
-[travis-macos-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/8?use_travis_com=true
-[travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/9?use_travis_com=true
+[travis-macos-tl-latest-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/2?use_travis_com=true
+[travis-macos-tl-2019-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/3?use_travis_com=true
+[travis-macos-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/4?use_travis_com=true
+[travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/5?use_travis_com=true
 
 [cirrus-linux-tl-2020-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202020
 [cirrus-linux-tl-2019-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202019
