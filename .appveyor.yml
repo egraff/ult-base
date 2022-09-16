@@ -108,7 +108,7 @@ for:
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
           if (-Not $IsPullRequest) {
             Write-Host "Decrypting deploy key";
-            appveyor-tools/secure-file -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "~/.ssh/id_rsa";
+            appveyor-tools/secure-file -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:HOME)/.ssh/id_rsa";
             Write-Host "Testing deploy key";
             $OldErrorActionPreference = $ErrorActionPreference;
             $ErrorActionPreference = "Continue";
