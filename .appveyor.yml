@@ -10,8 +10,8 @@ clone_depth: 10
 max_jobs: 5
 
 image:
-  - Visual Studio 2015
   - Ubuntu
+  - Visual Studio 2015
 
 environment:
   deploy_key_secret:
@@ -55,6 +55,18 @@ environment:
     - TEST_SUITE: protext2018
       TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
+
+
+matrix:
+  exclude:
+    - image: Visual Studio 2015
+      TEST_CATEGORY: regtest_linux
+
+    - image: Ubuntu
+      TEST_CATEGORY: miktex_install_tests
+
+    - image: Ubuntu
+      TEST_CATEGORY: regtest_win
 
 
 for:
