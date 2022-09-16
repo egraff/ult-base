@@ -116,7 +116,13 @@ for:
             (ssh -o StrictHostKeyChecking=no -T git@github.com || true) 2>&1 | %{ "$_" };
             $ErrorActionPreference = $OldErrorActionPreference;
           }
-      - ps: echo "HELLO"
+
+      - sh: >-
+          cd ci
+          set -ev
+          SCRIPT_DIR=`pwd`
+          . ${SCRIPT_DIR}/install_texlive_linux.sh http://mirrors.rit.edu/CTAN/systems/texlive/tlnet ${SCRIPT_DIR}/texlive2022.profile
+          sudo -i tlmgr update --self --all
 
     build: off
 
