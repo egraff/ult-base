@@ -5,8 +5,6 @@ branches:
 skip_commits:
   message: /\[ci skip\]/
 
-image: Visual Studio 2015
-
 clone_depth: 10
 
 max_jobs: 5
@@ -14,40 +12,56 @@ max_jobs: 5
 environment:
   deploy_key_secret:
     secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRF5qU3bakG0+sgJiC4nSsx8
+  deploy_key_salt:
+    secure: iofUyU+lLVL09ekeB/A6iCg86QG5sf65FblHFLnAyjO79UmGzfu9Mqs7VE0/xEE37t1R1OC1/lLBeq0yWBf+nQ==
 
   matrix:
+    - TEST_SUITE: miktex_install_tests
+      TEST_CATEGORY: miktex_install_tests
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: texlive-latest
+      TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
     - TEST_SUITE: texlive-2020
+      TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
     - TEST_SUITE: texlive-2019
+      TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
     - TEST_SUITE: texlive-2018
+      TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
     - TEST_SUITE: texlive-2017
+      TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
     - TEST_SUITE: miktex-latest
-      PROTODIR: proto_tl2016
-
-    - TEST_SUITE: miktex_install_tests
+      TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
     - TEST_SUITE: protext2018
+      TEST_CATEGORY: regtest_win
+      PROTODIR: proto_tl2016
+
+    - TEST_SUITE: texlive-latest
+      TEST_CATEGORY: regtest_linux
       PROTODIR: proto_tl2016
 
 
 for:
   - matrix:
       only:
-        - TEST_SUITE: miktex_install_tests
+        - TEST_CATEGORY: miktex_install_tests
+
+    image: Visual Studio 2015
 
     install:
-      - ps: . ".\ci\appveyor_install_miktex-latest-minimal.ps1"
+      - ps: . ".\ci\appveyor_win_install_miktex-latest-minimal.ps1"
       - refreshenv
       - pdflatex -version
 
@@ -68,19 +82,50 @@ for:
 
 
   - matrix:
-      except:
-        - TEST_SUITE: miktex_install_tests
+      only:
+        - TEST_CATEGORY: regtest_linux
+
+    image: Ubuntu
 
     install:
       # Decrypt deploy key
-      - nuget install secure-file -ExcludeVersion
-      - secure-file\tools\secure-file -decrypt ci\appveyor-deploy-key.enc -secret %deploy_key_secret% -out %USERPROFILE%\.ssh\id_rsa
+      - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
       - ps: >-
-          $OldErrorActionPreference = $ErrorActionPreference;
-          $ErrorActionPreference = "Continue";
-          ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" };
-          $ErrorActionPreference = $OldErrorActionPreference;
-    
+          $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
+          if (-Not $IsPullRequest) {
+            Write-Host "Decrypting deploy key";
+            appveyor-tools/secure-file -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "~/.ssh/id_rsa";
+            Write-Host "Testing deploy key";
+            $OldErrorActionPreference = $ErrorActionPreference;
+            $ErrorActionPreference = "Continue";
+            ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" };
+            $ErrorActionPreference = $OldErrorActionPreference;
+          }
+
+    build: off
+
+
+  - matrix:
+      only:
+        - TEST_CATEGORY: regtest_win
+
+    image: Visual Studio 2015
+
+    install:
+      # Decrypt deploy key
+      - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
+      - ps: >-
+          $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
+          if (-Not $IsPullRequest) {
+            Write-Host "Decrypting deploy key";
+            appveyor-tools\secure-file -decrypt ci\appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:USERPROFILE)\.ssh\id_rsa";
+            Write-Host "Testing deploy key";
+            $OldErrorActionPreference = $ErrorActionPreference;
+            $ErrorActionPreference = "Continue";
+            ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" };
+            $ErrorActionPreference = $OldErrorActionPreference;
+          }
+
       - cinst -y imagemagick -PackageParameters LegacySupport=true
       - cinst -y ghostscript
       - ps: >-
@@ -103,36 +148,36 @@ for:
           }
           $ErrorActionPreference = $OldErrorActionPreference;
     
-      - ps: . ".\ci\appveyor_install_${env:TEST_SUITE}.ps1"
+      - ps: . ".\ci\appveyor_win_install_${env:TEST_SUITE}.ps1"
       - refreshenv
       - pdflatex -version
 
     build_script:
       - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && make install CONTINUE=y"'
       - ps: >-
-          if (Test-Path -Path ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1") {
-            . ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1"
+          if (Test-Path -Path ".\ci\appveyor_win_postinstall_${env:TEST_SUITE}.ps1") {
+            . ".\ci\appveyor_win_postinstall_${env:TEST_SUITE}.ps1"
           }
-    
+
     test_script:
       - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PROTODIR=${PROTODIR}"'
-    
+
     on_success:
       - ps: >-
           try
           {
-            . .\ci\appveyor_after.ps1 -TestResult 0
+            . .\ci\appveyor_win_after.ps1 -TestResult 0
           }
           catch [Exception]
           {
             echo $_.Exception | FL -Force
           }
-    
+
     on_failure:
       - ps: >-
           try
           {
-            . .\ci\appveyor_after.ps1 -TestResult 1
+            . .\ci\appveyor_win_after.ps1 -TestResult 1
           }
           catch [Exception]
           {
