@@ -1,5 +1,9 @@
 task:
   matrix:
+    - name: "Linux - TeX Live 2021"
+      container:
+        dockerfile: ci/texlive-2021-linux.Dockerfile
+
     - name: "Linux - TeX Live 2020"
       container:
         dockerfile: ci/texlive-2020-linux.Dockerfile

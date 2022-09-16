@@ -6,6 +6,7 @@
 | Build                           | Build status                                                                    |
 | ------------------------------- | ------------------------------------------------------------------------------- |
 | Linux - TeX Live (latest)       | [![][travis-linux-tl-latest-badge]](#)                                          |
+| Linux - TeX Live 2021           | [![][cirrus-linux-tl-2021-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2020           | [![][cirrus-linux-tl-2020-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2019           | [![][cirrus-linux-tl-2019-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2018           | [![][cirrus-linux-tl-2018-badge]][cirrus-url]                                   |
@@ -37,6 +38,7 @@
 [travis-macos-tl-2018-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/4?use_travis_com=true
 [travis-macos-tl-2017-badge]: https://travis-matrix-badges.herokuapp.com/repos/egraff/ult-base/branches/master/5?use_travis_com=true
 
+[cirrus-linux-tl-2021-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202021
 [cirrus-linux-tl-2020-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202020
 [cirrus-linux-tl-2019-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202019
 [cirrus-linux-tl-2018-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202018
