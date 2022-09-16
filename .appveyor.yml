@@ -21,6 +21,10 @@ environment:
       PROTODIR: proto_tl2016
 
     - TEST_SUITE: texlive-latest
+      TEST_CATEGORY: regtest_linux
+      PROTODIR: proto_tl2016
+
+    - TEST_SUITE: texlive-latest
       TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
@@ -46,10 +50,6 @@ environment:
 
     - TEST_SUITE: protext2018
       TEST_CATEGORY: regtest_win
-      PROTODIR: proto_tl2016
-
-    - TEST_SUITE: texlive-latest
-      TEST_CATEGORY: regtest_linux
       PROTODIR: proto_tl2016
 
 
