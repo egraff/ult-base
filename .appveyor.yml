@@ -9,6 +9,10 @@ clone_depth: 10
 
 max_jobs: 5
 
+image:
+  - Visual Studio 2015
+  - Ubuntu
+
 environment:
   deploy_key_secret:
     secure: B4JcjFe25tjV6I8veR+a0tSh3wvyoE4/N3Qr5r4OoRF5qU3bakG0+sgJiC4nSsx8
@@ -56,9 +60,8 @@ environment:
 for:
   - matrix:
       only:
-        - TEST_CATEGORY: miktex_install_tests
-
-    image: Visual Studio 2015
+        - image: Visual Studio 2015
+          TEST_CATEGORY: miktex_install_tests
 
     install:
       - ps: . ".\ci\appveyor_win_install_miktex-latest-minimal.ps1"
@@ -83,9 +86,8 @@ for:
 
   - matrix:
       only:
-        - TEST_CATEGORY: regtest_linux
-
-    image: Ubuntu
+        - image: Ubuntu
+          TEST_CATEGORY: regtest_linux
 
     install:
       # Decrypt deploy key
@@ -94,7 +96,7 @@ for:
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
           if (-Not $IsPullRequest) {
             Write-Host "Decrypting deploy key";
-            appveyor-tools/secure-file -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($env:HOME)/.ssh/id_rsa";
+            appveyor-tools/secure-file -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "~/.ssh/id_rsa";
             Write-Host "Testing deploy key";
             $OldErrorActionPreference = $ErrorActionPreference;
             $ErrorActionPreference = "Continue";
@@ -107,9 +109,8 @@ for:
 
   - matrix:
       only:
-        - TEST_CATEGORY: regtest_win
-
-    image: Visual Studio 2015
+        - image: Visual Studio 2015
+          TEST_CATEGORY: regtest_win
 
     install:
       # Decrypt deploy key
