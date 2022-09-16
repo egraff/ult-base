@@ -1,3 +1,5 @@
+PROTODIR ?= proto
+
 # All files produced while making the document will have this basename
 LATEX_JOBNAME ?= output
 
@@ -39,7 +41,7 @@ clean:
 test: detect-python
 	@echo "Running comparison tests..."
 	@echo ""
-	@$(PYTHON) ../test-scripts/regtest.py .
+	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) .
 
 _file: _ctrl_
 	@echo "Building $(TEXFILE_DIR)/$(TEXFILE_FILENAME)..."

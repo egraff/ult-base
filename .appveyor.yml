@@ -17,13 +17,29 @@ environment:
 
   matrix:
     - TEST_SUITE: texlive-latest
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: texlive-2020
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: texlive-2019
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: texlive-2018
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: texlive-2017
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: miktex-latest
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: miktex_install_tests
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: protext2018
+      PROTODIR: proto_tl2016
+
 
 for:
   - matrix:
@@ -90,23 +106,16 @@ for:
       - ps: . ".\ci\appveyor_install_${env:TEST_SUITE}.ps1"
       - refreshenv
       - pdflatex -version
-    
-      - ps: >-
-          $MsysPath = 'C:\MinGW\msys\1.0\bin';
-          $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
-          $NewPath = $OldPath + ';' + $MsysPath;
-          [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
-      - refreshenv
 
     build_script:
-      - make install CONTINUE=y
+      - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && make install CONTINUE=y"'
       - ps: >-
           if (Test-Path -Path ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1") {
             . ".\ci\appveyor_postinstall_${env:TEST_SUITE}.ps1"
           }
     
     test_script:
-      - make -C test
+      - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PROTODIR=${PROTODIR}"'
     
     on_success:
       - ps: >-

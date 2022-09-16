@@ -6,21 +6,26 @@ git:
 matrix:
   include:
     - name: "Linux - Latest TeX Live"
-      env: TEST_SUITE=linux-latest
+      env:
+        - TEST_SUITE=linux-latest
+        - PROTODIR=proto_tl2016
+        - PYTHON=python
       os: linux
       sudo: required
-      python: 2.7
+      python: 3.6
     - name: "OS X - Latest TeX Live"
-      env: TEST_SUITE=osx-latest
+      env:
+        - TEST_SUITE=osx-latest
+        - PROTODIR=proto_tl2016
+        - PYTHON=python3
       os: osx
       sudo: required
       language: generic
-      osx_image: xcode10
+      osx_image: xcode10.2
       before_install:
         - sw_vers
         - brew update
-        - brew unlink python@2
-        - python2.7 --version
+        - python3 --version
         - brew install libidn
         - brew install ghostscript
         - gs -v
@@ -28,16 +33,18 @@ matrix:
         - compare -version
         - pdfinfo -v || (exit 0)
     - name: "OS X - TeX Live 2019"
-      env: TEST_SUITE=osx-tl2019
+      env:
+        - TEST_SUITE=osx-tl2019
+        - PROTODIR=proto_tl2016
+        - PYTHON=python3
       os: osx
       sudo: required
       language: generic
-      osx_image: xcode10
+      osx_image: xcode10.2
       before_install:
         - sw_vers
         - brew update
-        - brew unlink python@2
-        - python2.7 --version
+        - python3 --version
         - brew install libidn
         - brew install ghostscript
         - gs -v
@@ -45,16 +52,17 @@ matrix:
         - compare -version
         - pdfinfo -v || (exit 0)
     - name: "OS X - TeX Live 2018"
-      env: TEST_SUITE=osx-tl2018
+      env:
+        - TEST_SUITE=osx-tl2018
+        - PROTODIR=proto_tl2016
       os: osx
       sudo: required
       language: generic
-      osx_image: xcode10
+      osx_image: xcode10.2
       before_install:
         - sw_vers
         - brew update
-        - brew unlink python@2
-        - python2.7 --version
+        - python3 --version
         - brew install libidn
         - brew install ghostscript
         - gs -v
@@ -62,16 +70,17 @@ matrix:
         - compare -version
         - pdfinfo -v || (exit 0)
     - name: "OS X - TeX Live 2017"
-      env: TEST_SUITE=osx-tl2017
+      env:
+        - TEST_SUITE=osx-tl2017
+        - PROTODIR=proto_tl2016
       os: osx
       sudo: required
       language: generic
-      osx_image: xcode10
+      osx_image: xcode10.2
       before_install:
         - sw_vers
         - brew update
-        - brew unlink python@2
-        - python2.7 --version
+        - python3 --version
         - brew install libidn
         - brew install ghostscript
         - gs -v
@@ -88,6 +97,6 @@ install:
   - make install CONTINUE=y
   - sudo -i texhash
 script:
-  - make -C test
+  - make -C test PYTHON=${PYTHON} PROTODIR=${PROTODIR}
 after_script:
   - ci/travis_after.sh
