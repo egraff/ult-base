@@ -117,7 +117,7 @@ for:
             $ErrorActionPreference = $OldErrorActionPreference;
           }
 
-      - sh: >-
+      - sh: |
           cd ci
           set -ev
           SCRIPT_DIR=`pwd`
