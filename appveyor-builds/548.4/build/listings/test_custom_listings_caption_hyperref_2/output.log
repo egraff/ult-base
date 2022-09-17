@@ -1,0 +1,611 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2022.9.17)  17 SEP 2022 13:43
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**test_custom_listings_caption_hyperref_2.tex
+(./test_custom_listings_caption_hyperref_2.tex
+LaTeX2e <2020-10-01> patch level 4
+L3 programming layer <2021-02-18> (c:/texlive/2020/texmf-dist/tex/latex/base/bo
+ok.cls
+Document Class: book 2020/04/10 v1.4m Standard LaTeX document class
+(c:/texlive/2020/texmf-dist/tex/latex/base/bk10.clo
+File: bk10.clo 2020/04/10 v1.4m Standard LaTeX file (size option)
+)
+\c@part=\count179
+\c@chapter=\count180
+\c@section=\count181
+\c@subsection=\count182
+\c@subsubsection=\count183
+\c@paragraph=\count184
+\c@subparagraph=\count185
+\c@figure=\count186
+\c@table=\count187
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
+) (c:/texlive/2020/texmf-dist/tex/latex/caption/caption.sty
+Package: caption 2020/10/26 v3.5g Customizing captions (AR)
+(c:/texlive/2020/texmf-dist/tex/latex/caption/caption3.sty
+Package: caption3 2020/10/21 v2.2e caption3 kernel (AR)
+(c:/texlive/2020/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
+\KV@toks@=\toks15
+)
+\captionmargin=\dimen139
+\captionmargin@=\dimen140
+\captionwidth=\dimen141
+\caption@tempdima=\dimen142
+\caption@indent=\dimen143
+\caption@parindent=\dimen144
+\caption@hangindent=\dimen145
+Package caption Info: Standard document class detected.
+)
+\c@caption@flags=\count188
+\c@continuedfloat=\count189
+) (c:/texlive/2020/texmf-dist/tex/latex/listings/listings.sty
+\lst@mode=\count190
+\lst@gtempboxa=\box47
+\lst@token=\toks16
+\lst@length=\count191
+\lst@currlwidth=\dimen146
+\lst@column=\count192
+\lst@pos=\count193
+\lst@lostspace=\dimen147
+\lst@width=\dimen148
+\lst@newlines=\count194
+\lst@lineno=\count195
+\lst@maxwidth=\dimen149
+(c:/texlive/2020/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+\c@lstnumber=\count196
+\lst@skipnumbers=\count197
+\lst@framebox=\box48
+) (c:/texlive/2020/texmf-dist/tex/latex/listings/listings.cfg
+File: listings.cfg 2020/03/24 1.8d listings configuration
+))
+Package: listings 2020/03/24 1.8d (Carsten Heinz)
+(c:/texlive/2020/texmf-dist/tex/latex/hyperref/hyperref.sty
+Package: hyperref 2021-02-27 v7.00k Hypertext links for LaTeX
+(c:/texlive/2020/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2020-05-10 v1.25 LaTeX kernel commands for general use (HO)
+) (c:/texlive/2020/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2020/03/06 v1.0d TeX engine tests
+) (c:/texlive/2020/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2020-06-27 v0.33 Utility functions of pdfTeX for LuaTeX (HO
+)
+(c:/texlive/2020/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+) (c:/texlive/2020/texmf-dist/tex/generic/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2019/12/15 v1.18 Key value parser (HO)
+) (c:/texlive/2020/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+Package: kvdefinekeys 2019-12-19 v1.6 Define keys (HO)
+) (c:/texlive/2020/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+) (c:/texlive/2020/texmf-dist/tex/latex/hycolor/hycolor.sty
+Package: hycolor 2020-01-27 v1.10 Color options for hyperref/bookmark (HO)
+) (c:/texlive/2020/texmf-dist/tex/latex/letltxmacro/letltxmacro.sty
+Package: letltxmacro 2019/12/03 v1.6 Let assignment for LaTeX macros (HO)
+) (c:/texlive/2020/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+) (c:/texlive/2020/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
+)
+\@linkdim=\dimen150
+\Hy@linkcounter=\count198
+\Hy@pagecounter=\count199
+(c:/texlive/2020/texmf-dist/tex/latex/hyperref/pd1enc.def
+File: pd1enc.def 2021-02-27 v7.00k Hyperref: PDFDocEncoding definition (HO)
+Now handling font encoding PD1 ...
+... no UTF-8 mapping file for font encoding PD1
+) (c:/texlive/2020/texmf-dist/tex/latex/hyperref/hyperref-langpatches.def
+File: hyperref-langpatches.def 2021-02-27 v7.00k Hyperref: patches for babel la
+nguages
+) (c:/texlive/2020/texmf-dist/tex/generic/intcalc/intcalc.sty
+Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
+) (c:/texlive/2020/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+)
+\Hy@SavedSpaceFactor=\count266
+(c:/texlive/2020/texmf-dist/tex/latex/hyperref/puenc.def
+File: puenc.def 2021-02-27 v7.00k Hyperref: PDF Unicode definition (HO)
+Now handling font encoding PU ...
+... no UTF-8 mapping file for font encoding PU
+)
+Package hyperref Info: Hyper figures OFF on input line 4192.
+Package hyperref Info: Link nesting OFF on input line 4197.
+Package hyperref Info: Hyper index ON on input line 4200.
+Package hyperref Info: Plain pages OFF on input line 4207.
+Package hyperref Info: Backreferencing OFF on input line 4212.
+Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
+Package hyperref Info: Bookmarks ON on input line 4445.
+\c@Hy@tempcnt=\count267
+(c:/texlive/2020/texmf-dist/tex/latex/url/url.sty
+\Urlmuskip=\muskip16
+Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
+)
+LaTeX Info: Redefining \url on input line 4804.
+\XeTeXLinkMargin=\dimen151
+(c:/texlive/2020/texmf-dist/tex/generic/bitset/bitset.sty
+Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
+(c:/texlive/2020/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
+)
+))
+\Fld@menulength=\count268
+\Field@Width=\dimen152
+\Fld@charsize=\dimen153
+Package hyperref Info: Hyper figures OFF on input line 6075.
+Package hyperref Info: Link nesting OFF on input line 6080.
+Package hyperref Info: Hyper index ON on input line 6083.
+Package hyperref Info: backreferencing OFF on input line 6090.
+Package hyperref Info: Link coloring OFF on input line 6095.
+Package hyperref Info: Link coloring with OCG OFF on input line 6100.
+Package hyperref Info: PDF/A mode OFF on input line 6105.
+LaTeX Info: Redefining \ref on input line 6145.
+LaTeX Info: Redefining \pageref on input line 6149.
+(c:/texlive/2020/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+Package: atbegshi-ltx 2020/08/17 v1.0a Emulation of the original atbegshi packa
+ge
+with kernel methods
+)
+\Hy@abspage=\count269
+\c@Item=\count270
+\c@Hfootnote=\count271
+)
+Package hyperref Info: Driver (autodetected): hpdftex.
+(c:/texlive/2020/texmf-dist/tex/latex/hyperref/hpdftex.def
+File: hpdftex.def 2021-02-27 v7.00k Hyperref driver for pdfTeX
+(c:/texlive/2020/texmf-dist/tex/latex/base/atveryend-ltx.sty
+Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atvery packag
+e
+with kernel methods
+)
+\Fld@listcount=\count272
+\c@bookmark@seq@number=\count273
+(c:/texlive/2020/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+Package: rerunfilecheck 2019/12/05 v1.9 Rerun checks for auxiliary files (HO)
+(c:/texlive/2020/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+Package: uniquecounter 2019/12/15 v1.4 Provide unlimited unique counter (HO)
+)
+Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
+86.
+)
+\Hy@SectionHShift=\skip49
+) (c:/Users/appveyor/texmf/tex/latex/ult-base/ult-custom-listings.sty
+Package: ult-custom-listings 2015/11/05 v1.1a UiT LaTeX template custom listing
+s
+(c:/texlive/2020/texmf-dist/tex/latex/xpatch/xpatch.sty (c:/texlive/2020/texmf-
+dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2021-02-18 L3 programming layer (loader) 
+(c:/texlive/2020/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+File: l3backend-pdftex.def 2021-03-18 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count274
+\l__pdf_internal_box=\box49
+))
+Package: xpatch 2020/03/25 v0.3a Extending etoolbox patching commands
+(c:/texlive/2020/texmf-dist/tex/latex/l3packages/xparse/xparse.sty (c:/texlive/
+2020/texmf-dist/tex/latex/l3packages/xparse/xparse-2020-10-01.sty (c:/texlive/2
+020/texmf-dist/tex/latex/l3packages/xparse/xparse-generic.tex))) (c:/texlive/20
+20/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2020/10/05 v2.5k e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count275
+))) (c:/texlive/2020/texmf-dist/tex/latex/xcolor/xcolor.sty
+Package: xcolor 2016/05/11 v2.12 LaTeX color extensions (UK)
+(c:/texlive/2020/texmf-dist/tex/latex/graphics-cfg/color.cfg
+File: color.cfg 2016/01/02 v1.6 sample color configuration
+)
+Package xcolor Info: Driver file: pdftex.def on input line 225.
+(c:/texlive/2020/texmf-dist/tex/latex/graphics-def/pdftex.def
+File: pdftex.def 2020/10/05 v1.2a Graphics/color driver for pdftex
+)
+Package xcolor Info: Model `cmy' substituted by `cmy0' on input line 1348.
+Package xcolor Info: Model `hsb' substituted by `rgb' on input line 1352.
+Package xcolor Info: Model `RGB' extended on input line 1364.
+Package xcolor Info: Model `HTML' substituted by `rgb' on input line 1366.
+Package xcolor Info: Model `Hsb' substituted by `hsb' on input line 1367.
+Package xcolor Info: Model `tHsb' substituted by `hsb' on input line 1368.
+Package xcolor Info: Model `HSB' substituted by `hsb' on input line 1369.
+Package xcolor Info: Model `Gray' substituted by `gray' on input line 1370.
+Package xcolor Info: Model `wave' substituted by `hsb' on input line 1371.
+) (c:/texlive/2020/texmf-dist/tex/latex/float/float.sty
+Package: float 2001/11/08 v1.3d Float enhancements (AL)
+\c@float@type=\count276
+\float@exts=\toks17
+\float@box=\box50
+\@float@everytoks=\toks18
+\@floatcapt=\box51
+) (c:/texlive/2020/texmf-dist/tex/latex/filecontents/filecontents.sty
+Package: filecontents 2019/09/20 v1.5 Create an external file from within a LaT
+eX document
+
+Package filecontents Warning: This package is obsolete. Disabling it and
+(filecontents)                passing control to the filecontents environment
+(filecontents)                defined by the LaTeX kernel.
+
+) (c:/texlive/2020/texmf-dist/tex/latex/import/import.sty
+Package: import 2020/04/01  v 6.2
+) (c:/texlive/2020/texmf-dist/tex/latex/currfile/currfile.sty
+Package: currfile 2020/09/29 v0.7d Provides the file path elements of the curre
+nt input file
+(c:/texlive/2020/texmf-dist/tex/latex/filehook/filehook.sty
+Package: filehook 2020/09/29 v0.8a Hooks for input files
+(c:/texlive/2020/texmf-dist/tex/latex/filehook/filehook-2020.sty
+Package: filehook-2020 2020/09/29 v0.8a Hooks for input files
+)) (c:/texlive/2020/texmf-dist/tex/latex/currfile/currfile-abspath.sty
+Package: currfile-abspath 2020/09/29 v0.7d Provides absolute file paths, the pa
+rent working directory and the main file name
+)
+\c@currfiledepth=\count277
+) (c:/projects/ult-base/test/tests/listings/listingtestdef.tex
+
+LaTeX Warning: Writing file `./samplecode.c'.
+
+\openout15 = `samplecode.c'.
+
+
+\@float@every@code=\toks19
+\c@code=\count278
+\c@codesnippet=\count279
+\c@algorithm=\count280
+) (../../.build/listings/test_custom_listings_caption_hyperref_2/output.aux)
+\openout1 = `output.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 27.
+LaTeX Font Info:    ... okay on input line 27.
+Package caption Info: Begin \AtBeginDocument code.
+Package caption Info: float package is loaded.
+Package caption Info: hyperref package is loaded.
+Package caption Info: listings package is loaded.
+Package caption Info: End \AtBeginDocument code.
+\c@lstlisting=\count281
+Package hyperref Info: Link coloring OFF on input line 27.
+(c:/texlive/2020/texmf-dist/tex/latex/hyperref/nameref.sty
+Package: nameref 2021-04-02 v2.47 Cross-referencing by name of section
+(c:/texlive/2020/texmf-dist/tex/latex/refcount/refcount.sty
+Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
+) (c:/texlive/2020/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
+)
+\c@section@level=\count282
+)
+LaTeX Info: Redefining \ref on input line 27.
+LaTeX Info: Redefining \pageref on input line 27.
+LaTeX Info: Redefining \nameref on input line 27.
+(../../.build/listings/test_custom_listings_caption_hyperref_2/output.out) (../
+../.build/listings/test_custom_listings_caption_hyperref_2/output.out)
+\@outlinefile=\write3
+\openout3 = `output.out'.
+
+(c:/texlive/2020/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count283
+\scratchdimen=\dimen154
+\scratchbox=\box52
+\nofMPsegments=\count284
+\nofMParguments=\count285
+\everyMPshowfont=\toks20
+\MPscratchCnt=\count286
+\MPscratchDim=\dimen155
+\MPnumerator=\count287
+\makeMPintoPDFobject=\count288
+\everyMPtoPDFconversion=\toks21
+) (c:/projects/ult-base/test/tests/listings/listingtestbody.tex
+No file output.lol.
+\tf@lol=\write4
+\openout4 = `output.lol'.
+
+[1
+
+
+{c:/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2
+
+]
+No file output.locodesnippet.
+\tf@locodesnippet=\write5
+\openout5 = `output.locodesnippet'.
+
+[3] [4
+
+]
+No file output.loalgorithm.
+\tf@loalgorithm=\write6
+\openout6 = `output.loalgorithm'.
+
+[5] [6
+
+]
+Chapter 1.
+
+LaTeX Warning: Reference `listing:test1' on page 7 undefined on input line 23.
+
+
+LaTeX Warning: Reference `listing:test2' on page 7 undefined on input line 23.
+
+[7]
+
+! LaTeX Error: Can be used only in preamble.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.27 ...ippet},label={snippet:first},name={hello}]
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! Package ult-custom-listings Error: Failed to patch caption's \lst@MakeCaption
+.
+
+See the ult-custom-listings package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.27 ...ippet},label={snippet:first},name={hello}]
+                                                  
+\lst@MakeCaption= macro:->\ifx \lst@label \@empty \else \let \@currentlabelname
+ \lst@@caption \fi \NROrg@lst@MakeCaption 
+
+\NROrg@lst@MakeCaption= macro:#1->\begingroup \caption@iflst@Init {}{\edef \cap
+tion@lst@leftskip {\noexpand \hskip -\the \@totalleftmargin \noexpand \relax }\
+l@addto@macro \caption@beginhook \caption@lst@leftskip }\caption@setposition {#
+1}\caption@iftop {\@tempdima \belowcaptionskip \belowcaptionskip \abovecaptions
+kip \abovecaptionskip \@tempdima }{}\caption@setup {rule=0}\caption@setoptions 
+{codesnippet}\caption@setautoposition {#1}\caption@begin {codesnippet}\caption@
+ORI@lst@MakeCaption {#1}\caption@end \endgroup 
+
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+(c:/texlive/2020/texmf-dist/tex/latex/listings/lstlang1.sty
+File: lstlang1.sty 2020/03/24 1.8d listings language file
+) (c:/texlive/2020/texmf-dist/tex/latex/listings/lstmisc.sty
+File: lstmisc.sty 2020/03/24 1.8d (Carsten Heinz)
+)
+Package hyperref Info: bookmark level for unknown codesnippet defaults to 0 on 
+input line 27.
+LaTeX Font Info:    Trying to load font information for OML+cmr on input line 2
+8.
+(c:/texlive/2020/texmf-dist/tex/latex/base/omlcmr.fd
+File: omlcmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OML/cmr/m/n' in size <10> not available
+(Font)              Font shape `OML/cmm/m/it' tried instead on input line 28.
+
+! LaTeX Error: Can be used only in preamble.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.31 ...algorithm},label={alg:first},name={myalg}]
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! Package ult-custom-listings Error: Failed to patch caption's \lst@MakeCaption
+.
+
+See the ult-custom-listings package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.31 ...algorithm},label={alg:first},name={myalg}]
+                                                  
+\lst@MakeCaption= macro:->\ifx \lst@label \@empty \else \let \@currentlabelname
+ \lst@@caption \fi \NROrg@lst@MakeCaption 
+
+\NROrg@lst@MakeCaption= macro:#1->\begingroup \caption@iflst@Init {}{\edef \cap
+tion@lst@leftskip {\noexpand \hskip -\the \@totalleftmargin \noexpand \relax }\
+l@addto@macro \caption@beginhook \caption@lst@leftskip }\caption@setposition {#
+1}\caption@iftop {\@tempdima \belowcaptionskip \belowcaptionskip \abovecaptions
+kip \abovecaptionskip \@tempdima }{}\caption@setup {rule=0}\caption@setoptions 
+{algorithm}\caption@setautoposition {#1}\caption@begin {algorithm}\caption@ORI@
+lst@MakeCaption {#1}\caption@end \endgroup 
+
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on in
+put line 31.
+
+! LaTeX Error: Can be used only in preamble.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.36 ...ppet},label={snippet:second},name={hello}]
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! Package ult-custom-listings Error: Failed to patch caption's \lst@MakeCaption
+.
+
+See the ult-custom-listings package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.36 ...ppet},label={snippet:second},name={hello}]
+                                                  
+\lst@MakeCaption= macro:->\ifx \lst@label \@empty \else \let \@currentlabelname
+ \lst@@caption \fi \NROrg@lst@MakeCaption 
+
+\NROrg@lst@MakeCaption= macro:#1->\begingroup \caption@iflst@Init {}{\edef \cap
+tion@lst@leftskip {\noexpand \hskip -\the \@totalleftmargin \noexpand \relax }\
+l@addto@macro \caption@beginhook \caption@lst@leftskip }\caption@setposition {#
+1}\caption@iftop {\@tempdima \belowcaptionskip \belowcaptionskip \abovecaptions
+kip \abovecaptionskip \@tempdima }{}\caption@setup {rule=0}\caption@setoptions 
+{codesnippet}\caption@setautoposition {#1}\caption@begin {codesnippet}\caption@
+ORI@lst@MakeCaption {#1}\caption@end \endgroup 
+
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+LaTeX Font Info:    Trying to load font information for OMS+cmr on input line 3
+8.
+(c:/texlive/2020/texmf-dist/tex/latex/base/omscmr.fd
+File: omscmr.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <10> not available
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 38.
+
+LaTeX Warning: Reference `snippet:first' on page 8 undefined on input line 44.
+
+
+LaTeX Warning: Reference `snippet:second' on page 8 undefined on input line 44.
+
+
+
+! LaTeX Error: Can be used only in preamble.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.46 ...lgorithm},label={alg:second},name={myalg}]
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! Package ult-custom-listings Error: Failed to patch caption's \lst@MakeCaption
+.
+
+See the ult-custom-listings package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.46 ...lgorithm},label={alg:second},name={myalg}]
+                                                  
+\lst@MakeCaption= macro:->\ifx \lst@label \@empty \else \let \@currentlabelname
+ \lst@@caption \fi \NROrg@lst@MakeCaption 
+
+\NROrg@lst@MakeCaption= macro:#1->\begingroup \caption@iflst@Init {}{\edef \cap
+tion@lst@leftskip {\noexpand \hskip -\the \@totalleftmargin \noexpand \relax }\
+l@addto@macro \caption@beginhook \caption@lst@leftskip }\caption@setposition {#
+1}\caption@iftop {\@tempdima \belowcaptionskip \belowcaptionskip \abovecaptions
+kip \abovecaptionskip \@tempdima }{}\caption@setup {rule=0}\caption@setoptions 
+{algorithm}\caption@setautoposition {#1}\caption@begin {algorithm}\caption@ORI@
+lst@MakeCaption {#1}\caption@end \endgroup 
+
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+
+LaTeX Warning: Reference `alg:first' on page 8 undefined on input line 50.
+
+
+LaTeX Warning: Reference `alg:second' on page 8 undefined on input line 50.
+
+[8]
+Chapter 2.
+
+! LaTeX Error: Can be used only in preamble.
+
+See the LaTeX manual or LaTeX Companion for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.53 ...tion},label={snippet:input}]{samplecode.c}
+                                                  
+Your command was ignored.
+Type  I <command> <return>  to replace it with another command,
+or  <return>  to continue without it.
+
+
+! Package ult-custom-listings Error: Failed to patch caption's \lst@MakeCaption
+.
+
+See the ult-custom-listings package documentation for explanation.
+Type  H <return>  for immediate help.
+ ...                                              
+                                                  
+l.53 ...tion},label={snippet:input}]{samplecode.c}
+                                                  
+\lst@MakeCaption= macro:->\ifx \lst@label \@empty \else \let \@currentlabelname
+ \lst@@caption \fi \NROrg@lst@MakeCaption 
+
+\NROrg@lst@MakeCaption= macro:#1->\begingroup \caption@iflst@Init {}{\edef \cap
+tion@lst@leftskip {\noexpand \hskip -\the \@totalleftmargin \noexpand \relax }\
+l@addto@macro \caption@beginhook \caption@lst@leftskip }\caption@setposition {#
+1}\caption@iftop {\@tempdima \belowcaptionskip \belowcaptionskip \abovecaptions
+kip \abovecaptionskip \@tempdima }{}\caption@setup {rule=0}\caption@setoptions 
+{codesnippet}\caption@setautoposition {#1}\caption@begin {codesnippet}\caption@
+ORI@lst@MakeCaption {#1}\caption@end \endgroup 
+
+You're in trouble here.  Try typing  <return>  to proceed.
+If that doesn't work, type  X <return>  to quit.
+
+(../../.build/listings/test_custom_listings_caption_hyperref_2/samplecode.c)
+
+LaTeX Warning: Reference `snippet:input' on page 9 undefined on input line 55.
+
+) [9
+
+] (../../.build/listings/test_custom_listings_caption_hyperref_2/output.aux)
+
+LaTeX Warning: There were undefined references.
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+
+Package rerunfilecheck Warning: File `output.out' has changed.
+(rerunfilecheck)                Rerun to get outlines right
+(rerunfilecheck)                or use package `bookmark'.
+
+Package rerunfilecheck Info: Checksums for `output.out':
+(rerunfilecheck)             Before: D41D8CD98F00B204E9800998ECF8427E;0
+(rerunfilecheck)             After:  7E9917C92BE00081D5792F4CD3370F27;171.
+ ) 
+Here is how much of TeX's memory you used:
+ 11791 strings out of 479828
+ 179670 string characters out of 5880691
+ 675214 words of memory out of 5000000
+ 29026 multiletter control sequences out of 15000+600000
+ 405303 words of font info for 33 fonts, out of 8000000 for 9000
+ 622 hyphenation exceptions out of 8191
+ 86i,6n,89p,1381b,1444s stack positions out of 5000i,500n,10000p,200000b,80000s
+<c:/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><c:/tex
+live/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb><c:/texlive/2020
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2020/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmr10.pfb><c:/texlive/2020/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmsl10.pfb><c:/texlive/2020/texmf-dist/fonts/type1/publ
+ic/amsfonts/cm/cmsy10.pfb>
+Output written on ../../.build/listings/test_custom_listings_caption_hyperref_2
+/output.pdf (9 pages, 73010 bytes).
+PDF statistics:
+ 112 PDF objects out of 1000 (max. 8388607)
+ 94 compressed objects within 1 object stream
+ 42 named destinations out of 1000 (max. 500000)
+ 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+
