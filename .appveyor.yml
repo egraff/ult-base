@@ -117,14 +117,7 @@ for:
             $ErrorActionPreference = $OldErrorActionPreference;
           }
 
-      - sh: |
-          pushd ci
-          set -ev
-          SCRIPT_DIR=`pwd`
-          . ${SCRIPT_DIR}/install_texlive_linux.sh http://mirrors.rit.edu/CTAN/systems/texlive/tlnet ${SCRIPT_DIR}/texlive2022.profile
-          sudo -i tlmgr update --self --all
-          popd
-
+      - sh: . ci/appveyor_linux_install_${TEST_SUITE}.sh
       - tlmgr conf
 
     build_script:
