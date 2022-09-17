@@ -32,27 +32,15 @@ environment:
       TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
+    - TEST_SUITE: texlive-2021
+      TEST_CATEGORY: regtest_win
+      PROTODIR: proto_tl2016
+
     - TEST_SUITE: texlive-2020
       TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
-    - TEST_SUITE: texlive-2019
-      TEST_CATEGORY: regtest_win
-      PROTODIR: proto_tl2016
-
-    - TEST_SUITE: texlive-2018
-      TEST_CATEGORY: regtest_win
-      PROTODIR: proto_tl2016
-
-    - TEST_SUITE: texlive-2017
-      TEST_CATEGORY: regtest_win
-      PROTODIR: proto_tl2016
-
     - TEST_SUITE: miktex-latest
-      TEST_CATEGORY: regtest_win
-      PROTODIR: proto_tl2016
-
-    - TEST_SUITE: protext2018
       TEST_CATEGORY: regtest_win
       PROTODIR: proto_tl2016
 
