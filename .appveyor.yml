@@ -133,8 +133,8 @@ for:
 
     test_script:
       - sh: |
-        source $HOME/venv3.10/bin/activate
-        make -C test PYTHON=python PROTODIR=${PROTODIR}
+          source $HOME/venv3.10/bin/activate
+          make -C test PYTHON=python PROTODIR=${PROTODIR}
 
     on_success:
       - sh: ci/appveyor_linux_after.sh 0
