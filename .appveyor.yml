@@ -118,13 +118,29 @@ for:
           }
 
       - sh: |
-          cd ci
+          pushd ci
           set -ev
           SCRIPT_DIR=`pwd`
           . ${SCRIPT_DIR}/install_texlive_linux.sh http://mirrors.rit.edu/CTAN/systems/texlive/tlnet ${SCRIPT_DIR}/texlive2022.profile
           sudo -i tlmgr update --self --all
+          popd
 
-    build: off
+      - tlmgr conf
+
+    build_script:
+      - sh: make install CONTINUE=y
+      - sh: sudo -i texhash
+
+    test_script:
+      - sh: |
+        source $HOME/venv3.10/bin/activate
+        make -C test PYTHON=python PROTODIR=${PROTODIR}
+
+    on_success:
+      - sh: ci/appveyor_linux_after.sh 0
+
+    on_failure:
+      - sh: ci/appveyor_linux_after.sh 1
 
 
   - matrix:
