@@ -5,6 +5,7 @@
 
 \RequirePackage{xpatch}
 \RequirePackage{etoolbox}
+\RequirePackage{ltxcmds}
 
 % Insane hack that allows us to create listing environments that are counted and referenced separately
 % (\lstnewenvironment is really, really stupid...)
@@ -152,12 +153,10 @@
     {\caption@begin{#1}}%
   %
   % Fix for caption package change in TeX Live revision 62097:
-  \@ifpackageloaded{caption}{%
-    \@ifpackagelater{caption}{2022/02/20}{%
-      \@patch@nofail@caption@lst@MakeCaption
-        {\caption@addcontentsline{lstlisting}}%
-        {\caption@addcontentsline{#1}}%
-    }{}%
+  \ltx@ifpackagelater{caption}{2022/02/20}{%
+    \@patch@nofail@caption@lst@MakeCaption
+      {\caption@addcontentsline{lstlisting}}%
+      {\caption@addcontentsline{#1}}%
   }{}%
 }
 
