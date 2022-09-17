@@ -1,5 +1,0 @@
-PWD c:/projects/ult-base/test/tests
-INPUT c:/texlive/2019/texmf.cnf
-INPUT c:/texlive/2019/texmf-dist/web2c/texmf.cnf
-INPUT c:/texlive/2019/texmf-var/web2c/pdftex/pdflatex.fmt
-OUTPUT ../.build/listings/test_custom_listings_caption_hyperref_1/output.log
