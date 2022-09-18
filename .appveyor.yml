@@ -105,7 +105,7 @@ for:
             $ErrorActionPreference = $OldErrorActionPreference;
           }
 
-      - sh: . ci/appveyor_linux_install_${TEST_SUITE}.sh
+      - sh: ci/appveyor_linux_install_${TEST_SUITE}.sh
       - tlmgr conf
 
     build_script:
