@@ -2,8 +2,10 @@ $ErrorActionPreference = "Stop"
 
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 
+$miktexMirror = 'http://mirrors.rit.edu/CTAN/systems/win32/miktex'
+
 $installerPath = "$scriptRoot\basic-miktex-x64.exe"
-$installerUrl = 'http://mirrors.rit.edu/CTAN/systems/win32/miktex/setup/windows-x64/basic-miktex-22.7-x64.exe'
+$installerUrl = "${miktexMirror}/setup/windows-x64/basic-miktex-22.7-x64.exe"
 
 (New-Object System.Net.WebClient).DownloadFile($installerUrl, $installerPath)
 
@@ -41,24 +43,26 @@ $env:Path = [System.Environment]::ExpandEnvironmentVariables(
 )
 refreshenv
 
-#mpm --admin --update-db --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
-#mpm --admin --upgrade --package-level=basic --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
-#mpm --admin --update --repository=http://ftp.rrze.uni-erlangen.de/ctan/systems/win32/miktex/tm/packages/ --verbose
-
 initexmf --admin --enable-installer --verbose
 initexmf --admin --default-paper-size=a4 --verbose
 initexmf --admin --update-fndb --verbose
 initexmf --admin --mkmaps --verbose
 
 
-$OldErrorActionPreference = $ErrorActionPreference;
-$ErrorActionPreference = "Continue";
+$OldErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
 
 # Manually register TEXMFHOME (see https://github.com/MiKTeX/miktex/issues/272)
 initexmf --user-roots="${env:USERPROFILE}/texmf" 2>&1 | %{ "$_" }
 $exitCode = $LastExitCode
-$ErrorActionPreference = $OldErrorActionPreference;
+$ErrorActionPreference = $OldErrorActionPreference
 
 if ($exitCode -ne 0) {
     throw "initexmf failed with exit code ${exitCode}"
 }
+
+mpm --admin --set-repository="${miktexMirror}/tm/packages/" --verbose
+
+miktex --admin --verbose packages update-package-database --repository="${miktexMirror}/tm/packages/"
+miktex --admin --verbose packages upgrade --repository="${miktexMirror}/tm/packages/" basic
+miktex --admin --verbose packages update --repository="${miktexMirror}/tm/packages/"
