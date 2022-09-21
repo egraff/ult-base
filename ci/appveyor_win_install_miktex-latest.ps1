@@ -2,7 +2,7 @@ $ErrorActionPreference = "Stop"
 
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 
-$miktexMirror = 'http://mirrors.rit.edu/CTAN/systems/win32/miktex'
+$miktexMirror = 'https://mirrors.rit.edu/CTAN/systems/win32/miktex'
 
 $installerPath = "$scriptRoot\basic-miktex-x64.exe"
 $installerUrl = "${miktexMirror}/setup/windows-x64/basic-miktex-22.7-x64.exe"
@@ -63,6 +63,6 @@ if ($exitCode -ne 0) {
 
 mpm --admin --set-repository="${miktexMirror}/tm/packages/" --verbose
 
-miktex --admin --verbose packages update-package-database --repository="${miktexMirror}/tm/packages/"
-miktex --admin --verbose packages upgrade --repository="${miktexMirror}/tm/packages/" basic
-miktex --admin --verbose packages update --repository="${miktexMirror}/tm/packages/"
+miktex --admin --verbose packages update-package-database --repository="${miktexMirror}/tm/packages/" 2>&1 | %{ "$_" }
+miktex --admin --verbose packages upgrade --repository="${miktexMirror}/tm/packages/" basic 2>&1 | %{ "$_" }
+miktex --admin --verbose packages update --repository="${miktexMirror}/tm/packages/" 2>&1 | %{ "$_" }

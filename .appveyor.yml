@@ -202,4 +202,4 @@ for:
             echo $_.Exception | FL -Force
           }
       # https://www.appveyor.com/docs/how-to/rdp-to-build-worker/
-      - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
+      # - ps: $blockRdp = $true; iex ((new-object net.webclient).DownloadString('https://raw.githubusercontent.com/appveyor/ci/master/scripts/enable-rdp.ps1'))
