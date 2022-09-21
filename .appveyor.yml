@@ -10,8 +10,8 @@ clone_depth: 10
 max_jobs: 5
 
 image:
-  - Ubuntu
   - Visual Studio 2015
+  - Ubuntu
 
 environment:
   deploy_key_secret:
