@@ -1,0 +1,72 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (MiKTeX 22.8.28) (preloaded format=pdflatex 2022.9.30)  30 SEP 2022 20:07
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**./test_upsc.tex
+(test_upsc.tex
+LaTeX2e <2022-06-01> patch level 5
+L3 programming layer <2022-08-30> (C:\Program Files\MiKTeX\tex/latex/base\book.
+cls
+Document Class: book 2021/10/04 v1.4n Standard LaTeX document class
+(C:\Program Files\MiKTeX\tex/latex/base\bk10.clo
+File: bk10.clo 2021/10/04 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count185
+\c@chapter=\count186
+\c@section=\count187
+\c@subsection=\count188
+\c@subsubsection=\count189
+\c@paragraph=\count190
+\c@subparagraph=\count191
+\c@figure=\count192
+\c@table=\count193
+\abovecaptionskip=\skip47
+\belowcaptionskip=\skip48
+\bibindent=\dimen138
+) (C:\Users\appveyor\AppData\Roaming\MiKTeX\tex/latex/geometry\geometry.sty
+Package: geometry 2020/01/02 v5.9 Page Geometry
+(C:\Program Files\MiKTeX\tex/latex/graphics\keyval.sty
+Package: keyval 2022/05/29 v1.15 key=value parser (DPC)
+\KV@toks@=\toks16
+) (C:\Program Files\MiKTeX\tex/generic/iftex\ifvtex.sty
+Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
+(C:\Program Files\MiKTeX\tex/generic/iftex\iftex.sty
+Package: iftex 2022/02/03 v1.0f TeX engine tests
+))
+\Gm@cnth=\count194
+\Gm@cntv=\count195
+\c@Gm@tempcnt=\count196
+\Gm@bindingoffset=\dimen139
+\Gm@wd@mp=\dimen140
+\Gm@odd@mp=\dimen141
+\Gm@even@mp=\dimen142
+\Gm@layoutwidth=\dimen143
+\Gm@layoutheight=\dimen144
+\Gm@layouthoffset=\dimen145
+\Gm@layoutvoffset=\dimen146
+\Gm@dimlist=\toks17
+(C:\Users\appveyor\AppData\Roaming\MiKTeX\tex/latex/geometry\geometry.cfg))
+
+! LaTeX Error: File `booktabs.sty' not found.
+
+Type X to quit or <RETURN> to proceed,
+or enter new name. (Default extension: sty)
+
+Enter file name: 
+! Emergency stop.
+<read *> 
+         
+l.5 ^^M
+       
+*** (cannot \read from terminal in nonstop modes)
+
+ 
+Here is how much of TeX's memory you used:
+ 863 strings out of 475389
+ 12921 string characters out of 2786806
+ 359373 words of memory out of 3000000
+ 22312 multiletter control sequences out of 15000+600000
+ 469259 words of font info for 28 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 55i,0n,62p,204b,36s stack positions out of 10000i,1000n,20000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!
