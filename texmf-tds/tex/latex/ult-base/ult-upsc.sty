@@ -6,6 +6,9 @@
 \RequirePackage{xparse}
 \RequirePackage{expl3}
 
+% Require mfirstuc so we can add \upsc to the block list in case mfirstuc is used
+\RequirePackage{mfirstuc}
+
 \@ifpackagelater{expl3}{2017/05/29}
 {%
   % l3regex package was deprecated, after functionality was embedded into expl3 package
@@ -33,5 +36,12 @@
     \expandafter{\protect\@@upsc{#1}}%
   \endgroup
 }
+
+
+\@ifpackagelater{mfirstuc}{2022/10/14}
+{%
+  \MFUblocker{\@@upsc}%
+  \MFUblocker{\upsc}%
+}{}%
 
 \endinput
