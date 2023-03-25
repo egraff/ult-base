@@ -9,13 +9,34 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
+$ProgressPreference = "SilentlyContinue"
 
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 
 $profileFullPath = [string](Resolve-Path $ProfilePath)
 
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
 $installZipPath = "$scriptRoot\install-tl.zip"
-(New-Object System.Net.WebClient).DownloadFile("${Repository}/install-tl.zip", $installZipPath)
+
+
+for ($attempt = 0; $attempt -lt 5; $attempt++)
+{
+  $client = New-Object System.Net.WebClient
+  try
+  {
+    $client.DownloadFile("${Repository}/install-tl.zip", $installZipPath)
+  }
+  catch [WebException]
+  {
+    continue
+  }
+  finally
+  {
+    $client.Dispose()
+  }
+
+  break
+}
 
 md "$scriptRoot\install-tl" -Force
 Expand-Archive $installZipPath -DestinationPath "${scriptRoot}\install-tl"
