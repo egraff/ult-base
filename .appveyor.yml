@@ -10,7 +10,7 @@ clone_depth: 10
 max_jobs: 5
 
 image:
-  - Visual Studio 2015
+  - Visual Studio 2022
   - Ubuntu
 
 environment:
@@ -47,7 +47,7 @@ environment:
 
 matrix:
   exclude:
-    - image: Visual Studio 2015
+    - image: Visual Studio 2022
       TEST_CATEGORY: regtest_linux
 
     - image: Ubuntu
@@ -60,7 +60,7 @@ matrix:
 for:
   - matrix:
       only:
-        - image: Visual Studio 2015
+        - image: Visual Studio 2022
           TEST_CATEGORY: miktex_install_tests
 
     install:
@@ -126,7 +126,7 @@ for:
 
   - matrix:
       only:
-        - image: Visual Studio 2015
+        - image: Visual Studio 2022
           TEST_CATEGORY: regtest_win
 
     install:
