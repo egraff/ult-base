@@ -5,7 +5,7 @@ $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })
 $miktexMirror = 'https://mirrors.rit.edu/CTAN/systems/win32/miktex'
 
 $installerPath = "$scriptRoot\basic-miktex-x64.exe"
-$installerUrl = "${miktexMirror}/setup/windows-x64/basic-miktex-22.7-x64.exe"
+$installerUrl = "${miktexMirror}/setup/windows-x64/basic-miktex-22.10-x64.exe"
 
 (New-Object System.Net.WebClient).DownloadFile($installerUrl, $installerPath)
 
