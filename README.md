@@ -14,8 +14,8 @@
 | Linux - TeX Live 2017           | [![][cirrus-linux-tl-2017-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2016           | [![][cirrus-linux-tl-2016-badge]][cirrus-url]                                   |
 | Windows - TeX Live (latest)     | [![][appveyor-win-texlive-latest-badge]][appveyor-url]                          |
+| Windows - TeX Live 2022         | [![][appveyor-win-texlive-2022-badge]][appveyor-url]                            |
 | Windows - TeX Live 2021         | [![][appveyor-win-texlive-2021-badge]][appveyor-url]                            |
-| Windows - TeX Live 2020         | [![][appveyor-win-texlive-2020-badge]][appveyor-url]                            |
 | Windows - MiKTeX (latest)       | [![][appveyor-win-miktex-latest-badge]][appveyor-url]                           |
 | Windows - MiKTeX install tests  | [![][appveyor-win-miktex-install-badge]][appveyor-url]                          |
 
