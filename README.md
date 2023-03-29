@@ -6,6 +6,7 @@
 | Build                           | Build status                                                                    |
 | ------------------------------- | ------------------------------------------------------------------------------- |
 | Linux - TeX Live (latest)       | [![][appveyor-linux-texlive-latest-badge]][appveyor-url]                        |
+| Linux - TeX Live 2022           | [![][cirrus-linux-tl-2022-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2021           | [![][cirrus-linux-tl-2021-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2020           | [![][cirrus-linux-tl-2020-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2019           | [![][cirrus-linux-tl-2019-badge]][cirrus-url]                                   |
@@ -24,6 +25,7 @@
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/2i4xagf9s92eoxwu/branch/master?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/egraff/ult-base/branch/master
 
+[cirrus-linux-tl-2022-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202022
 [cirrus-linux-tl-2021-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202021
 [cirrus-linux-tl-2020-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202020
 [cirrus-linux-tl-2019-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202019
@@ -31,9 +33,9 @@
 [cirrus-linux-tl-2017-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202017
 [cirrus-linux-tl-2016-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202016
 
-[appveyor-linux-texlive-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/2
-[appveyor-win-texlive-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/3
-[appveyor-win-texlive-2021-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/4
-[appveyor-win-texlive-2020-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/5
-[appveyor-win-miktex-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/6
-[appveyor-win-miktex-install-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/1
+[appveyor-linux-texlive-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/3
+[appveyor-win-texlive-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/4
+[appveyor-win-texlive-2022-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/5
+[appveyor-win-texlive-2021-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/6
+[appveyor-win-miktex-latest-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/1
+[appveyor-win-miktex-install-badge]: https://appveyor-matrix-badges.herokuapp.com/repos/egraff/ult-base/branch/master/2
