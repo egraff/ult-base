@@ -11,7 +11,12 @@ int main(void)
 \floatstyle{plaintop}
 \newfloat{code}{!tbph}{myc}
 
-\lstset{captionpos=b,numbers=left,backgroundcolor=\color[rgb]{0.9,0.9,1}}
+\lstset{%
+  basicstyle=\usefont{T1}{pcr}{m}{n},%
+  captionpos=b,%
+  numbers=left,%
+  backgroundcolor=\color[rgb]{0.9,0.9,1}%
+}
 
 \makeatletter
 \newcustomlstenvironment{codesnippet}{locodesnippet}{Code Snippet}[1][]
