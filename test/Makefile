@@ -39,9 +39,12 @@ clean:
 	@echo "Done!"
 
 test: detect-python
+ifndef WARMUP_COMPILE
+  WARMUP_COMPILE := 0
+endif
 	@echo "Running comparison tests..."
 	@echo ""
-	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) .
+	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) --warmup-compile $(WARMUP_COMPILE) .
 
 _file: _ctrl_
 	@echo "Building $(TEXFILE_DIR)/$(TEXFILE_FILENAME)..."

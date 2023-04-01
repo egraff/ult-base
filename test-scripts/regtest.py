@@ -68,6 +68,7 @@ class TestConfig:
         num_concurrent_processes=8,
         num_dots_per_line=80,
         debug_level=debug.INFO,
+        run_warmup_compile_before_tests=False,
     ):
         test_base_dir = path_relpath(os.path.realpath(test_base_dir))
         assert os.path.isdir(test_base_dir)
@@ -84,9 +85,13 @@ class TestConfig:
 
         self.DEBUGLEVEL = debug_level
 
+        self.run_warmup_compile_before_tests = run_warmup_compile_before_tests
+
         self.echo_lock = threading.Lock()
         self.make_task_semaphore = asyncio.BoundedSemaphore(1)
         self.process_pool_semaphore = asyncio.BoundedSemaphore(8)
+
+        self.latex_build_timeout = 3 * 60
 
 
 class TestResult:
@@ -289,7 +294,7 @@ async def make_test_tex_file_async(
         "LATEX_JOBNAME={}".format(latex_jobname),
     ]
     return await asynclib.popen_async(
-        cmd, timeout=(3 * 60), raise_exception_on_timeout=True
+        cmd, timeout=config.latex_build_timeout, raise_exception_on_timeout=True
     )
 
 
@@ -371,7 +376,7 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
 
 
 class TestRunner:
-    def __init__(self, config):
+    def __init__(self, config: TestConfig):
         self.test_result_lock = asyncio.Lock()
         self.num_tests_completed = 0
         self.failed_tests = []
@@ -440,7 +445,56 @@ class TestRunner:
 
                 self.failed_tests.append(test_result)
 
-    async def run(self, test_names):
+    async def run(self, test_names) -> int:
+        if self.config.run_warmup_compile_before_tests:
+            await self._run_warmup_compile(test_names)
+
+        return await self._run_tests(test_names)
+
+    async def _run_warmup_compile(self, test_names):
+        self.echo(debug.BOLD, "Running warmup compile step...\n")
+        for i, test_name in enumerate(test_names):
+            latex_jobname = "output"
+
+            # Path to tex file, relative to config.TESTSDIR
+            texfile_testddir_relpath = "{}.tex".format(test_name)
+
+            texfile_basename = os.path.splitext(os.path.basename(texfile_testddir_relpath))[0]
+            texfile_dirname = os.path.dirname(texfile_testddir_relpath)
+
+            texfile_filename = "{}.tex".format(texfile_basename)
+            latex_build_outdir = path_join(config.BUILDDIR, texfile_dirname, texfile_basename)
+
+            texfile_dirpath = path_join(config.TESTSDIR, texfile_dirname)
+            outdir_relative_to_texfile_dirpath = path_relpath(
+                latex_build_outdir, texfile_dirpath
+            )
+
+            shutil.rmtree(latex_build_outdir, ignore_errors=True)
+            mkdirp(latex_build_outdir)
+
+            for _ in range(2):
+                try:
+                    returncode, stdout, stderr = await make_test_tex_file_async(
+                        self.config,
+                        texfile_dir=path_relpath(texfile_dirpath, self.config.TEST_BASE_DIR),
+                        texfile_filename=texfile_filename,
+                        latex_output_dir=outdir_relative_to_texfile_dirpath,
+                        latex_jobname=latex_jobname,
+                    )
+                except:
+                    pass
+
+            shutil.rmtree(latex_build_outdir, ignore_errors=True)
+
+            if i % self.config.NUM_DOTS_PER_LINE == 0:
+                self.echo(debug.BOLD, "\n")
+
+            self.echo(debug.NORMAL, ".")
+
+        self.echo(debug.BOLD, "\n\nWarmup compile step done!\n\n")
+
+    async def _run_tests(self, test_names) -> int:
         tasks = []
         for test_name in test_names:
             task = asyncio.ensure_future(self._run_test(test_name))
@@ -652,6 +706,17 @@ def _dirname(astring):
     return astring
 
 
+def _str2bool(v):
+    if isinstance(v, bool):
+        return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument(
@@ -674,6 +739,13 @@ if __name__ == "__main__":
         default="proto",
         help="the name of the test prototype folder",
     )
+    parser.add_argument(
+        "--warmup-compile",
+        dest="run_warmup_compile_before_tests",
+        type=_str2bool,
+        default=False,
+        help="whether to run a warmup compile step before executing the tests",
+    )
 
     args = parser.parse_args()
 
@@ -691,6 +763,7 @@ if __name__ == "__main__":
         test_base_dir,
         proto_dir=args.proto_dir,
         num_concurrent_processes=min(max(int(1.5 * os.cpu_count()), 2), 16),
+        run_warmup_compile_before_tests=args.run_warmup_compile_before_tests,
     )
     runner = TestRunner(config)
 
