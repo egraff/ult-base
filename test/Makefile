@@ -33,6 +33,17 @@ ifndef PYTHON
   endif
 endif
 
+detect-tex-cmds:
+ifndef LATEXMK
+  LATEXMK := "$(shell which latexmk 2>/dev/null)"
+endif
+ifndef PDFLATEX
+  PDFLATEX := "$(shell which pdflatex 2>/dev/null)"
+endif
+ifndef MAKEGLOSSARIES
+  MAKEGLOSSARIES := "$(shell which makeglossaries 2>/dev/null)"
+endif
+
 set-default-vars:
 ifndef WARMUP_COMPILE
   WARMUP_COMPILE := 0
@@ -56,16 +67,7 @@ _file: _ctrl_
 	  $(BUILD) \
 	)
 
-_ctrl_:
-ifndef LATEXMK
-  LATEXMK := "$(shell which latexmk 2>/dev/null)"
-endif
-ifndef PDFLATEX
-  PDFLATEX := "$(shell which pdflatex 2>/dev/null)"
-endif
-ifndef MAKEGLOSSARIES
-  MAKEGLOSSARIES := "$(shell which makeglossaries 2>/dev/null)"
-endif
+_ctrl_: detect-tex-cmds
 ifeq ($(LATEXMK),"")
 	@echo "Cannot find 'latexmk'" >&2
 	@exit 2
