@@ -50,4 +50,4 @@ RUN \
     collection-plainextra \
     collection-pstricks \
   ; while [ $? -ne 0 ]; do !!; done ; \
-  tlmgr path add
+  tlmgr path add || true
