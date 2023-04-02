@@ -47,4 +47,5 @@ RUN \
     collection-pictures \
     collection-plaingeneric \
     collection-pstricks \
-  ; while [ $? -ne 0 ]; do !!; done
+  ; while [ $? -ne 0 ]; do !!; done ; \
+  tlmgr path add
