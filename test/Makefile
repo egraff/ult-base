@@ -45,9 +45,7 @@ ifndef MAKEGLOSSARIES
 endif
 
 set-default-vars:
-ifeq ($(WARMUP_COMPILE),"")
-  WARMUP_COMPILE := 0
-endif
+  WARMUP_COMPILE ?= 0
 
 clean:
 	@$(RM) -r $(PDFFLD) $(BUILDFLD)
