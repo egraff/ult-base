@@ -45,7 +45,9 @@ ifndef MAKEGLOSSARIES
 endif
 
 set-default-vars:
-  WARMUP_COMPILE ?= 0
+ifeq ($(strip $(WARMUP_COMPILE)),)
+  override WARMUP_COMPILE := 0
+endif
 
 clean:
 	@$(RM) -r $(PDFFLD) $(BUILDFLD)
@@ -54,7 +56,7 @@ clean:
 test: detect-python set-default-vars
 	@echo "Running comparison tests..."
 	@echo ""
-	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) --warmup-compile $(WARMUP_COMPILE) .
+	echo "YO: $(WARMUP_COMPILE) "
 
 _file: _ctrl_
 	@echo "Building $(TEXFILE_DIR)/$(TEXFILE_FILENAME)..."
