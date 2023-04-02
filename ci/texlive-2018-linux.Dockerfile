@@ -19,7 +19,7 @@ RUN \
   (echo "i" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${TLNET_REPO} -profile ./texlive.profile) || \
   ( \
     while [ $? -ne 0 ]; do \
-      echo "y" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${TLNET_REPO} -profile ./texlive.profile \
+      echo "y" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${TLNET_REPO} -profile ./texlive.profile ; \
     done \
   ) && \
   export MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }') && \
