@@ -46,7 +46,7 @@ endif
 
 set-default-vars:
 ifndef WARMUP_COMPILE
-  WARMUP_COMPILE := 0
+  WARMUP_COMPILE := "0"
 endif
 
 clean:
