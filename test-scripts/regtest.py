@@ -709,6 +709,8 @@ def _dirname(astring):
 def _str2bool(v):
     if isinstance(v, bool):
         return v
+    if isinstance(v, int):
+        return bool(v)
     if v.lower() in ('yes', 'true', 't', 'y', '1'):
         return True
     elif v.lower() in ('no', 'false', 'f', 'n', '0'):
