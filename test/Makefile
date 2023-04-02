@@ -7,7 +7,7 @@ PDFFLD = pdfs
 BUILDFLD = .build
 
 # Extra options, these must be available for both pdflatex and latexmk
-DEFOPT = -output-directory=$(LATEX_OUTPUT_DIR) -interaction=batchmode
+DEFOPT = -output-directory=$(LATEX_OUTPUT_DIR) -interaction=nonstopmode -halt-on-error
 
 # Command to build document
 BUILD = ($(LATEXMK) -pdf -bibtex -latexoption=-shell-escape -jobname=$(LATEX_JOBNAME) $(DEFOPT) $(TEXFILE_FILENAME) 2>&1) >/dev/null
@@ -33,15 +33,16 @@ ifndef PYTHON
   endif
 endif
 
+set-default-vars:
+ifndef WARMUP_COMPILE
+  WARMUP_COMPILE := 0
+endif
 
 clean:
 	@$(RM) -r $(PDFFLD) $(BUILDFLD)
 	@echo "Done!"
 
-test: detect-python
-ifndef WARMUP_COMPILE
-  WARMUP_COMPILE := 0
-endif
+test: detect-python set-default-vars
 	@echo "Running comparison tests..."
 	@echo ""
 	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) --warmup-compile $(WARMUP_COMPILE) .
