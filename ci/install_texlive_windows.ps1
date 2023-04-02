@@ -26,7 +26,7 @@ for ($attempt = 0; $attempt -lt 5; $attempt++)
   {
     $client.DownloadFile("${Repository}/install-tl.zip", $installZipPath)
   }
-  catch [WebException]
+  catch [System.Net.WebException]
   {
     continue
   }
