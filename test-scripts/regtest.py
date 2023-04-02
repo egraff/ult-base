@@ -716,7 +716,7 @@ def _str2bool(v):
     elif v.lower() in ('no', 'false', 'f', 'n', '0'):
         return False
     else:
-        raise argparse.ArgumentTypeError('Boolean value expected.')
+        raise argparse.ArgumentTypeError(f'Boolean value expected, got {v} (type {type(v)})')
 
 
 if __name__ == "__main__":
