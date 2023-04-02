@@ -56,7 +56,7 @@ clean:
 test: detect-python set-default-vars
 	@echo "Running comparison tests..."
 	@echo ""
-	echo "YO: $(WARMUP_COMPILE) "
+	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) --warmup-compile $(WARMUP_COMPILE) .
 
 _file: _ctrl_
 	@echo "Building $(TEXFILE_DIR)/$(TEXFILE_FILENAME)..."
