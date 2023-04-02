@@ -21,3 +21,25 @@ RUN \
   ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin" && \
   sed -i 's/^PATH="/PATH="\/opt\/texbin:/' /etc/environment && \
   rm -rf ${tl_dir} "install-tl-unx.tar.gz"
+
+RUN \
+  tlmgr install \
+    collection-basic \
+    collection-bibtexextra \
+    collection-binextra \
+    collection-fontsextra \
+    collection-fontsrecommended \
+    collection-fontutils \
+    collection-formatsextra \
+    collection-langenglish \
+    collection-langeuropean \
+    collection-langother \
+    collection-latex \
+    collection-latexextra \
+    collection-latexrecommended \
+    collection-mathscience \
+    collection-metapost \
+    collection-pictures \
+    collection-plaingeneric \
+    collection-pstricks \
+  ; while [ $? -ne 0 ]; do !!; done
