@@ -30,7 +30,8 @@ while ($true)
         collection-metapost `
         collection-pictures `
         collection-plaingeneric `
-        collection-pstricks
+        collection-pstricks `
+        collection-wintools
 
     if ($?)
     {
