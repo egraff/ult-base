@@ -18,33 +18,45 @@ $env:Path = [System.Environment]::ExpandEnvironmentVariables(
 
 tlmgr repository set $tlnetRepo
 
-while ($true)
-{
-    tlmgr install `
-        collection-basic `
-        collection-bibtexextra `
-        collection-binextra `
-        collection-fontsextra `
-        collection-fontsrecommended `
-        collection-fontutils `
-        collection-formatsextra `
-        collection-langenglish `
-        collection-langeuropean `
-        collection-langother `
-        collection-latex `
-        collection-latexextra `
-        collection-latexrecommended `
-        collection-mathscience `
-        collection-metapost `
-        collection-pictures `
-        collection-plaingeneric `
-        collection-pstricks `
-        collection-wintools
+Write-Host "Going to install TeX Live collections..."
 
-    if ($?)
+$OldErrorActionPreference = $ErrorActionPreference
+$ErrorActionPreference = "Continue"
+
+try
+{
+    while ($true)
     {
-        break
+        tlmgr install `
+            collection-basic `
+            collection-bibtexextra `
+            collection-binextra `
+            collection-fontsextra `
+            collection-fontsrecommended `
+            collection-fontutils `
+            collection-formatsextra `
+            collection-langenglish `
+            collection-langeuropean `
+            collection-langother `
+            collection-latex `
+            collection-latexextra `
+            collection-latexrecommended `
+            collection-mathscience `
+            collection-metapost `
+            collection-pictures `
+            collection-plaingeneric `
+            collection-pstricks `
+            collection-wintools
+
+        if ($?)
+        {
+            break
+        }
     }
+}
+finally
+{
+    $ErrorActionPreference = $OldErrorActionPreference
 }
 
 tlmgr path add
