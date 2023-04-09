@@ -1,14 +1,22 @@
 $ErrorActionPreference = "Stop"
 
+# Use HTTPS for initial installer, because of flaky historic mirror (corrupted downloads in initial install step
+# may cause unrecoverable errors, e.g. with error message "TeX Live [VERSION] is frozen").
+# Use HTTP for subsequent install (with retries), because HTTP is too slow for CI (exceeds timeout for CI job)
+$initialInstallerRepo = 'https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2019/tlnet-final'
+$tlnetRepo = 'http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2019/tlnet-final'
+
 $scriptRoot = (Resolve-Path $(If ($PSScriptRoot) { $PSScriptRoot } Else { "." })).Path
 . "${scriptRoot}\install_texlive_windows.ps1" `
-    -Repository 'http://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2019/tlnet-final' `
+    -Repository $initialInstallerRepo `
     -ProfilePath "${scriptRoot}\texlive2019-win.profile"
 
 $env:Path = [System.Environment]::ExpandEnvironmentVariables(
     [System.Environment]::GetEnvironmentVariable('Path', 'Machine') + ';' +
     [System.Environment]::GetEnvironmentVariable('Path', 'User')
 )
+
+tlmgr repository set $tlnetRepo
 
 while ($true)
 {
