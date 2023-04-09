@@ -52,4 +52,6 @@ RUN \
     collection-plainextra \
     collection-pstricks \
   ; while [ $? -ne 0 ]; do !!; done ; \
+  tlmgr update --reinstall-forcibly-removed --all --self ; \
+  while [ $? -ne 0 ]; do !!; done ; \
   tlmgr path add || true
