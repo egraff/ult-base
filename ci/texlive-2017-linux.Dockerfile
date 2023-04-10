@@ -7,7 +7,8 @@ RUN \
 RUN \
   apt-get install --no-install-recommends -y git python3 curl && \
   apt-get install --no-install-recommends -y poppler-utils ghostscript imagemagick --fix-missing && \
-  apt-get install --no-install-recommends -y libfile-fcntllock-perl gcc equivs libwww-perl fontconfig unzip
+  apt-get install --no-install-recommends -y libfile-fcntllock-perl gcc equivs libwww-perl fontconfig unzip && \
+  apt-get install --no-install-recommends -y dotnet-runtime-7.0
 
 COPY ci/texlive2017.profile ./texlive.profile
 
