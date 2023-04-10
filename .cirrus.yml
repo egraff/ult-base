@@ -1,4 +1,8 @@
 task:
+  environment:
+    deploy_key_secret: ENCRYPTED[3c73c561f87d2de39c00e8b44701aad9e5cf57079e8abc56077ee6cd584029f3e0f2789a74098d2e49c2ee318328e490]
+    deploy_key_salt: ENCRYPTED[277a1e25420dc9db77407432e093b68006b91a02dd7b603b0dd608863e82eefa24133bca90de395a08f4368d01c9219e]
+
   matrix:
     - name: "Linux - TeX Live 2022"
       container:
@@ -41,6 +45,16 @@ task:
         dockerfile: ci/texlive-2016-linux.Dockerfile
       env:
         PROTODIR: proto_tl2016
+  
+  decrypt_deploy_key_script: |
+    curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/fc44f5c5f2fb184fe738814f373c16cb69c30929/install.sh' | bash -e -
+    if [ ! -z "$CIRRUS_PR" ]; then
+      echo "Decrypting deploy key"
+      appveyor-tools/secure-file -decrypt ci/cirrus-deploy-key.enc -secret ${deploy_key_secret} -salt -secret ${deploy_key_salt} -out "${HOME}/.ssh/id_rsa"
+      chmod 600 "$($Env:HOME)/.ssh/id_rsa"
+      echo "Testing deploy key"
+      (ssh -o StrictHostKeyChecking=no -T git@github.com || true)
+    fi
 
   install_script:
     - pdfinfo -v
