@@ -45,7 +45,7 @@ task:
         dockerfile: ci/texlive-2016-linux.Dockerfile
       env:
         PROTODIR: proto_tl2016
-  
+
   decrypt_deploy_key_script: |
     curl -sflL 'https://raw.githubusercontent.com/appveyor/secure-file/fc44f5c5f2fb184fe738814f373c16cb69c30929/install.sh' | bash -e -
     if [ -z "$CIRRUS_PR" ]; then
