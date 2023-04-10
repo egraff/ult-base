@@ -69,3 +69,16 @@ task:
 
   test_script:
     - make -C test PYTHON=python3 PROTODIR=${PROTODIR}
+
+  on_failure:
+    set_result_code_script:
+      - echo "TEST_RESULT_CODE=1" >> $CIRRUS_ENV
+
+  always:
+    set_default_result_code_script: |
+      if [ -z "$TEST_RESULT_CODE" ]; then
+        echo "TEST_RESULT_CODE=0" >> $CIRRUS_ENV
+      fi
+
+    after_script:
+      - echo "Test result code: $TEST_RESULT_CODE"
