@@ -9,7 +9,7 @@ RUN \
   export DEBIAN_FRONTEND=noninteractive && \
   apt-get install --no-install-recommends -qq -y git python3 curl && \
   apt-get install --no-install-recommends -qq -y poppler-utils ghostscript imagemagick --fix-missing && \
-  apt-get install --no-install-recommends -qq -y libfile-fcntllock-perl gcc equivs libwww-perl fontconfig unzip
+  apt-get install --no-install-recommends -qq -y libfile-fcntllock-perl gcc equivs libwww-perl fontconfig unzip openssh-client
 
 # Install .NET 3.1 runtime, required by secure-file utility
 RUN \
