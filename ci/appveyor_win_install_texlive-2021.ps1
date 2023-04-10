@@ -48,10 +48,13 @@ try
             collection-pstricks `
             collection-wintools
 
-        if ($?)
+        $exitCode = $LastExitCode
+        if ($exitCode -eq 0)
         {
             break
         }
+
+        Write-Host "Exit code was ${exitCode} - retrying installation"
     }
 
     tlmgr repository set $httpsRepo
