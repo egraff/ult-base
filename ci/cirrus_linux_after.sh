@@ -61,7 +61,7 @@ cp test/test_result.json $GH_PAGES/_data/cirrus-builds/${CIRRUS_BUILD_ID}_${CI_N
 pushd $GH_PAGES
 
 git add --all .
-git commit -m "Cirrus: test results from build task ${CIRRUS_BUILD_ID}_${CI_NODE_INDEX}"
+git commit -m "Cirrus: test results from build task ${CIRRUS_BUILD_ID}.${CI_NODE_INDEX}"
 
 # Allow command to fail (no exit on failure)
 set +e
