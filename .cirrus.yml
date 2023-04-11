@@ -82,3 +82,4 @@ task:
 
     after_script:
       - echo "Test result code: $TEST_RESULT_CODE"
+      - ci/cirrus_linux_after.sh $TEST_RESULT_CODE
