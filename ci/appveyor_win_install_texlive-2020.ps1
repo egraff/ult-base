@@ -59,10 +59,14 @@ try
 
     tlmgr repository set $httpsRepo
     tlmgr update --reinstall-forcibly-removed --all --self
+
+    tlmgr path add
+    if ($LastExitCode -ne 0)
+    {
+        throw "Failed command: tlmgr path add"
+    }
 }
 finally
 {
     $ErrorActionPreference = $OldErrorActionPreference
 }
-
-tlmgr path add
