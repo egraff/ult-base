@@ -9,7 +9,7 @@ TLPROFILE=$2
 sudo apt-get update
 sudo apt-get install --fix-missing
 sudo apt-get install --no-install-recommends -qq poppler-utils ghostscript imagemagick --fix-missing
-sudo apt-get install --no-install-recommends -qq libfile-fcntllock-perl gcc equivs libwww-perl fontconfig unzip
+sudo apt-get install --no-install-recommends -qq wget libfile-fcntllock-perl gcc equivs libwww-perl fontconfig unzip
 
 pdfinfo -v
 compare -version
