@@ -1,7 +1,7 @@
 % Copyright (c) 2015 Erlend Graff <erlend.graff@gmail.com>
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ult-custom-listings}[2015/11/05 v1.1a UiT LaTeX template custom listings]
+\ProvidesPackage{ult-custom-listings}[2024/03/25 v1.2 UiT LaTeX template custom listings]
 
 \RequirePackage{xpatch}
 \RequirePackage{etoolbox}
@@ -95,15 +95,22 @@
       }%
   }%
 
-  \AfterEndPreamble{%
-    % Patch ToC-stuff in \lst@MakeCaption
-    \global\@namedef{ext@lstlisting}{lol}%
-    \global\@patch@nofail@lst@MakeCaption
-      {\addcontentsline{lol}{lstlisting}}%
-      {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}}%
-    \global\@patch@nofail@lst@MakeCaption
-      {\addcontentsline{lol}{lstlisting}}%
-      {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}}%
+  \@ifpackagelater{listings}{2024/02/21}%
+  {%
+    % listings version 2024/02/21 finally fixed the hard-coded 'lol', and replaced with \ext@lstlisting
+    % See https://www.tug.org/svn/texlive?limit_changes=0&view=revision&revision=70045
+  }%
+  {%
+    \AfterEndPreamble{%
+      % Patch ToC-stuff in \lst@MakeCaption
+      \global\@namedef{ext@lstlisting}{lol}%
+      \global\@patch@nofail@lst@MakeCaption
+        {\addcontentsline{lol}{lstlisting}}%
+        {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}}%
+      \global\@patch@nofail@lst@MakeCaption
+        {\addcontentsline{lol}{lstlisting}}%
+        {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}}%
+    }%
   }%
 }
 
