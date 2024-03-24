@@ -4,6 +4,12 @@ task:
     deploy_key_salt: ENCRYPTED[277a1e25420dc9db77407432e093b68006b91a02dd7b603b0dd608863e82eefa24133bca90de395a08f4368d01c9219e]
 
   matrix:
+    - name: "Linux - TeX Live 2023"
+      container:
+        dockerfile: ci/texlive-2023-linux.Dockerfile
+      env:
+        PROTODIR: proto_tl2022
+
     - name: "Linux - TeX Live 2022"
       container:
         dockerfile: ci/texlive-2022-linux.Dockerfile
