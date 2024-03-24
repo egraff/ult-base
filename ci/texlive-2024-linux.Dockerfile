@@ -21,7 +21,7 @@ RUN \
   apt-get update && \
   apt-get install --no-install-recommends -y dotnet-runtime-3.1
 
-COPY ci/texlive2023.profile ./texlive.profile
+COPY ci/texlive2024.profile ./texlive.profile
 
 RUN \
   export TLNET_REPO=http://mirrors.rit.edu/CTAN/systems/texlive/tlnet && \
