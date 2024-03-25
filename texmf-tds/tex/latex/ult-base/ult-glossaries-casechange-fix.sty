@@ -1,0 +1,58 @@
+% Copyright (c) 2015 Erlend Graff <erlend.graff@gmail.com>
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{ult-glossaries-casechange-fix}[2024/03/25 v1.0 UiT LaTeX template glossaries case-change fix]
+
+\RequirePackage{expl3}
+\RequirePackage{etoolbox}
+
+% Revision 67394 (https://tug.org/svn/texlive?view=revision&limit_changes=0&revision=67394)
+% contains a change to how \l_text_case_exclude_arg_tl is treated wrt. expansions
+% (see https://github.com/latex3/latex3/commit/3070964cf97fb66f3cffd99a6a4bba2b70df8fe9).
+%
+% This caused a regression in the glossaries packages, where expandable glsentry macros would no
+% longer expand inside \MakeUppercase, \glsglsuppercase, etc., because they were all previously
+% added to \l_text_case_exclude_arg_tl.
+%
+% See https://www.dickimaw-books.com/bugtracker.php?key=271.
+
+\ExplSyntaxOn
+\@ifpackagelater{expl3}{2020/01/12}
+{
+  \providecommand{\ult@remove@case@exclude@arg}[1]{%
+    \tl_if_in:NnT \l_text_case_exclude_arg_tl {#1}%
+      {%
+        \tl_remove_all:Nn \l_text_case_exclude_arg_tl {#1}%
+      }%
+  }
+}
+{
+  \providecommand{\ult@remove@case@exclude@arg}[1]{}
+}
+\ExplSyntaxOff
+
+\AfterEndPreamble{%
+  \ult@remove@case@exclude@arg{\glsentryname}%
+  \ult@remove@case@exclude@arg{\glsentrydesc}%
+  \ult@remove@case@exclude@arg{\glsentrydescplural}%
+  \ult@remove@case@exclude@arg{\glsentrytext}%
+  \ult@remove@case@exclude@arg{\glsentryplural}%
+  \ult@remove@case@exclude@arg{\glsentrysymbol}%
+  \ult@remove@case@exclude@arg{\glsentrysymbolplural}%
+  \ult@remove@case@exclude@arg{\glsentryfirst}%
+  \ult@remove@case@exclude@arg{\glsentryfirstplural}%
+  \ult@remove@case@exclude@arg{\glsentryuseri}%
+  \ult@remove@case@exclude@arg{\glsentryuserii}%
+  \ult@remove@case@exclude@arg{\glsentryuseriii}%
+  \ult@remove@case@exclude@arg{\glsentryuseriv}%
+  \ult@remove@case@exclude@arg{\glsentryuserv}%
+  \ult@remove@case@exclude@arg{\glsentryuservi}%
+  \ult@remove@case@exclude@arg{\glsentryshort}%
+  \ult@remove@case@exclude@arg{\glsentryshortpl}%
+  \ult@remove@case@exclude@arg{\glsentrylong}%
+  \ult@remove@case@exclude@arg{\glsentrylongpl}%
+  \ult@remove@case@exclude@arg{\glsentryfull}%
+  \ult@remove@case@exclude@arg{\glsentryfullpl}%
+}
+
+\endinput
