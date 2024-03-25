@@ -106,10 +106,10 @@
       \global\@namedef{ext@lstlisting}{lol}%
       \global\@patch@nofail@lst@MakeCaption
         {\addcontentsline{lol}{lstlisting}}%
-        {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}}%
+        {\addcontentsline{\ext@lstlisting}{lstlisting}}%
       \global\@patch@nofail@lst@MakeCaption
         {\addcontentsline{lol}{lstlisting}}%
-        {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}}%
+        {\addcontentsline{\ext@lstlisting}{lstlisting}}%
     }%
   }%
 }
@@ -145,10 +145,10 @@
   %
   % Patch ToC output from \lst@MakeCaption so we get a separate "List of ..." for each environment.
   \@patch@nofail@lst@MakeCaption
-    {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}\lst@name}%
+    {\addcontentsline{\ext@lstlisting}{lstlisting}\lst@name}%
     {\addcontentsline{\@nameuse{ext@#1}}{#1}\lst@name}%
   \@patch@nofail@lst@MakeCaption
-    {\addcontentsline{\@nameuse{ext@lstlisting}}{lstlisting}{\protect\numberline{\thelstlisting}\lst@@caption}}%
+    {\addcontentsline{\ext@lstlisting}{lstlisting}{\protect\numberline{\thelstlisting}\lst@@caption}}%
     {\addcontentsline{\@nameuse{ext@#1}}{#1}{\protect\numberline\expandafter{\csname the#1\endcsname}\lst@@caption}}%
   %
   % Now, patch caption's implementation of \lst@MakeCaption, so we may style each environment differently using \captionsetup
