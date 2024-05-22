@@ -308,22 +308,25 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
     texfile_testddir_relpath = "{}.tex".format(test_name)
 
     texfile_basename = os.path.splitext(os.path.basename(texfile_testddir_relpath))[0]
+
+    # Certain LaTeX versions have problems with build directory paths containing '[' and ']' characters
+    # when going through MSYS->Windows path substitution
+    texfile_basename_subst = (
+        texfile_basename.replace("]", "").replace("[", "~").replace(",", "_")
+        if re.search(r"\[.*\]", texfile_basename)
+        else texfile_basename
+    )
+
     texfile_dirname = os.path.dirname(texfile_testddir_relpath)
+    texfile_dirpath = path_join(config.TESTSDIR, texfile_dirname)
 
     texfile_filename = "{}.tex".format(texfile_basename)
     latex_build_outdir = path_join(config.BUILDDIR, texfile_dirname, texfile_basename)
-
-    latex_build_outdir_pdf_path = path_join(
-        latex_build_outdir, "{}.pdf".format(latex_jobname)
-    )
-
-    texfile_dirpath = path_join(config.TESTSDIR, texfile_dirname)
-    outdir_relative_to_texfile_dirpath = path_relpath(
-        latex_build_outdir, texfile_dirpath
-    )
+    latex_build_outdir_subst = path_join(config.BUILDDIR, texfile_dirname, texfile_basename_subst)
 
     async with config.make_task_semaphore:
         shutil.rmtree(latex_build_outdir, ignore_errors=True)
+        shutil.rmtree(latex_build_outdir_subst, ignore_errors=True)
         mkdirp(latex_build_outdir)
         mkdirp(os.path.dirname(test_pdf_path))
 
@@ -335,10 +338,11 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
                 config,
                 texfile_dir=path_relpath(texfile_dirpath, config.TEST_BASE_DIR),
                 texfile_filename=texfile_filename,
-                latex_output_dir=outdir_relative_to_texfile_dirpath,
+                latex_output_dir=path_relpath(latex_build_outdir_subst, texfile_dirpath),
                 latex_jobname=latex_jobname,
             )
         except asynclib.AsyncPopenTimeoutError as err:
+            shutil.move(latex_build_outdir_subst, latex_build_outdir)
             return TestResult(
                 test_name,
                 False,
@@ -348,7 +352,10 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
                 build_stderr=err.stderr,
             )
         except:
+            shutil.move(latex_build_outdir_subst, latex_build_outdir)
             return TestResult(test_name, False, exc_info=sys.exc_info())
+
+    shutil.move(latex_build_outdir_subst, latex_build_outdir)
 
     if returncode != 0:
         return TestResult(
@@ -358,6 +365,10 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
             build_stdout=stdout,
             build_stderr=stderr,
         )
+
+    latex_build_outdir_pdf_path = path_join(
+        latex_build_outdir, "{}.pdf".format(latex_jobname)
+    )
 
     # If we got here, then build was successful. Move PDF into pdf directory, and remove latex output directory.
     shutil.move(latex_build_outdir_pdf_path, test_pdf_path)
@@ -460,15 +471,20 @@ class TestRunner:
             texfile_testddir_relpath = "{}.tex".format(test_name)
 
             texfile_basename = os.path.splitext(os.path.basename(texfile_testddir_relpath))[0]
+
+            # Certain LaTeX versions have problems with build directory paths containing '[' and ']' characters
+            # when going through MSYS->Windows path substitution
+            texfile_basename_subst = (
+                texfile_basename.replace("]", "").replace("[", "~").replace(",", "_")
+                if re.search(r"\[.*\]", texfile_basename)
+                else texfile_basename
+            )
+
             texfile_dirname = os.path.dirname(texfile_testddir_relpath)
+            texfile_dirpath = path_join(config.TESTSDIR, texfile_dirname)
 
             texfile_filename = "{}.tex".format(texfile_basename)
-            latex_build_outdir = path_join(config.BUILDDIR, texfile_dirname, texfile_basename)
-
-            texfile_dirpath = path_join(config.TESTSDIR, texfile_dirname)
-            outdir_relative_to_texfile_dirpath = path_relpath(
-                latex_build_outdir, texfile_dirpath
-            )
+            latex_build_outdir = path_join(config.BUILDDIR, texfile_dirname, texfile_basename_subst)
 
             shutil.rmtree(latex_build_outdir, ignore_errors=True)
             mkdirp(latex_build_outdir)
@@ -479,7 +495,7 @@ class TestRunner:
                         self.config,
                         texfile_dir=path_relpath(texfile_dirpath, self.config.TEST_BASE_DIR),
                         texfile_filename=texfile_filename,
-                        latex_output_dir=outdir_relative_to_texfile_dirpath,
+                        latex_output_dir=path_relpath(latex_build_outdir, texfile_dirpath),
                         latex_jobname=latex_jobname,
                     )
                 except:
