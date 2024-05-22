@@ -215,7 +215,7 @@ def determine_list_of_pages_to_test(pdf_obj: PdfFile) -> List[int]:
         page_list = sorted(set(page_list))
 
         for page_num in page_list:
-            assert page_num <= num_pages
+            assert page_num <= num_pages, f"{page_num} (from '{basename}' -> {page_list}) not <= {num_pages}"
     else:
         page_list = list(range(1, num_pages + 1))
 
