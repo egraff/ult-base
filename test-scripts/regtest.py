@@ -327,7 +327,7 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
     async with config.make_task_semaphore:
         shutil.rmtree(latex_build_outdir, ignore_errors=True)
         shutil.rmtree(latex_build_outdir_subst, ignore_errors=True)
-        mkdirp(latex_build_outdir)
+        mkdirp(latex_build_outdir_subst)
         mkdirp(os.path.dirname(test_pdf_path))
 
         with contextlib.suppress(FileNotFoundError):
@@ -355,24 +355,24 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
             shutil.move(latex_build_outdir_subst, latex_build_outdir)
             return TestResult(test_name, False, exc_info=sys.exc_info())
 
-    shutil.move(latex_build_outdir_subst, latex_build_outdir)
+        shutil.move(latex_build_outdir_subst, latex_build_outdir)
 
-    if returncode != 0:
-        return TestResult(
-            test_name,
-            False,
-            build_returncode=returncode,
-            build_stdout=stdout,
-            build_stderr=stderr,
+        if returncode != 0:
+            return TestResult(
+                test_name,
+                False,
+                build_returncode=returncode,
+                build_stdout=stdout,
+                build_stderr=stderr,
+            )
+
+        latex_build_outdir_pdf_path = path_join(
+            latex_build_outdir, "{}.pdf".format(latex_jobname)
         )
 
-    latex_build_outdir_pdf_path = path_join(
-        latex_build_outdir, "{}.pdf".format(latex_jobname)
-    )
-
-    # If we got here, then build was successful. Move PDF into pdf directory, and remove latex output directory.
-    shutil.move(latex_build_outdir_pdf_path, test_pdf_path)
-    shutil.rmtree(latex_build_outdir, ignore_errors=True)
+        # If we got here, then build was successful. Move PDF into pdf directory, and remove latex output directory.
+        shutil.move(latex_build_outdir_pdf_path, test_pdf_path)
+        shutil.rmtree(latex_build_outdir, ignore_errors=True)
 
     try:
         _, failed_pages = await test_pdf_pair_async(
