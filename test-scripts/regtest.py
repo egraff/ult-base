@@ -406,12 +406,12 @@ async def run_test_async(ctx: TestRunContext, test_name: str) -> Awaitable[TestR
 
 
 class TestRunner:
-    def __init__(self, config: TestConfig):
+    def __init__(self, config: TestConfig, path_util: PathUtil):
         self.test_result_lock = asyncio.Lock()
         self.num_tests_completed = 0
         self.failed_tests = []
         self.tasks = []
-        self.ctx = TestRunContext(config)
+        self.ctx = TestRunContext(config, path_util)
 
     def echo_raw(self, echo_str):
         with self.ctx.echo_lock:
