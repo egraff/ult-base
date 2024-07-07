@@ -811,7 +811,7 @@ if __name__ == "__main__":
         num_concurrent_processes=min(max(int(1.5 * os.cpu_count()), 2), 16),
         run_warmup_compile_before_tests=args.run_warmup_compile_before_tests,
     )
-    runner = TestRunner(config)
+    runner = TestRunner(config, path_util)
 
     if args.test_name is not None:
         tests = [args.test_name]
