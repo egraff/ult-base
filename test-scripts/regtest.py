@@ -104,7 +104,7 @@ class TestRunContext:
 
         self.echo_lock = threading.Lock()
         self.make_task_semaphore = asyncio.BoundedSemaphore(1)
-        self.process_pool_semaphore = asyncio.BoundedSemaphore(num_concurrent_processes)
+        self.process_pool_semaphore = asyncio.BoundedSemaphore(config.num_concurrent_processes)
 
         self.latex_build_timeout = 3 * 60
 
