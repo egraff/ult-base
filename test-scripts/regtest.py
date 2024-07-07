@@ -1,7 +1,6 @@
 import argparse
 import asyncio
 import contextlib
-import enum
 import io
 import json
 import os
@@ -18,7 +17,7 @@ import asynclib
 from testutil import compare_pngs_async, get_png_size_async, PdfFile, mkdirp
 
 
-class debug(enum.StrEnum):
+class debug:
     INFO = "\\033[1;34m"
     DEBUG = "\\033[0;32m"
     WARNING = "\\033[1;33m"
