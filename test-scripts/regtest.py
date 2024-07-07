@@ -92,7 +92,7 @@ class TestRunContext:
         self.BUILDDIR = path_util.path_join(test_base_dir, ".build")
         self.TESTSDIR = path_util.path_join(test_base_dir, "tests")
         self.PDFSDIR = path_util.path_join(test_base_dir, "pdfs")
-        self.PROTODIR = path_util.path_join(test_base_dir, proto_dir)
+        self.PROTODIR = path_util.path_join(test_base_dir, config.proto_dir)
         self.TMPDIR = path_util.path_join(test_base_dir, "tmp")
         self.DIFFDIR = path_util.path_join(test_base_dir, "diffs")
 
