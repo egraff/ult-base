@@ -77,12 +77,10 @@ async def popen_async(
 
         returncode, stdout, stderr = await task
     except (asyncio.CancelledError, asyncio.TimeoutError):
-        did_timeout = True
-
         transport.close()
         returncode, stdout, stderr = await completed_future
 
-        if did_timeout and raise_exception_on_timeout:
+        if raise_exception_on_timeout:
             raise AsyncPopenTimeoutError(returncode, stdout, stderr)
 
         # Instead of re-raising exception, ensure non-zero returncode

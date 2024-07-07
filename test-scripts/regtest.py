@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import contextlib
+import enum
 import io
 import json
 import os
@@ -11,32 +12,30 @@ import sys
 import threading
 import traceback
 from types import TracebackType
-from typing import Any, Awaitable, List, Optional, Tuple, Type
+from typing import Any, Awaitable, Callable, List, NamedTuple, Optional, Protocol, Tuple, Type
 
 import asynclib
 from testutil import compare_pngs_async, get_png_size_async, PdfFile, mkdirp
 
 
-class debug:
-    NORMAL = "\\033[0m"
+class debug(enum.StrEnum):
     INFO = "\\033[1;34m"
     DEBUG = "\\033[0;32m"
     WARNING = "\\033[1;33m"
+    NORMAL = "\\033[0m"
+    BOLD = "\\033[1m"
+    UNDERLINE = "\\033[4m"
+    WHITE = "\\033[1;37m"
+    GREEN = "\\033[1;32m"
     YELLOW = "\\033[1;33m"
     BLUE = "\\033[1;34m"
     ERROR = "\\033[1;31m"
-    FUCK = "\\033[1;41m"
-    GREEN = "\\033[1;32m"
-    WHITE = "\\033[1;37m"
-    BOLD = "\\033[1m"
-    UNDERLINE = "\\033[4m"
 
 
 dlvl = [
     debug.INFO,
     debug.DEBUG,
     debug.WARNING,
-    debug.FUCK,
     debug.NORMAL,
     debug.BOLD,
     debug.UNDERLINE,
@@ -48,48 +47,65 @@ dlvl = [
 ]
 
 
-def normalize_path_separators(path: str):
-    return path.replace("\\", "/")
+class PathUtil(Protocol):
+    def path_join(self, path: str, *paths: str) -> str:
+      """Join one or more path segments."""
+
+    def path_relpath(self, path: str, start: str = ...) -> str:
+      """Return a relative filepath to path either from the current directory
+      or from an optional start directory.
+      """
 
 
-def path_join(path, *paths):
-    return normalize_path_separators(os.path.join(path, *paths))
+class SystemPathUtil:
+    def _normalize_path_separators(self, path: str) -> str:
+        return path.replace("\\", "/")
+
+    def path_join(self, path: str, *paths: str) -> str:
+        return self._normalize_path_separators(os.path.join(path, *paths))
+
+    def path_relpath(self, path: str, start: str = os.curdir) -> str:
+        return self._normalize_path_separators(os.path.relpath(path, start))
 
 
-def path_relpath(path, start=os.curdir):
-    return normalize_path_separators(os.path.relpath(path, start))
+class TestConfig(NamedTuple):
+    test_base_dir: str
+    proto_dir: str
+    num_concurrent_processes: int = 8
+    num_dots_per_line: int = 80
+    run_warmup_compile_before_tests: bool = False
 
 
-class TestConfig:
+class TestRunContext:
     def __init__(
         self,
-        test_base_dir,
-        proto_dir="proto",
-        num_concurrent_processes=8,
-        num_dots_per_line=80,
+        config: TestConfig,
+        path_util: PathUtil,
         debug_level=debug.INFO,
-        run_warmup_compile_before_tests=False,
     ):
-        test_base_dir = path_relpath(os.path.realpath(test_base_dir))
+        self.config = config
+        self.path_util = path_util
+
+        test_base_dir = path_util.path_relpath(os.path.realpath(config.test_base_dir))
         assert os.path.isdir(test_base_dir)
 
         self.TEST_BASE_DIR = test_base_dir
-        self.BUILDDIR = path_join(test_base_dir, ".build")
-        self.TESTSDIR = path_join(test_base_dir, "tests")
-        self.PDFSDIR = path_join(test_base_dir, "pdfs")
-        self.PROTODIR = path_join(test_base_dir, proto_dir)
-        self.TMPDIR = path_join(test_base_dir, "tmp")
-        self.DIFFDIR = path_join(test_base_dir, "diffs")
+        self.BUILDDIR = path_util.path_join(test_base_dir, ".build")
+        self.TESTSDIR = path_util.path_join(test_base_dir, "tests")
+        self.PDFSDIR = path_util.path_join(test_base_dir, "pdfs")
+        self.PROTODIR = path_util.path_join(test_base_dir, proto_dir)
+        self.TMPDIR = path_util.path_join(test_base_dir, "tmp")
+        self.DIFFDIR = path_util.path_join(test_base_dir, "diffs")
 
-        self.NUM_DOTS_PER_LINE = num_dots_per_line
+        self.NUM_DOTS_PER_LINE = config.num_dots_per_line
 
         self.DEBUGLEVEL = debug_level
 
-        self.run_warmup_compile_before_tests = run_warmup_compile_before_tests
+        self.run_warmup_compile_before_tests = config.run_warmup_compile_before_tests
 
         self.echo_lock = threading.Lock()
         self.make_task_semaphore = asyncio.BoundedSemaphore(1)
-        self.process_pool_semaphore = asyncio.BoundedSemaphore(8)
+        self.process_pool_semaphore = asyncio.BoundedSemaphore(num_concurrent_processes)
 
         self.latex_build_timeout = 3 * 60
 
@@ -119,23 +135,25 @@ class TestResult:
 
 
 async def test_pdf_page_pair_async(
-    config: TestConfig,
+    ctx: TestRunContext,
     test_pdf_obj: PdfFile,
     proto_pdf_obj: PdfFile,
     page_num: int,
     test_name: str,
 ) -> Awaitable[Tuple[int, bool]]:
+    path_util = ctx.path_util
+
     png_relpath = "{}_{}.png".format(test_name, page_num)
-    test_png_page_path = path_join(config.TMPDIR, "tests", png_relpath)
-    proto_png_page_path = path_join(config.TMPDIR, "proto", png_relpath)
-    diff_path = path_join(config.DIFFDIR, png_relpath)
+    test_png_page_path = path_util.path_join(ctx.TMPDIR, "tests", png_relpath)
+    proto_png_page_path = path_util.path_join(ctx.TMPDIR, "proto", png_relpath)
+    diff_path = path_util.path_join(ctx.DIFFDIR, png_relpath)
 
     mkdirp(os.path.dirname(test_png_page_path))
     mkdirp(os.path.dirname(proto_png_page_path))
     mkdirp(os.path.dirname(diff_path))
 
     # Start processes for generating PNGs
-    async with config.process_pool_semaphore:
+    async with ctx.process_pool_semaphore:
         test_pdf_task = asyncio.ensure_future(
             test_pdf_obj.get_png_for_page_async(page_num, test_png_page_path)
         )
@@ -223,9 +241,9 @@ def determine_list_of_pages_to_test(pdf_obj: PdfFile) -> List[int]:
 
 
 async def test_pdf_pair_async(
-    config: TestConfig, test_name: str, test_pdf_path: str, proto_pdf_path: str
+    ctx: TestRunContext, test_name: str, test_pdf_path: str, proto_pdf_path: str
 ) -> Awaitable[Tuple[str, List[int]]]:
-    async with config.process_pool_semaphore:
+    async with ctx.process_pool_semaphore:
         test_pdf_obj = await PdfFile.create(test_pdf_path)
         proto_pdf_obj = await PdfFile.create(proto_pdf_path)
 
@@ -244,7 +262,7 @@ async def test_pdf_pair_async(
 
         task = asyncio.ensure_future(
             test_pdf_page_pair_async(
-                config, test_pdf_obj, proto_pdf_obj, page_num, test_name
+                ctx, test_pdf_obj, proto_pdf_obj, page_num, test_name
             )
         )
         test_tasks.append(task)
@@ -273,7 +291,7 @@ async def test_pdf_pair_async(
 
 
 async def make_test_tex_file_async(
-    config: TestConfig,
+    ctx: TestRunContext,
     texfile_dir: str,
     texfile_filename: str,
     latex_output_dir: str,
@@ -282,7 +300,7 @@ async def make_test_tex_file_async(
     cmd = [
         "make",
         "-C",
-        config.TEST_BASE_DIR,
+        ctx.TEST_BASE_DIR,
         "--no-print-directory",
         "_file",
         "LATEXMK=latexmk",
@@ -294,17 +312,19 @@ async def make_test_tex_file_async(
         "LATEX_JOBNAME={}".format(latex_jobname),
     ]
     return await asynclib.popen_async(
-        cmd, timeout=config.latex_build_timeout, raise_exception_on_timeout=True
+        cmd, timeout=ctx.latex_build_timeout, raise_exception_on_timeout=True
     )
 
 
-async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestResult]:
-    test_pdf_path = path_join(config.PDFSDIR, "{}.pdf".format(test_name))
-    proto_pdf_path = path_join(config.PROTODIR, "{}.pdf".format(test_name))
+async def run_test_async(ctx: TestRunContext, test_name: str) -> Awaitable[TestResult]:
+    path_util = ctx.path_util
+
+    test_pdf_path = path_util.path_join(ctx.PDFSDIR, "{}.pdf".format(test_name))
+    proto_pdf_path = path_util.path_join(ctx.PROTODIR, "{}.pdf".format(test_name))
 
     latex_jobname = "output"
 
-    # Path to tex file, relative to config.TESTSDIR
+    # Path to tex file, relative to ctx.TESTSDIR
     texfile_testddir_relpath = "{}.tex".format(test_name)
 
     texfile_basename = os.path.splitext(os.path.basename(texfile_testddir_relpath))[0]
@@ -318,13 +338,13 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
     )
 
     texfile_dirname = os.path.dirname(texfile_testddir_relpath)
-    texfile_dirpath = path_join(config.TESTSDIR, texfile_dirname)
+    texfile_dirpath = path_util.path_join(ctx.TESTSDIR, texfile_dirname)
 
     texfile_filename = "{}.tex".format(texfile_basename)
-    latex_build_outdir = path_join(config.BUILDDIR, texfile_dirname, texfile_basename)
-    latex_build_outdir_subst = path_join(config.BUILDDIR, texfile_dirname, texfile_basename_subst)
+    latex_build_outdir = path_util.path_join(ctx.BUILDDIR, texfile_dirname, texfile_basename)
+    latex_build_outdir_subst = path_util.path_join(ctx.BUILDDIR, texfile_dirname, texfile_basename_subst)
 
-    async with config.make_task_semaphore:
+    async with ctx.make_task_semaphore:
         shutil.rmtree(latex_build_outdir, ignore_errors=True)
         shutil.rmtree(latex_build_outdir_subst, ignore_errors=True)
         mkdirp(latex_build_outdir_subst)
@@ -335,10 +355,10 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
 
         try:
             returncode, stdout, stderr = await make_test_tex_file_async(
-                config,
-                texfile_dir=path_relpath(texfile_dirpath, config.TEST_BASE_DIR),
+                ctx,
+                texfile_dir=path_util.path_relpath(texfile_dirpath, ctx.TEST_BASE_DIR),
                 texfile_filename=texfile_filename,
-                latex_output_dir=path_relpath(latex_build_outdir_subst, texfile_dirpath),
+                latex_output_dir=path_util.path_relpath(latex_build_outdir_subst, texfile_dirpath),
                 latex_jobname=latex_jobname,
             )
         except asynclib.AsyncPopenTimeoutError as err:
@@ -366,7 +386,7 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
                 build_stderr=stderr,
             )
 
-        latex_build_outdir_pdf_path = path_join(
+        latex_build_outdir_pdf_path = path_util.path_join(
             latex_build_outdir, "{}.pdf".format(latex_jobname)
         )
 
@@ -376,7 +396,7 @@ async def run_test_async(config: TestConfig, test_name: str) -> Awaitable[TestRe
 
     try:
         _, failed_pages = await test_pdf_pair_async(
-            config,
+            ctx,
             test_name,
             test_pdf_path=test_pdf_path,
             proto_pdf_path=proto_pdf_path,
@@ -392,10 +412,10 @@ class TestRunner:
         self.num_tests_completed = 0
         self.failed_tests = []
         self.tasks = []
-        self.config = config
+        self.ctx = TestRunContext(config)
 
     def echo_raw(self, echo_str):
-        with self.config.echo_lock:
+        with self.ctx.echo_lock:
             subprocess.Popen(
                 [
                     "sh",
@@ -407,7 +427,7 @@ class TestRunner:
     def colorfmt(self, *string):
         color = ""
         if string[0] in dlvl:
-            if dlvl.index(string[0]) < dlvl.index(self.config.DEBUGLEVEL):
+            if dlvl.index(string[0]) < dlvl.index(self.ctx.DEBUGLEVEL):
                 return
 
             color = string[0]
@@ -429,7 +449,7 @@ class TestRunner:
         self.echo_raw(self.colorfmt(*string))
 
     async def _run_test(self, test_name):
-        test_result = await run_test_async(self.config, test_name)
+        test_result = await run_test_async(self.ctx, test_name)
         test_passed = (
             test_result.build_succeeded
             and (test_result.exc_info is None)
@@ -437,7 +457,7 @@ class TestRunner:
         )
 
         async with self.test_result_lock:
-            if self.num_tests_completed % self.config.NUM_DOTS_PER_LINE == 0:
+            if self.num_tests_completed % self.ctx.NUM_DOTS_PER_LINE == 0:
                 self.echo(debug.BOLD, "\n")
 
             self.num_tests_completed += 1
@@ -457,17 +477,19 @@ class TestRunner:
                 self.failed_tests.append(test_result)
 
     async def run(self, test_names) -> int:
-        if self.config.run_warmup_compile_before_tests:
+        if self.ctx.run_warmup_compile_before_tests:
             await self._run_warmup_compile(test_names)
 
         return await self._run_tests(test_names)
 
     async def _run_warmup_compile(self, test_names):
+        path_util = self.ctx.path_util
+
         self.echo(debug.BOLD, "Running warmup compile step...\n")
         for i, test_name in enumerate(test_names):
             latex_jobname = "output"
 
-            # Path to tex file, relative to config.TESTSDIR
+            # Path to tex file, relative to ctx.TESTSDIR
             texfile_testddir_relpath = "{}.tex".format(test_name)
 
             texfile_basename = os.path.splitext(os.path.basename(texfile_testddir_relpath))[0]
@@ -481,10 +503,10 @@ class TestRunner:
             )
 
             texfile_dirname = os.path.dirname(texfile_testddir_relpath)
-            texfile_dirpath = path_join(config.TESTSDIR, texfile_dirname)
+            texfile_dirpath = path_util.path_join(self.ctx.TESTSDIR, texfile_dirname)
 
             texfile_filename = "{}.tex".format(texfile_basename)
-            latex_build_outdir = path_join(config.BUILDDIR, texfile_dirname, texfile_basename_subst)
+            latex_build_outdir = path_util.path_join(self.ctx.BUILDDIR, texfile_dirname, texfile_basename_subst)
 
             shutil.rmtree(latex_build_outdir, ignore_errors=True)
             mkdirp(latex_build_outdir)
@@ -492,10 +514,10 @@ class TestRunner:
             for _ in range(2):
                 try:
                     returncode, stdout, stderr = await make_test_tex_file_async(
-                        self.config,
-                        texfile_dir=path_relpath(texfile_dirpath, self.config.TEST_BASE_DIR),
+                        self.ctx,
+                        texfile_dir=path_util.path_relpath(texfile_dirpath, self.ctx.TEST_BASE_DIR),
                         texfile_filename=texfile_filename,
-                        latex_output_dir=path_relpath(latex_build_outdir, texfile_dirpath),
+                        latex_output_dir=path_util.path_relpath(latex_build_outdir, texfile_dirpath),
                         latex_jobname=latex_jobname,
                     )
                 except:
@@ -503,7 +525,7 @@ class TestRunner:
 
             shutil.rmtree(latex_build_outdir, ignore_errors=True)
 
-            if i % self.config.NUM_DOTS_PER_LINE == 0:
+            if i % self.ctx.NUM_DOTS_PER_LINE == 0:
                 self.echo(debug.BOLD, "\n")
 
             self.echo(debug.NORMAL, ".")
@@ -511,6 +533,8 @@ class TestRunner:
         self.echo(debug.BOLD, "\n\nWarmup compile step done!\n\n")
 
     async def _run_tests(self, test_names) -> int:
+        path_util = self.ctx.path_util
+
         tasks = []
         for test_name in test_names:
             task = asyncio.ensure_future(self._run_test(test_name))
@@ -535,7 +559,7 @@ class TestRunner:
 
         async with self.test_result_lock:
             with open(
-                path_join(self.config.TEST_BASE_DIR, "test_result.json"),
+                path_util.path_join(self.ctx.TEST_BASE_DIR, "test_result.json"),
                 "w",
                 encoding="utf8",
             ) as fp:
@@ -595,12 +619,12 @@ class TestRunner:
                             failed_test_map["proc"]["stderr"].append(line)
                             echo(debug.NORMAL, "      %s\n" % (line,))
 
-                        latex_log_file = path_join(
-                            config.BUILDDIR, test_result.test_name, "output.log"
+                        latex_log_file = path_util.path_join(
+                            self.ctx.BUILDDIR, test_result.test_name, "output.log"
                         )
                         if os.path.exists(latex_log_file):
-                            latex_log_file_relpath = path_relpath(
-                                latex_log_file, config.TEST_BASE_DIR
+                            latex_log_file_relpath = path_util.path_relpath(
+                                latex_log_file, self.ctx.TEST_BASE_DIR
                             )
                             failed_test_map["log_file"] = latex_log_file_relpath
                             echo(
@@ -654,12 +678,12 @@ class TestRunner:
                             failed_test_map["proc"]["stderr"].append(line)
                             echo(debug.NORMAL, "      %s\n" % (line,))
 
-                        latex_log_file = path_join(
-                            config.BUILDDIR, test_result.test_name, "output.log"
+                        latex_log_file = path_util.path_join(
+                            self.ctx.BUILDDIR, test_result.test_name, "output.log"
                         )
                         if os.path.exists(latex_log_file):
-                            latex_log_file_relpath = path_relpath(
-                                latex_log_file, config.TEST_BASE_DIR
+                            latex_log_file_relpath = path_util.path_relpath(
+                                latex_log_file, self.ctx.TEST_BASE_DIR
                             )
                             failed_test_map["log_file"] = latex_log_file_relpath
                             echo(
@@ -688,14 +712,14 @@ class TestRunner:
                 self.echo(
                     debug.BLUE,
                     "PNGs containing diffs are available in '%s'\n\n"
-                    % (self.config.DIFFDIR,),
+                    % (self.ctx.DIFFDIR,),
                 )
                 json.dump(result_map, fp)
                 return 1
 
 
-def test_generator(tex_tests_root_dir: str, test_file_prefix="test"):
-    for dir_path, dir_names, file_names in os.walk(tex_tests_root_dir):
+def test_generator(path_util: PathUtil, tex_tests_root_dir: str, test_file_prefix: str = "test", test_name_filter: Callable[[str], bool] = lambda _: True):
+    for dir_path, _dir_names, file_names in os.walk(tex_tests_root_dir):
         for file_name in file_names:
             # Ignore files that contain spaces
             if " " in file_name:
@@ -708,31 +732,34 @@ def test_generator(tex_tests_root_dir: str, test_file_prefix="test"):
                 continue
 
             filebasename = os.path.splitext(file_name)[0]
-            test_name = path_relpath(
-                path_join(dir_path, filebasename), tex_tests_root_dir
+            test_name = path_util.path_relpath(
+                path_util.path_join(dir_path, filebasename), tex_tests_root_dir
             )
+
+            if not test_name_filter(test_name):
+                continue
 
             yield test_name
 
 
-def _dirname(astring):
-    if (os.path.sep in astring) or ("/" in astring) or (".." in astring):
+def _dirname(val) -> str:
+    assert isinstance(val, str)
+
+    if (os.path.sep in val) or ("/" in val) or (".." in val):
         raise argparse.ArgumentTypeError("should be a folder name, not a path")
 
-    return astring
+    return val
 
 
-def _str2bool(v):
-    if isinstance(v, bool):
-        return v
-    if isinstance(v, int):
-        return bool(v)
-    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+def _str2bool(val: str) -> bool:
+    assert isinstance(val, str)
+
+    if val.lower() in ("yes", "true", "t", "y", "1"):
         return True
-    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+    elif val.lower() in ("no", "false", "f", "n", "0"):
         return False
     else:
-        raise argparse.ArgumentTypeError(f'Boolean value expected, got {v} (type {type(v)})')
+        raise argparse.ArgumentTypeError(f'Boolean value expected, got {val}')
 
 
 if __name__ == "__main__":
@@ -774,8 +801,10 @@ if __name__ == "__main__":
 
     asyncio.set_event_loop(loop)
 
+    path_util = SystemPathUtil()
+
     test_base_dir = args.test_base_dir
-    tex_tests_root_dir = path_join(test_base_dir, "tests")
+    tex_tests_root_dir = path_util.path_join(test_base_dir, "tests")
 
     config = TestConfig(
         test_base_dir,
@@ -788,7 +817,7 @@ if __name__ == "__main__":
     if args.test_name is not None:
         tests = [args.test_name]
     else:
-        tests = [tup for tup in test_generator(tex_tests_root_dir)]
+        tests = [test_name for test_name in test_generator(path_util, tex_tests_root_dir)]
 
     try:
         retcode = loop.run_until_complete(runner.run(tests))
