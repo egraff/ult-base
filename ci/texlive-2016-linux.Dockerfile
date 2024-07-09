@@ -19,11 +19,13 @@ RUN \
   wget ${INSTALL_TL_REPO}/install-tl-unx.tar.gz && \
   tar -xf "install-tl-unx.tar.gz" && \
   export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 ) && \
-  (echo "i" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${INSTALL_TL_REPO} -profile ./texlive.profile) || \
   ( \
-    while [ $? -ne 0 ]; do \
-      echo "y" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${INSTALL_TL_REPO} -profile ./texlive.profile ; \
-    done \
+    (echo "i" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${INSTALL_TL_REPO} -profile ./texlive.profile) || \
+    ( \
+      while [ $? -ne 0 ]; do \
+        echo "y" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${INSTALL_TL_REPO} -profile ./texlive.profile ; \
+      done \
+    ) \
   ) && \
   export MAINTEXDIR=$(grep "TEXDIR:" "install-tl.log" | awk -F'"' '{ print $2 }') && \
   ln -s "${MAINTEXDIR}/bin"/* "/opt/texbin" && \
