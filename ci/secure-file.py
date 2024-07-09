@@ -6,9 +6,9 @@ import argparse
 import base64
 from typing import BinaryIO
 
-from Crypto.Cipher import AES
-from Crypto.Hash import SHA1
-from Crypto.Protocol.KDF import PBKDF2
+from Cryptodome.Cipher import AES
+from Cryptodome.Hash import SHA1
+from Cryptodome.Protocol.KDF import PBKDF2
 
 
 def decrypt(enc_file_in: BinaryIO, dec_file_out: BinaryIO, secret: str, salt: str):
