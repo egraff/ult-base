@@ -3,7 +3,7 @@ FROM ubuntu:noble
 RUN \
   apt-get update && \
   export DEBIAN_FRONTEND=noninteractive && \
-  apt-get install --no-install-recommends -y wget apt-utils software-properties-common
+  apt-get install --no-install-recommends -y wget apt-utils software-properties-common ca-certificates
 
 RUN \
   export DEBIAN_FRONTEND=noninteractive && \
