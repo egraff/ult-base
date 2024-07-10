@@ -61,7 +61,7 @@ define check-python-version
 	_PYTHON_VER_STR=$$($${_PYTHON} -V 2>&1) ; \
 	_PYTHON_STR=$$(echo $$_PYTHON_VER_STR | cut -d ' ' -f 1) ; \
 	if [ "$${_PYTHON_STR}" != "Python" ]; then \
-	  echo "Found 'python' executable does not quack like python" >&2 ; \
+	  echo "Found 'python' executable does not quack like python (got '$${_PYTHON_STR}')" >&2 ; \
 	  exit 11 ; \
 	fi ; \
 	_PYTHON_VER=$$(echo $$_PYTHON_VER_STR | cut -d ' ' -f 2) ; \
