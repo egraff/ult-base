@@ -19,7 +19,7 @@ LAMEBUILD = ($(PDFLATEX) -shell-escape -jobname=$(LATEX_JOBNAME) $(DEFOPT) $(TEX
 # (Not using -d option due to incompatibility with some systems)
 BUILDGLOSS = cd $(LATEX_OUTPUT_DIR) && $(MAKEGLOSSARIES) -q $(LATEX_JOBNAME) && cd - >/dev/null
 
-.PHONY: test
+PHONY += all
 all: test
 
 
@@ -78,19 +78,56 @@ define check-python-version
 endef
 
 
+PHONY += check-python
 check-python:
 	@$(check-python-version)
 
+PHONY += check-file-params
+check-file-params:
+ifeq ($(strip $(TEXFILE_DIR)),)
+	@echo "TEXFILE_DIR not set" >&2
+	@exit 2
+endif
+ifeq ($(strip $(TEXFILE_FILENAME)),)
+	@echo "TEXFILE_FILENAME not set" >&2
+	@exit 3
+endif
+ifeq ($(strip $(LATEX_OUTPUT_DIR)),)
+	@echo "LATEX_OUTPUT_DIR not set" >&2
+	@exit 4
+endif
+
+PHONY += check-file-programs
+check-file-programs:
+	_LATEXMK=$$(echo $(LATEXMK)) ; \
+	if [ -z "$${_LATEXMK}" ]; then \
+	  echo "Cannot find 'latexmk'" >&2 ; \
+	  exit 2 ; \
+	fi ; \
+	_PDFLATEX=$$(echo $(PDFLATEX)) ; \
+	if [ -z "$${_PDFLATEX}" ]; then \
+	  echo "Cannot find 'pdflatex'" >&2 ; \
+	  exit 3 ; \
+	fi ; \
+	_MAKEGLOSSARIES=$$(echo $(MAKEGLOSSARIES)) ; \
+	if [ -z "$${_MAKEGLOSSARIES}" ]; then \
+	  echo "Cannot find 'makeglossaries'" >&2 ; \
+	  exit 4 ; \
+	fi
+
+PHONY += clean
 clean:
 	@$(RM) -r $(PDFFLD) $(BUILDFLD)
 	@echo "Done!"
 
+PHONY += test
 test: check-python
 	@echo "Running comparison tests..."
 	@echo ""
 	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) --warmup-compile $(WARMUP_COMPILE) .
 
-_file: _ctrl_
+PHONY += _file
+_file: check-file-params check-file-programs
 	@echo "Building $(TEXFILE_DIR)/$(TEXFILE_FILENAME)..."
 	( \
 	  cd $(TEXFILE_DIR) && \
@@ -99,31 +136,7 @@ _file: _ctrl_
 	  $(BUILD) \
 	)
 
-_ctrl_:
-ifeq ($(strip $(LATEXMK)),)
-	@echo "Cannot find 'latexmk'" >&2
-	@exit 2
-endif
-ifeq ($(strip $(PDFLATEX)),)
-	@echo "Cannot find 'pdflatex'" >&2
-	@exit 3
-endif
-ifeq ($(strip $(MAKEGLOSSARIES)),)
-	@echo "Cannot find 'makeglossaries'" >&2
-	@exit 4
-endif
-ifeq ($(strip $(TEXFILE_DIR)),)
-	@echo "TEXFILE_DIR not set" >&2
-	@exit 5
-endif
-ifeq ($(strip $(TEXFILE_FILENAME)),)
-	@echo "TEXFILE_FILENAME not set" >&2
-	@exit 6
-endif
-ifeq ($(strip $(LATEX_OUTPUT_DIR)),)
-	@echo "LATEX_OUTPUT_DIR not set" >&2
-	@exit 7
-endif
+.PHONY: $(PHONY)
 
 # Debug stuff
 
