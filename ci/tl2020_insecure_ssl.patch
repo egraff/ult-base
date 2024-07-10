@@ -1,0 +1,20 @@
+--- tlpkg/TeXLive/TLDownload.pm
++++ tlpkg/TeXLive/TLDownload.pm
+@@ -73,6 +73,7 @@ sub reinit {
+     timeout => $TeXLive::TLConfig::NetworkTimeout,
+     @env_proxy,
+   );
++  $ua->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
+   $self->{'ua'} = $ua;
+   $self->{'enabled'} = 1;
+   $self->{'errorcount'} = 0;
+--- tlpkg/TeXLive/TLConfig.pm
++++ tlpkg/TeXLive/TLConfig.pm
+@@ -127,6 +127,7 @@ our %FallbackDownloaderArgs = (
+              '--fail', '--location',
+              '--connect-timeout', "$NetworkTimeout", '--silent', '--output'],
+   'wget' => ['--user-agent=texlive/wget', '--tries=4',
++             '--no-check-certificate',
+              "--timeout=$NetworkTimeout", '-q', '-O'],
+ );
+ # the way we package things on the web

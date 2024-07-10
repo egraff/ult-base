@@ -7,18 +7,21 @@ RUN \
 
 RUN \
   export DEBIAN_FRONTEND=noninteractive && \
-  apt-get install --no-install-recommends -qq -y git python3 python3-pycryptodome curl && \
+  apt-get install --no-install-recommends -qq -y git python3 python3-pycryptodome curl patch && \
   apt-get install --no-install-recommends -qq -y poppler-utils ghostscript imagemagick --fix-missing && \
-  apt-get install --no-install-recommends -qq -y libfile-fcntllock-perl gcc equivs libwww-perl fontconfig && \
+  apt-get install --no-install-recommends -qq -y libfile-fcntllock-perl libwww-perl liblwp-protocol-https-perl && \
+  apt-get install --no-install-recommends -qq -y gcc equivs fontconfig && \
   apt-get install --no-install-recommends -qq -y unzip openssh-client rsync
 
 COPY ci/texlive2020.profile ./texlive.profile
+COPY ci/tl2020_insecure_ssl.patch ./tl2020_insecure_ssl.patch
 
 RUN \
   export INSTALL_TL_REPO=https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2020/tlnet-final && \
   wget --no-check-certificate ${INSTALL_TL_REPO}/install-tl-unx.tar.gz && \
   tar -xf "install-tl-unx.tar.gz" && \
   export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 ) && \
+  (cd ${tl_dir} && patch -p0 < ../tl2020_insecure_ssl.patch) && \
   ( \
     (echo "i" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${INSTALL_TL_REPO} -profile ./texlive.profile) || \
     ( \

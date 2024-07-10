@@ -1,0 +1,21 @@
+--- tlpkg/TeXLive/TLDownload.pm
++++ tlpkg/TeXLive/TLDownload.pm
+@@ -48,6 +48,7 @@ sub new
+     env_proxy => 1,
+     timeout => $TeXLive::TLConfig::NetworkTimeout,
+   );
++  $ua->ssl_opts(verify_hostname => 0, SSL_verify_mode => 0x00);
+   $self->{'ua'} = $ua;
+   $self->{'enabled'} = 1;
+   $self->{'errorcount'} = 0;
+--- tlpkg/TeXLive/TLUtils.pm
++++ tlpkg/TeXLive/TLUtils.pm
+@@ -2556,7 +2556,7 @@ sub _download_file {
+ 
+   my $wget = $ENV{"TL_DOWNLOAD_PROGRAM"} || $wgetdefault;
+   my $wgetargs = $ENV{"TL_DOWNLOAD_ARGS"}
+-                 || "--user-agent=texlive/wget --tries=10 --timeout=$NetworkTimeout -q -O";
++                 || "--no-check-certificate --user-agent=texlive/wget --tries=10 --timeout=$NetworkTimeout -q -O";
+ 
+   debug("downloading $url using $wget $wgetargs\n");
+   my $ret;
