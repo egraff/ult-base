@@ -11,7 +11,7 @@ max_jobs: 5
 
 image:
   - Visual Studio 2022
-  - Ubuntu
+  - Ubuntu2204
 
 environment:
   deploy_key_secret:
@@ -51,10 +51,10 @@ matrix:
     - image: Visual Studio 2022
       TEST_CATEGORY: regtest_linux
 
-    - image: Ubuntu
+    - image: Ubuntu2204
       TEST_CATEGORY: miktex_install_tests
 
-    - image: Ubuntu
+    - image: Ubuntu2204
       TEST_CATEGORY: regtest_win
 
 
@@ -87,7 +87,7 @@ for:
 
   - matrix:
       only:
-        - image: Ubuntu
+        - image: Ubuntu2204
           TEST_CATEGORY: regtest_linux
 
     install:
@@ -115,7 +115,7 @@ for:
 
     test_script:
       - sh: |
-          source $HOME/venv3.10/bin/activate
+          source $HOME/venv3.12/bin/activate
           make -C test PYTHON=python PROTODIR=${PROTODIR}
 
     on_success:
@@ -182,7 +182,7 @@ for:
           }
 
     test_script:
-      - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PROTODIR=${PROTODIR} WARMUP_COMPILE=${WARMUP_COMPILE}"'
+      - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PYTHON=\"C:\Python312-x64\python.exe\" PROTODIR=${PROTODIR} WARMUP_COMPILE=${WARMUP_COMPILE}"'
 
     on_success:
       - ps: >-
