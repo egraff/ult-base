@@ -92,12 +92,13 @@ for:
 
     install:
       # Decrypt deploy key
-      - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
       - ps: >-
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
           if (-Not $IsPullRequest) {
             Write-Host "Decrypting deploy key";
-            appveyor-tools/secure-file -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:HOME)/.ssh/id_rsa";
+            source $HOME/venv3.12/bin/activate
+            python ci/secure-file.py -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:HOME)/.ssh/id_rsa";
+            deactivate
             chmod 600 "$($Env:HOME)/.ssh/id_rsa";
             Write-Host "Testing deploy key";
             $OldErrorActionPreference = $ErrorActionPreference;
@@ -132,12 +133,11 @@ for:
 
     install:
       # Decrypt deploy key
-      - ps: iex ((New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/appveyor/secure-file/master/install.ps1'))
       - ps: >-
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
           if (-Not $IsPullRequest) {
             Write-Host "Decrypting deploy key";
-            appveyor-tools\secure-file -decrypt ci\appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:USERPROFILE)\.ssh\id_rsa";
+            C:\Python312-x64\python.exe ci\secure-file.py -decrypt ci\appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:USERPROFILE)\.ssh\id_rsa";
             Write-Host "Testing deploy key";
             $OldErrorActionPreference = $ErrorActionPreference;
             $ErrorActionPreference = "Continue";
