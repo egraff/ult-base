@@ -101,7 +101,7 @@ for:
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
           if (-Not $IsPullRequest) {
             Write-Host "Decrypting deploy key";
-            $HOME/venv3.12/Scripts/activate.ps1;
+            $($Env:HOME)/venv3.12/Scripts/activate.ps1;
             python ci/secure-file.py -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:HOME)/.ssh/id_rsa";
             deactivate;
             chmod 600 "$($Env:HOME)/.ssh/id_rsa";
