@@ -92,11 +92,15 @@ for:
 
     install:
       # Decrypt deploy key
+      - sh: |
+          source $HOME/venv3.12/bin/activate
+          python -mpip install pycryptodomex
+          deactivate
       - ps: >-
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
           if (-Not $IsPullRequest) {
             Write-Host "Decrypting deploy key";
-            source $HOME/venv3.12/bin/activate
+            $HOME/venv3.12/Scripts/activate.ps1
             python ci/secure-file.py -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:HOME)/.ssh/id_rsa";
             deactivate
             chmod 600 "$($Env:HOME)/.ssh/id_rsa";
@@ -133,11 +137,12 @@ for:
 
     install:
       # Decrypt deploy key
+      - ps: py -3.12-64 -mpip install pycryptodomex
       - ps: >-
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
           if (-Not $IsPullRequest) {
             Write-Host "Decrypting deploy key";
-            C:\Python312-x64\python.exe ci\secure-file.py -decrypt ci\appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:USERPROFILE)\.ssh\id_rsa";
+            py -3.12-64 ci\secure-file.py -decrypt ci\appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:USERPROFILE)\.ssh\id_rsa";
             Write-Host "Testing deploy key";
             $OldErrorActionPreference = $ErrorActionPreference;
             $ErrorActionPreference = "Continue";
@@ -182,7 +187,7 @@ for:
           }
 
     test_script:
-      - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PYTHON=\"C:\Python312-x64\python.exe\" PROTODIR=${PROTODIR} WARMUP_COMPILE=${WARMUP_COMPILE}"'
+      - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PYTHON=\"py -3.12-64\" PROTODIR=${PROTODIR} WARMUP_COMPILE=${WARMUP_COMPILE}"'
 
     on_success:
       - ps: >-
