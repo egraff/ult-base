@@ -97,20 +97,16 @@ for:
           python -mpip install --upgrade pip 2>&1
           python -mpip install pycryptodomex
           deactivate
-      - ps: >-
-          $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
-          if (-Not $IsPullRequest) {
-            Write-Host "Decrypting deploy key";
-            $($Env:HOME)/venv3.12/Scripts/activate.ps1;
-            python ci/secure-file.py -decrypt ci/appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:HOME)/.ssh/id_rsa";
-            deactivate;
-            chmod 600 "$($Env:HOME)/.ssh/id_rsa";
-            Write-Host "Testing deploy key";
-            $OldErrorActionPreference = $ErrorActionPreference;
-            $ErrorActionPreference = "Continue";
-            (ssh -o StrictHostKeyChecking=no -T git@github.com || true) 2>&1 | %{ "$_" };
-            $ErrorActionPreference = $OldErrorActionPreference;
-          }
+      - sh: |
+          if [[ -z "$APPVEYOR_PULL_REQUEST_NUMBER" ]]; then
+            echo "Decrypting deploy key"
+            source $HOME/venv3.12/bin/activate
+            python ci/secure-file.py -decrypt ci/appveyor-deploy-key.enc -secret ${deploy_key_secret} -salt ${deploy_key_salt} -out "${HOME}/.ssh/id_rsa"
+            deactivate
+            chmod 600 "${HOME}/.ssh/id_rsa"
+            echo "Testing deploy key"
+            (ssh -o StrictHostKeyChecking=no -T git@github.com || true) 2>&1
+          fi
 
       - sh: ci/appveyor_linux_install_${TEST_SUITE}.sh
       - tlmgr conf
