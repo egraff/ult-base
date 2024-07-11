@@ -138,6 +138,7 @@ for:
 
     install:
       # Decrypt deploy key
+      - ps: py -3.12-64 -mpip install --upgrade pip 2>&1 | %{ "$_" }
       - ps: py -3.12-64 -mpip install pycryptodomex
       - ps: >-
           $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
