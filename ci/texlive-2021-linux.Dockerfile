@@ -17,7 +17,7 @@ COPY ci/texlive2021.profile ./texlive.profile
 
 RUN \
   export INSTALL_TL_REPO=https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2021/tlnet-final && \
-  wget --no-check-certificate ${INSTALL_TL_REPO}/install-tl-unx.tar.gz && \
+  wget ${INSTALL_TL_REPO}/install-tl-unx.tar.gz && \
   tar -xf "install-tl-unx.tar.gz" && \
   export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 ) && \
   ( \

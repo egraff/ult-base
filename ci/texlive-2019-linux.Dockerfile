@@ -14,14 +14,12 @@ RUN \
   apt-get install --no-install-recommends -qq -y unzip openssh-client rsync
 
 COPY ci/texlive2019.profile ./texlive.profile
-COPY ci/tl2019_insecure_ssl.patch ./tl2019_insecure_ssl.patch
 
 RUN \
   export INSTALL_TL_REPO=https://ftp.math.utah.edu/pub/tex/historic/systems/texlive/2019/tlnet-final && \
-  wget --no-check-certificate ${INSTALL_TL_REPO}/install-tl-unx.tar.gz && \
+  wget ${INSTALL_TL_REPO}/install-tl-unx.tar.gz && \
   tar -xf "install-tl-unx.tar.gz" && \
   export tl_dir=$( ls | grep -P "install-tl-\d{8}$" | head -n 1 ) && \
-  (cd ${tl_dir} && patch -p0 < ../tl2019_insecure_ssl.patch) && \
   ( \
     (echo "i" | ${tl_dir}/install-tl -logfile install-tl.log -repository ${INSTALL_TL_REPO} -profile ./texlive.profile) || \
     ( \
