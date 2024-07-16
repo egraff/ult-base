@@ -1,4 +1,26 @@
-task:
+ltxpect_self_test_task:
+  name: "ltxpect self-tests"
+
+  container:
+    image: ubuntu:noble
+
+  install_script:
+    - apt-get update
+    - apt-get install --no-install-recommends -qq -y python3 mypy black
+
+  mypy_script:
+    - (cd test-scripts && python3 -mmypy ltxpect)
+    - (cd test-scripts && python3 -mmypy regtest.py)
+
+  black_script:
+    - (cd test-scripts && python3 -mblack --check ltxpect)
+    - (cd test-scripts && python3 -mblack --check regtest.py)
+
+  test_script:
+    - (cd test-scripts && python3 -munittest discover -s ltxpect -t ..)
+
+
+latex_test_task:
   environment:
     deploy_key_secret: ENCRYPTED[3c73c561f87d2de39c00e8b44701aad9e5cf57079e8abc56077ee6cd584029f3e0f2789a74098d2e49c2ee318328e490]
     deploy_key_salt: ENCRYPTED[277a1e25420dc9db77407432e093b68006b91a02dd7b603b0dd608863e82eefa24133bca90de395a08f4368d01c9219e]
