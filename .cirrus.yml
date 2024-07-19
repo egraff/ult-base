@@ -110,12 +110,13 @@ latex_test_task:
     copy_artifacts_script: |
       mkdir cirrus-artifacts
       if [[ "$CIRRUS_CHANGE_MESSAGE" =~ \[keep\-pdfs\] ]]; then
-        (cp -R test/pdfs/*.pdf cirrus-artifacts/ 2>/dev/null) || true
+        (cp -Rvv test/pdfs/*.pdf cirrus-artifacts/ 2>/dev/null) || true
+      else
+        echo "Not copying artifacts - $CIRRUS_CHANGE_MESSAGE"
       fi
 
     ci_artifacts:
       path: "cirrus-artifacts/*"
-      only_if: $CIRRUS_CHANGE_MESSAGE '.*\[keep-pdfs\].*'
 
     after_script:
       - echo "Test result code: $TEST_RESULT_CODE"
