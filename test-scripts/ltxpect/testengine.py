@@ -436,13 +436,17 @@ class TestEngine:
                 test_pdf_path=test_pdf_path,
                 proto_pdf_path=proto_pdf_path,
             )
-            return TestResult(test_name, True, failed_pages=failed_pages)
         except:
             exc_info = cast(
                 tuple[Type[BaseException], BaseException, TracebackType], sys.exc_info()
             )
 
             return TestResult(test_name, True, exc_info=exc_info)
+
+        if not failed_pages:
+            self.fs.remove_file(test_pdf_path)
+
+        return TestResult(test_name, True, failed_pages=failed_pages)
 
 
 if TYPE_CHECKING:
