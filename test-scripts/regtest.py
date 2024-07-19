@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import os
+import re
 import sys
 from typing import cast, Callable
 
@@ -26,7 +27,7 @@ def test_generator(
     path_util: ltxpect.coreabc.IPathUtil,
     tex_tests_root_dir: str,
     test_file_prefix: str = "test",
-    test_name_filter: Callable[[str], bool] = lambda _: True,
+    test_name_filter: Callable[[str], bool] | None = None,
 ):
     for dir_path, _dir_names, file_names in os.walk(tex_tests_root_dir):
         for file_name in file_names:
@@ -45,7 +46,7 @@ def test_generator(
                 path_util.path_join(dir_path, filebasename), tex_tests_root_dir
             )
 
-            if not test_name_filter(test_name):
+            if test_name_filter and not test_name_filter(test_name):
                 continue
 
             yield test_name
@@ -85,6 +86,13 @@ if __name__ == "__main__":
         type=str,
         default=None,
         help="the name of a specific test to run",
+    )
+    parser.add_argument(
+        "--filter",
+        dest="test_filter",
+        type=str,
+        default=None,
+        help="a regular expression filter determining which tests to run",
     )
     parser.add_argument(
         "--protodir",
@@ -169,8 +177,15 @@ if __name__ == "__main__":
     if args.test_name is not None:
         tests = [args.test_name]
     else:
+        test_name_filter = None
+        if args.test_filter:
+            test_name_filter = lambda x: re.search(args.test_filter, x) is not None
+
         tests = [
-            test_name for test_name in test_generator(path_util, tex_tests_root_dir)
+            test_name
+            for test_name in test_generator(
+                path_util, tex_tests_root_dir, test_name_filter=test_name_filter
+            )
         ]
 
     try:
