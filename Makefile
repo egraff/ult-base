@@ -1,8 +1,8 @@
 NAME = ult-base
 
 # Try to locate user's local texmf tree
-ULTTEXMFHOME = $(shell kpsewhich --var-value TEXMFHOME)
-ULTTEXMFLOCAL = $(shell kpsewhich --var-value TEXMFLOCAL)
+ULTTEXMFHOME = $(shell kpsewhich --var-value TEXMFHOME 2>/dev/null)
+ULTTEXMFLOCAL = $(shell kpsewhich --var-value TEXMFLOCAL 2>/dev/null)
 
 all: help
 
@@ -15,7 +15,7 @@ help:
 	@echo "     uninstall  -  remove the ult-base packages from your home texmf tree"
 
 define prompt-texmf
-	@while [ -z "$$CONTINUE" ]; do                                          \
+	while [ -z "$$CONTINUE" ]; do                                           \
 	    read -r -p "Is this correct? [y/N] " CONTINUE;                      \
 	done ;                                                                  \
 	if [ $$CONTINUE != "y" ] && [ $$CONTINUE != "Y" ]; then                 \
@@ -24,10 +24,10 @@ define prompt-texmf
 endef
 
 
-# If ULTTEXMFLOCAL is on the kpathsea form {dir1:dir2:dir3} or {dir1;dir2;dir3} or {dir1,dir2,dir3},
-# then select the first directory from the list. Otherwise, use ULTTEXMFLOCAL verbatim.
-define parse-ulttexmflocal
-	MULTI_PATHS=$$(echo "$(ULTTEXMFLOCAL)" | sed -n 's/^{\(.*\)}/\1/p') ;   \
+# If the TEXMF argument is on the kpathsea form {dir1:dir2:dir3} or {dir1;dir2;dir3} or {dir1,dir2,dir3},
+# then select the first directory from the list. Otherwise, use the TEXMF argument verbatim.
+define parse-texmf
+	MULTI_PATHS=$$(echo "$(1)" | sed -n 's/^{\(.*\)}/\1/p') ;               \
 	if [ ! -z "$$MULTI_PATHS" ]; then                                       \
 	    if [ "$(OS)" = "Windows_NT" ]; then                                 \
 	        IFS=';,' ;                                                      \
@@ -39,52 +39,41 @@ define parse-ulttexmflocal
 	        break ;                                                         \
 	    done ;                                                              \
 	else                                                                    \
-	    echo "$(ULTTEXMFLOCAL)" ;                                           \
+	    echo "$(1)" ;                                                       \
 	fi
 endef
 
 
-# TEXMFHOME is prioritized. ULTTEXMFLOCAL is initially set to TEXMFLOCAL, but
-# if TEXMFHOME is defined, it will override ULTTEXMFLOCAL
-try-texmf-home:
+# If TEXMFHOME is defined, we use it! Else, we try TEXMFLOCAL
+# (note that if TEXMF has been specified as a command line argument, it takes precedence)
 ifneq ($(ULTTEXMFHOME),)
-  ULTTEXMFLOCAL = $(ULTTEXMFHOME)
+  TEXMF = $(shell $(call parse-texmf,$(ULTTEXMFHOME)))
+else ifneq ($(ULTTEXMFLOCAL),)
+  TEXMF = $(shell $(call parse-texmf,$(ULTTEXMFLOCAL)))
 endif
 
-# If either TEXMFHOME or TEXMFLOCAL is defined, try to parse it
-try-texmf-local: try-texmf-home
-ifneq ($(ULTTEXMFLOCAL),)
-  ULTPARSEDTEXMF = $(shell $(parse-ulttexmflocal))
-endif
 
-# If neither TEXMFHOME nor TEXMFLOCAL is defined
-check-ulttexmf: try-texmf-local
-ifeq ($(ULTPARSEDTEXMF),)
+check-texmf:
+ifeq ($(strip $(TEXMF)),)
 	@echo "Cannot locate your home texmf tree. Specify manually with"
 	@echo " "
 	@echo "    make install TEXMF=/path/to/texmf"
 	@echo " "
 	@exit 1
-else
-  TEXMF = $(ULTPARSEDTEXMF)
 endif
 
 
-ifdef TEXMF
-detect-texmf:
-else
-detect-texmf: check-ulttexmf
-endif
+detect-texmf: check-texmf
 	@echo "Using texmf tree in \"$(TEXMF)\"."
-	$(prompt-texmf)
+	@$(prompt-texmf)
 ULTTEXMF = $(subst \,/,$(TEXMF))
 LATEXROOT = $(ULTTEXMF)/tex/latex/$(NAME)
 LOCALLATEXROOT = texmf-tds/tex/latex/$(NAME)
 
-check-texmf: detect-texmf
+ensure-texmf-exists: detect-texmf
 	@test -d "$(ULTTEXMF)" || mkdir -p "$(ULTTEXMF)"
 
-uninstall: check-texmf
+uninstall: ensure-texmf-exists
 	@echo "$(ULTTEXMF)/tex/latex/$(NAME)"
 	@if [ -d "$(LATEXROOT)" ]; then \
 	    echo "Uninstalling..." ; \
@@ -93,7 +82,7 @@ uninstall: check-texmf
 	    echo "You might have to run 'texhash' to update your texmf database." ; \
 	fi
 
-install: check-texmf uninstall
+install: ensure-texmf-exists uninstall
 	@echo "Installing into \"$(LATEXROOT)\"..."
 	@test -d "$(LATEXROOT)" || mkdir -p "$(LATEXROOT)"
 	@cp -r -v "$(LOCALLATEXROOT)"/* "$(LATEXROOT)/"
