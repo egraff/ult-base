@@ -1,5 +1,6 @@
 import asyncio
 import re
+from collections.abc import Sequence
 from typing import Self, Type, TYPE_CHECKING
 
 from ltxpect import asyncpopen
@@ -8,14 +9,13 @@ from .abc import ImageDimensions, IPngImageComparer, IPngImageDimensionsInspecto
 
 
 class ImageMagickPngImageComparer:
-    def __init__(self, im_compare_cmd: str) -> None:
-        self.im_compare_cmd = im_compare_cmd
+    def __init__(self, im_compare_cmd: Sequence[str]) -> None:
+        self.im_compare_cmd = tuple(im_compare_cmd)
 
     async def compare_png_images_async(
         self, png_path_first: str, png_path_second: str, output_diff_path: str
     ) -> bool:
-        cmd_args = [
-            self.im_compare_cmd,
+        cmd_args = list(self.im_compare_cmd) + [
             "-metric",
             "ae",
             png_path_first,
@@ -29,8 +29,23 @@ class ImageMagickPngImageComparer:
 
         assert returncode <= 1
 
-        # Needed because stderr[0] could be something like "1.33125e+006"
-        ae_diff = int(float(stderr[0]))
+        assert len(stderr) >= 0
+        compare_output = stderr[0].decode("ascii")
+
+        # NOTE: compare from ImageMagick <= 7.0 returns a single value for the 'ae' metric, whereas in
+        # ImageMagick >= 7.1, the output is like 'AAA (BBB)', where 'BBB' is the same value that used to be output.
+        match = re.match(
+            r"^(?P<first>\S+)(?: \((?P<second>[^\)\s]+)\))?$", compare_output
+        )
+        assert match is not None
+
+        if match["second"]:
+            ae_diff_str = match["second"]
+        else:
+            ae_diff_str = match["first"]
+
+        # NOTE: the float conversion is needed because the output value could be something like "1.33125e+006"
+        ae_diff = int(float(ae_diff_str))
 
         # (0 means equal)
         return ae_diff == 0
@@ -38,17 +53,17 @@ class ImageMagickPngImageComparer:
     @classmethod
     def create(cls: Type[Self], locator: IExternalProgramLocator) -> Self:
         im_compare_cmd = locator.find_program("Compare (ImageMagick)", ["compare"])
-        return cls(im_compare_cmd)
+        return cls([im_compare_cmd])
 
 
 class ImageMagickPngImageDimensionsInspector:
-    def __init__(self, im_identify_cmd: str) -> None:
-        self.im_identify_cmd = im_identify_cmd
+    def __init__(self, im_identify_cmd: Sequence[str]) -> None:
+        self.im_identify_cmd = tuple(im_identify_cmd)
 
     async def get_png_image_dimensions_async(self, img_path: str) -> ImageDimensions:
         returncode, stdout, _stderr = await asyncpopen.popen_async(
             asyncio.get_running_loop(),
-            [self.im_identify_cmd, "-format", "%G", img_path],
+            list(self.im_identify_cmd) + ["-format", "%G", img_path],
             timeout=2 * 60,
         )
 
@@ -63,7 +78,7 @@ class ImageMagickPngImageDimensionsInspector:
     @classmethod
     def create(cls: Type[Self], locator: IExternalProgramLocator) -> Self:
         im_identify_cmd = locator.find_program("Identify (ImageMagick)", ["identify"])
-        return cls(im_identify_cmd)
+        return cls([im_identify_cmd])
 
 
 if TYPE_CHECKING:
