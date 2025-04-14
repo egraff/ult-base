@@ -121,6 +121,7 @@ latex_test_task:
 
     ci_artifacts:
       path: "cirrus-artifacts/*"
+      only_if: $CIRRUS_CHANGE_MESSAGE =~ '.*\[keep\-pdfs\].*'
 
     after_script:
       - echo "Test result code: $TEST_RESULT_CODE"
