@@ -1,11 +1,11 @@
 selected_scheme scheme-basic
 TEXDIR C:/texlive/2024
-TEXMFCONFIG ~/.texlive2023/texmf-config
+TEXMFCONFIG ~/.texlive2024/texmf-config
 TEXMFHOME ~/texmf
 TEXMFLOCAL C:/texlive/texmf-local
 TEXMFSYSCONFIG C:/texlive/2024/texmf-config
 TEXMFSYSVAR C:/texlive/2024/texmf-var
-TEXMFVAR ~/.texlive2023/texmf-var
+TEXMFVAR ~/.texlive2024/texmf-var
 binary_win32 1
 instopt_adjustpath 1
 instopt_adjustrepo 1
