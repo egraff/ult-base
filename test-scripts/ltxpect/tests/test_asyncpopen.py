@@ -118,7 +118,7 @@ class AsyncPopenTests(unittest.TestCase):
 
             self.assertEqual(program, "/path/to/program")
             self.assertEqual(program_args, ("first_arg", "--second_arg"))
-            self.assertEqual(subprocess_exec_kwargs, {"env": os.environ})
+            self.assertEqual(subprocess_exec_kwargs, {"cwd": None, "env": os.environ})
 
             # Cleanup
 
@@ -166,7 +166,57 @@ class AsyncPopenTests(unittest.TestCase):
             self.assertEqual(program, "/path/to/program")
             self.assertEqual(program_args, ("first_arg", "--second_arg"))
             self.assertEqual(
-                subprocess_exec_kwargs, {"env": {"ENV_A": "A", "ENV_B": "B"}}
+                subprocess_exec_kwargs,
+                {"cwd": None, "env": {"ENV_A": "A", "ENV_B": "B"}},
+            )
+
+            # Cleanup
+
+            protocol.connection_made(self.transport)
+            self.transport.set_returncode(123)
+            protocol.connection_lost(None)
+            await asyncio.wait([popen_task, self.transport_closed_future])
+
+        try:
+            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
+        finally:
+            self.loop.close()
+
+    def test_subprocess_arguments__with_user_specified_cwd(self) -> None:
+        # Arrange
+
+        async def test_async():
+            # Act
+
+            popen_task = asyncio.create_task(
+                asyncpopen.popen_async(
+                    asyncio.get_running_loop(),
+                    ["/path/to/program", "first_arg", "--second_arg"],
+                    timeout=123,
+                    cwd="/some/cwd",
+                )
+            )
+
+            # Assert
+
+            # Use asyncio.wait() in case there was an exception from popen_async()
+            done_futures, _ = await asyncio.wait(
+                [self.subprocess_exec_called_future, popen_task],
+                return_when=asyncio.FIRST_COMPLETED,
+                timeout=1.0,
+            )
+            if popen_task in done_futures:
+                await popen_task
+                self.fail("popen_async() returned unexpectedly")
+
+            protocol, program, program_args, subprocess_exec_kwargs = (
+                await self.subprocess_exec_called_future
+            )
+
+            self.assertEqual(program, "/path/to/program")
+            self.assertEqual(program_args, ("first_arg", "--second_arg"))
+            self.assertEqual(
+                subprocess_exec_kwargs, {"cwd": "/some/cwd", "env": os.environ}
             )
 
             # Cleanup

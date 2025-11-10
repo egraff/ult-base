@@ -13,19 +13,23 @@ class MakefileTestBuilder:
     async def build_latex_document_async(
         self,
         base_dir: str,
-        texfile_dir_subpath: str,
+        texfile_parent_dir_subpath: str,
         texfile_filename: str,
         latex_build_dir_subpath: str,
         latex_jobname: str,
         timeout: float = 0,
     ) -> asyncpopen.AsyncPopenResult:
-        textfile_dir_path = self.path_util.path_join(base_dir, texfile_dir_subpath)
+        # Absolute path to the directory that contains the tex file
+        texfile_parent_dir_path = self.path_util.path_join(
+            base_dir, texfile_parent_dir_subpath
+        )
+
         latex_build_dir_path = self.path_util.path_join(
             base_dir, latex_build_dir_subpath
         )
 
-        latex_build_dir_relative_to_texfile_dir = self.path_util.path_relpath(
-            latex_build_dir_path, textfile_dir_path
+        latex_build_dir_relative_to_texfile_parent_dir = self.path_util.path_relpath(
+            latex_build_dir_path, texfile_parent_dir_path
         )
 
         cmd = [
@@ -37,9 +41,11 @@ class MakefileTestBuilder:
             "LATEXMK=latexmk",
             "PDFLATEX=pdflatex",
             "MAKEGLOSSARIES=makeglossaries",
-            "TEXFILE_DIR={}".format(texfile_dir_subpath),
+            "TEXFILE_DIR={}".format(texfile_parent_dir_subpath),
             "TEXFILE_FILENAME={}".format(texfile_filename),
-            "LATEX_OUTPUT_DIR={}".format(latex_build_dir_relative_to_texfile_dir),
+            "LATEX_OUTPUT_DIR={}".format(
+                latex_build_dir_relative_to_texfile_parent_dir
+            ),
             "LATEX_JOBNAME={}".format(latex_jobname),
         ]
 

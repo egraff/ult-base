@@ -297,6 +297,10 @@ class TestEngine:
         texfile_parent_dir_path = self.path_util.path_join(
             ctx.TESTSDIR, texfile_parent_dir_relpath
         )
+        assert self.fs.is_directory(texfile_parent_dir_path)
+        assert self.fs.is_file(
+            self.path_util.path_join(texfile_parent_dir_path, texfile_filename)
+        )
 
         latex_build_dir = self.path_util.path_join(
             ctx.BUILDDIR, texfile_parent_dir_relpath, texfile_basename_subst
@@ -315,7 +319,7 @@ class TestEngine:
             try:
                 _ = await self.latex_doc_buildtool.build_latex_document_async(
                     base_dir=ctx.TEST_BASE_DIR,
-                    texfile_dir_subpath=texfile_parent_dir_relative_to_base_dir,
+                    texfile_parent_dir_subpath=texfile_parent_dir_relative_to_base_dir,
                     texfile_filename=texfile_filename,
                     latex_build_dir_subpath=latex_build_dir_relative_to_base_dir,
                     latex_jobname=latex_jobname,
@@ -338,6 +342,8 @@ class TestEngine:
             ctx.PROTODIR, "{}.pdf".format(test_name)
         )
 
+        assert self.fs.is_file(proto_pdf_path)
+
         latex_jobname = "output"
 
         # Path to tex file, relative to ctx.TESTSDIR
@@ -357,6 +363,10 @@ class TestEngine:
 
         texfile_parent_dir_path = self.path_util.path_join(
             ctx.TESTSDIR, texfile_parent_dir_relpath
+        )
+        assert self.fs.is_directory(texfile_parent_dir_path)
+        assert self.fs.is_file(
+            self.path_util.path_join(texfile_parent_dir_path, texfile_filename)
         )
 
         latex_out_dir = self.path_util.path_join(
@@ -386,7 +396,7 @@ class TestEngine:
                 returncode, stdout, stderr = (
                     await self.latex_doc_buildtool.build_latex_document_async(
                         base_dir=ctx.TEST_BASE_DIR,
-                        texfile_dir_subpath=texfile_parent_dir_relative_to_base_dir,
+                        texfile_parent_dir_subpath=texfile_parent_dir_relative_to_base_dir,
                         texfile_filename=texfile_filename,
                         latex_build_dir_subpath=latex_build_dir_relative_to_base_dir,
                         latex_jobname=latex_jobname,

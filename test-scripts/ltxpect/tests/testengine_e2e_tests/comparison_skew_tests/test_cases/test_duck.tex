@@ -1,0 +1,33 @@
+\documentclass{article}
+
+\usepackage{xcolor}
+\usepackage{tikzducks}
+
+\usepackage{geometry}
+\geometry{
+  paperwidth=30mm,
+  paperheight=30mm,
+  left=5mm,
+  right=5mm,
+  top=5mm,
+  bottom=5mm,
+}
+
+\ifcsname skew\endcsname\else\let\skew=0\fi
+\ifx 1\skew
+\definecolor{qbill}{RGB}{170,123,154}
+\else
+\colorlet{qbill}{orange!50!brown}
+\fi
+
+\begin{document}
+\begin{tikzpicture}
+  \duck[
+    body=yellow!50!red!20!white,
+    eyebrow,
+    tshirt=white!93!black,
+    jacket=red!50!black,
+    bill=qbill
+  ]
+\end{tikzpicture}
+\end{document}

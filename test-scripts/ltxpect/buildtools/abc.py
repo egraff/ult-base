@@ -24,7 +24,7 @@ class ILatexDocumentBuildTool(Protocol):
     def build_latex_document_async(
         self,
         base_dir: str,
-        texfile_dir_subpath: str,
+        texfile_parent_dir_subpath: str,
         texfile_filename: str,
         latex_build_dir_subpath: str,
         latex_jobname: str,

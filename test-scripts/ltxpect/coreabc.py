@@ -40,6 +40,8 @@ class IFileSystem(Protocol):
 
     def move_file(self, oldpath: str, newpath: str) -> None: ...
 
+    def copy_file(self, oldpath: str, newpath: str) -> None: ...
+
 
 @runtime_checkable
 class ITestRunContext(Protocol):

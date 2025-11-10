@@ -92,6 +92,7 @@ async def popen_async(
     loop: asyncio.AbstractEventLoop,
     args: list[str],
     timeout: float = 0,
+    cwd: str | None = None,
     env: Mapping[str, str] | None = None,
 ) -> AsyncPopenResult:
     """Run the (non-interactive) command described by args as a child process,
@@ -103,7 +104,7 @@ async def popen_async(
     completed_future = cast(asyncio.Future[AsyncPopenResult], loop.create_future())
 
     transport, _protocol = await loop.subprocess_exec(
-        lambda: _AsyncProcessProtocol(completed_future), *args, env=env
+        lambda: _AsyncProcessProtocol(completed_future), *args, cwd=cwd, env=env
     )
 
     try:

@@ -42,6 +42,9 @@ class FileSystem:
     def move_file(self, oldpath: str, newpath: str) -> None:
         shutil.move(oldpath, newpath)
 
+    def copy_file(self, oldpath: str, newpath: str) -> None:
+        shutil.copyfile(oldpath, newpath)
+
 
 if TYPE_CHECKING:
     _: type[IFileSystem] = FileSystem
