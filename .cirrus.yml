@@ -2,7 +2,7 @@ ltxpect_self_test_task:
   name: "ltxpect self-tests"
 
   container:
-    image: ubuntu:noble
+    image: registry.gitlab.com/islandoftex/images/texlive:latest
 
   install_script:
     - apt-get update
