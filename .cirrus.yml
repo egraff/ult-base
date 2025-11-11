@@ -9,6 +9,12 @@ ltxpect_self_test_task:
     - apt-get install --no-install-recommends -qq -y python3 mypy black
     - apt-get install --no-install-recommends -qq -y poppler-utils ghostscript imagemagick
 
+  log_util_versions_script:
+    - (set -o xtrace; compare -version) || true
+    - (set -o xtrace; gs -v) || true
+    - (set -o xtrace; pdfinfo -v) || true
+    - (set -o xtrace; python3 --version) || true
+
   mypy_script:
     - (cd test-scripts && python3 -mmypy ltxpect)
     - (cd test-scripts && python3 -mmypy regtest.py)
