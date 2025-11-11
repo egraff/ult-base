@@ -197,23 +197,9 @@ for:
           }
 
     test_script:
+      - ps: Write-Host "Running ltxpect tests..."
+      - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && cd test-scripts && py -3.12-64 -munittest discover -s ltxpect -t ..'
       - ps: |
-          $OldErrorActionPreference = $ErrorActionPreference
-          $ErrorActionPreference = "Continue"
-          Write-Host "Running ltxpect tests..."
-          Push-Location ${env:APPVEYOR_BUILD_FOLDER}\test-scripts
-          try
-          {
-            py -3.12-64 -munittest discover -s ltxpect -t ..
-            if ($LastExitCode -ne 0)
-            {
-              $host.SetShouldExit($LastExitCode)
-            }
-          }
-          finally
-          {
-            Pop-Location
-          }
           Write-Host
           Write-Host
 
