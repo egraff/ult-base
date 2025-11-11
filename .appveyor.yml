@@ -137,23 +137,25 @@ for:
           TEST_CATEGORY: regtest_win
 
     install:
-      # Decrypt deploy key
-      - ps: >-
-          $OldErrorActionPreference = $ErrorActionPreference;
-          $ErrorActionPreference = "Continue";
-          py -3.12-64 -mpip install --upgrade pip 2>&1 | %{ "$_" };
-          $ErrorActionPreference = $OldErrorActionPreference;
+      - ps: |
+          $OldErrorActionPreference = $ErrorActionPreference
+          $ErrorActionPreference = "Continue"
+          py -3.12-64 -mpip install --upgrade pip 2>&1 | %{ "$_" }
+          $ErrorActionPreference = $OldErrorActionPreference
+
       - ps: py -3.12-64 -mpip install pycryptodomex
-      - ps: >-
-          $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER;
+
+      # Decrypt deploy key
+      - ps: |
+          $IsPullRequest = (Test-Path Env:APPVEYOR_PULL_REQUEST_NUMBER) -And $Env:APPVEYOR_PULL_REQUEST_NUMBER
           if (-Not $IsPullRequest) {
-            Write-Host "Decrypting deploy key";
-            py -3.12-64 ci\secure-file.py -decrypt ci\appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:USERPROFILE)\.ssh\id_rsa";
-            Write-Host "Testing deploy key";
-            $OldErrorActionPreference = $ErrorActionPreference;
-            $ErrorActionPreference = "Continue";
-            ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" };
-            $ErrorActionPreference = $OldErrorActionPreference;
+            Write-Host "Decrypting deploy key"
+            py -3.12-64 ci\secure-file.py -decrypt ci\appveyor-deploy-key.enc -secret $Env:deploy_key_secret -salt $Env:deploy_key_salt -out "$($Env:USERPROFILE)\.ssh\id_rsa"
+            Write-Host "Testing deploy key"
+            $OldErrorActionPreference = $ErrorActionPreference
+            $ErrorActionPreference = "Continue"
+            ssh -o StrictHostKeyChecking=no -T git@github.com 2>&1 | %{ "$_" }
+            $ErrorActionPreference = $OldErrorActionPreference
           }
 
       - choco upgrade chocolatey -y --no-progress
@@ -161,25 +163,27 @@ for:
 
       - choco install -y --no-progress imagemagick -PackageParameters LegacySupport=true
       - choco install -y --no-progress ghostscript
-      - ps: >-
-          $GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | select -f 1).FullName;
-          $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine');
-          $NewPath = $OldPath + ';' + $GsPath;
-          [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine');
+
+      - ps: |
+          $GsPath = (gci 'C:\Program Files\gs' -Include 'bin' -Directory -Recurse | select -f 1).FullName
+          $OldPath = [Environment]::GetEnvironmentVariable('path', 'machine')
+          $NewPath = $OldPath + ';' + $GsPath
+          [Environment]::SetEnvironmentVariable('path', $NewPath, 'machine')
+
       - choco install -y --no-progress xpdf-utils
       - refreshenv
       - set
       - compare -version
       - gswin64c -v
       - where pdfinfo
-      - ps: >-
-          $OldErrorActionPreference = $ErrorActionPreference;
-          $ErrorActionPreference = "Continue";
-          pdfinfo -v 2>&1 | %{ "$_" };
+      - ps: |
+          $OldErrorActionPreference = $ErrorActionPreference
+          $ErrorActionPreference = "Continue"
+          pdfinfo -v 2>&1 | %{ "$_" }
           if ($LastExitCode -ne 0 -And $LastExitCode -ne 99) {
-            $host.SetShouldExit($LastExitCode);
+            $host.SetShouldExit($LastExitCode)
           }
-          $ErrorActionPreference = $OldErrorActionPreference;
+          $ErrorActionPreference = $OldErrorActionPreference
     
       - ps: . ".\ci\appveyor_win_install_${env:TEST_SUITE}.ps1"
       - refreshenv
@@ -187,13 +191,13 @@ for:
 
     build_script:
       - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && make install CONTINUE=y"'
-      - ps: >-
+      - ps: |
           if (Test-Path -Path ".\ci\appveyor_win_postinstall_${env:TEST_SUITE}.ps1") {
             . ".\ci\appveyor_win_postinstall_${env:TEST_SUITE}.ps1"
           }
 
     test_script:
-      - ps: >-
+      - ps: |
           Write-Host "Running ltxpect tests..."
           powershell -Command "cd ${env:APPVEYOR_BUILD_FOLDER}\test-scripts && py -3 -munittest discover -s ltxpect -t .."
           Write-Host
@@ -202,7 +206,7 @@ for:
       - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PYTHON=\"py -3.12-64\" PROTODIR=${PROTODIR} WARMUP_COMPILE=${WARMUP_COMPILE}"'
 
     on_success:
-      - ps: >-
+      - ps: |
           try
           {
             . .\ci\appveyor_win_after.ps1 -TestResult 0
@@ -213,7 +217,7 @@ for:
           }
 
     on_failure:
-      - ps: >-
+      - ps: |
           try
           {
             . .\ci\appveyor_win_after.ps1 -TestResult 1
