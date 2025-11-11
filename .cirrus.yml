@@ -7,6 +7,7 @@ ltxpect_self_test_task:
   install_script:
     - apt-get update
     - apt-get install --no-install-recommends -qq -y python3 mypy black
+    - apt-get install --no-install-recommends -qq -y poppler-utils ghostscript imagemagick
 
   mypy_script:
     - (cd test-scripts && python3 -mmypy ltxpect)

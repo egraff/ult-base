@@ -20,29 +20,27 @@ environment:
     secure: iofUyU+lLVL09ekeB/A6iCg86QG5sf65FblHFLnAyjO79UmGzfu9Mqs7VE0/xEE37t1R1OC1/lLBeq0yWBf+nQ==
 
   matrix:
-    - TEST_SUITE: miktex-latest
-      TEST_CATEGORY: regtest_win
+    - TEST_CATEGORY: miktex_install_tests
+
+    - TEST_CATEGORY: regtest_win
+      TEST_SUITE: miktex-latest
       PROTODIR: proto_tl2025
       WARMUP_COMPILE: 1
 
-    - TEST_SUITE: miktex_install_tests
-      TEST_CATEGORY: miktex_install_tests
+    - TEST_CATEGORY: regtest_linux
+      TEST_SUITE: texlive-latest
       PROTODIR: proto_tl2025
 
-    - TEST_SUITE: texlive-latest
-      TEST_CATEGORY: regtest_linux
+    - TEST_CATEGORY: regtest_win
+      TEST_SUITE: texlive-latest
       PROTODIR: proto_tl2025
 
-    - TEST_SUITE: texlive-latest
-      TEST_CATEGORY: regtest_win
-      PROTODIR: proto_tl2025
-
-    - TEST_SUITE: texlive-2024
-      TEST_CATEGORY: regtest_win
+    - TEST_CATEGORY: regtest_win
+      TEST_SUITE: texlive-2024
       PROTODIR: proto_tl2022
 
-    - TEST_SUITE: texlive-2023
-      TEST_CATEGORY: regtest_win
+    - TEST_CATEGORY: regtest_win
+      TEST_SUITE: texlive-2023
       PROTODIR: proto_tl2022
 
 
@@ -105,7 +103,7 @@ for:
             deactivate
             chmod 600 "${HOME}/.ssh/id_rsa"
             echo "Testing deploy key"
-            (ssh -o StrictHostKeyChecking=no -T git@github.com || true) 2>&1
+            (ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -vvvT -T git@github.com || true) 2>&1
           fi
 
       - sh: ci/appveyor_linux_install_${TEST_SUITE}.sh
@@ -116,6 +114,7 @@ for:
       - sh: sudo -i texhash
 
     test_script:
+      - sh: (cd test-scripts && python3 -munittest discover -s ltxpect -t ..)
       - sh: |
           source $HOME/venv3.12/bin/activate
           make -C test PYTHON=python PROTODIR=${PROTODIR}
@@ -152,7 +151,7 @@ for:
             $ErrorActionPreference = $OldErrorActionPreference;
           }
 
-      - choco upgrade chocolatey -y
+      - choco upgrade chocolatey -y --no-progress
       - refreshenv
 
       - choco install -y --no-progress imagemagick -PackageParameters LegacySupport=true
@@ -189,6 +188,7 @@ for:
           }
 
     test_script:
+      - ps: powershell -Command "cd ${APPVEYOR_BUILD_FOLDER}\test-scripts && py -3 -munittest discover -s ltxpect -t .."
       - 'C:\msys64\usr\bin\bash.exe -e -l -c "cd $APPVEYOR_BUILD_FOLDER && ulimit -n 3200 && make -C test PYTHON=\"py -3.12-64\" PROTODIR=${PROTODIR} WARMUP_COMPILE=${WARMUP_COMPILE}"'
 
     on_success:
