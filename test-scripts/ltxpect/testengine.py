@@ -325,6 +325,8 @@ class TestEngine:
                     latex_jobname=latex_jobname,
                     timeout=ctx.latex_build_timeout,
                 )
+            except asyncio.CancelledError:
+                raise
             except:
                 pass
 
@@ -403,6 +405,8 @@ class TestEngine:
                         timeout=ctx.latex_build_timeout,
                     )
                 )
+            except asyncio.CancelledError:
+                raise
             except asyncpopen.AsyncPopenTimeoutError as err:
                 return TestResult(
                     test_name,

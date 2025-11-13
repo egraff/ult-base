@@ -210,6 +210,8 @@ async def build_comparison_skew_test_tex_file_variants_async(
                 with_skew=False,
                 timeout=30,
             )
+        except asyncio.CancelledError:
+            raise
         except:
             pass
 
@@ -385,17 +387,11 @@ class ComparisonSkewTestsMeta(type):
                     fs.force_remove_tree(config.build_dir)
                     fs.force_remove_tree(config.pdfs_dir)
 
-                if sys.platform == "win32":
-                    loop = asyncio.ProactorEventLoop()
-                else:
-                    loop = asyncio.SelectorEventLoop()
+                async def run_test_async():
+                    run_test_future = asyncio.ensure_future(test_async(config))
+                    await asyncio.wait_for(run_test_future, timeout=30.0)
 
-                try:
-                    loop.run_until_complete(
-                        asyncio.wait_for(test_async(config), timeout=10.0)
-                    )
-                finally:
-                    loop.close()
+                asyncio.run(run_test_async(), debug=True)
 
             return __test_function
 

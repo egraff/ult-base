@@ -111,13 +111,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if sys.platform == "win32":
-        loop = asyncio.ProactorEventLoop()
-    else:
-        loop = asyncio.SelectorEventLoop()
-
-    asyncio.set_event_loop(loop)
-
     path_util = ltxpect.paths.SystemPathUtil()
 
     external_program_locator = ShutilExternalProgramLocator()
@@ -188,9 +181,5 @@ if __name__ == "__main__":
             )
         ]
 
-    try:
-        retcode = loop.run_until_complete(runner.run_async(tests))
-    finally:
-        loop.close()
-
+    retcode = asyncio.run(runner.run_async(tests))
     sys.exit(retcode)

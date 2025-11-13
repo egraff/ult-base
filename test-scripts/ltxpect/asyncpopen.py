@@ -115,7 +115,12 @@ async def popen_async(
             to_await = asyncio.wait_for(asyncio.shield(to_await), timeout)
 
         returncode, stdout, stderr = await to_await
-    except (asyncio.CancelledError, asyncio.TimeoutError):
+    except asyncio.CancelledError as e:
+        transport.close()
+        returncode, stdout, stderr = await completed_future
+
+        raise
+    except asyncio.TimeoutError:
         transport.close()
         returncode, stdout, stderr = await completed_future
 

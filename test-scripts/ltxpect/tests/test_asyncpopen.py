@@ -40,10 +40,7 @@ class FakeTransport(asyncio.SubprocessTransport):
 
 class AsyncPopenTests(unittest.TestCase):
     def setUp(self) -> None:
-        if sys.platform == "win32":
-            self.loop = asyncio.ProactorEventLoop()
-        else:
-            self.loop = asyncio.SelectorEventLoop()
+        self.loop = asyncio.new_event_loop()
 
         patcher = mock.patch.object(
             self.loop, "subprocess_exec", new_callable=mock.AsyncMock
@@ -86,6 +83,19 @@ class AsyncPopenTests(unittest.TestCase):
         self.subprocess_exec_mock.side_effect = subprocess_exec
         self.subprocess_exec_mock.reset_mock()
 
+    def _run_async_test(self, coro):
+        if not asyncio.coroutines.iscoroutine(coro):
+            raise ValueError("a coroutine was expected, got {!r}".format(coro))
+
+        async def _wrap_with_timeout(coro):
+            coro_future = asyncio.ensure_future(coro)
+            await asyncio.wait_for(coro_future, timeout=1.0)
+
+        try:
+            self.loop.run_until_complete(_wrap_with_timeout(coro))
+        finally:
+            self.loop.close()
+
     def test_subprocess_arguments__with_default_environment(self) -> None:
         # Arrange
 
@@ -127,10 +137,7 @@ class AsyncPopenTests(unittest.TestCase):
             protocol.connection_lost(None)
             await asyncio.wait([popen_task, self.transport_closed_future])
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
 
     def test_subprocess_arguments__with_user_specified_environment(self) -> None:
         # Arrange
@@ -177,10 +184,7 @@ class AsyncPopenTests(unittest.TestCase):
             protocol.connection_lost(None)
             await asyncio.wait([popen_task, self.transport_closed_future])
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
 
     def test_subprocess_arguments__with_user_specified_cwd(self) -> None:
         # Arrange
@@ -226,10 +230,7 @@ class AsyncPopenTests(unittest.TestCase):
             protocol.connection_lost(None)
             await asyncio.wait([popen_task, self.transport_closed_future])
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
 
     def test_program_terminates_with_no_output(self) -> None:
         # Arrange
@@ -268,10 +269,7 @@ class AsyncPopenTests(unittest.TestCase):
             self.assertEqual(result.stdout, ())
             self.assertEqual(result.stderr, ())
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
 
     def test_program_terminates_with_output(self) -> None:
         # Arrange
@@ -324,10 +322,7 @@ class AsyncPopenTests(unittest.TestCase):
                 (b"First stderr line", b"Second stderr line", b"Last stderr line"),
             )
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
 
     def test_program_times_out_with_no_output(self) -> None:
         # Arrange
@@ -380,10 +375,7 @@ class AsyncPopenTests(unittest.TestCase):
                 (),
             )
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
 
     def test_program_times_out_with_output(self) -> None:
         # Arrange
@@ -444,10 +436,7 @@ class AsyncPopenTests(unittest.TestCase):
                 (b"First stderr line", b"Second stderr line", b"Last stderr line"),
             )
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
 
     def test_subprocess_exec_raises_exception(self) -> None:
         # Arrange
@@ -473,7 +462,4 @@ class AsyncPopenTests(unittest.TestCase):
 
             self.assertEqual(exctx.exception.args[0], "OOPS")
 
-        try:
-            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
-        finally:
-            self.loop.close()
+        self._run_async_test(test_async())
