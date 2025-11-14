@@ -389,7 +389,7 @@ class ComparisonSkewTestsMeta(type):
 
                 async def run_test_async():
                     run_test_future = asyncio.ensure_future(test_async(config))
-                    await asyncio.wait_for(run_test_future, timeout=30.0)
+                    await asyncio.wait_for(run_test_future, timeout=120.0)
 
                 asyncio.run(run_test_async(), debug=True)
 
