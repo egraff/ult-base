@@ -129,7 +129,7 @@ class ImageMagickPngImageComparerTests(unittest.TestCase):
         finally:
             self.loop.close()
 
-    def test_imagemagick_7_1_compare_ae_output__images_with_no_diff(self):
+    def test_imagemagick_7_1_1_compare_ae_output__images_with_no_diff(self):
         # Arrange
 
         async def test_async():
@@ -155,7 +155,7 @@ class ImageMagickPngImageComparerTests(unittest.TestCase):
         finally:
             self.loop.close()
 
-    def test_imagemagick_7_1_compare_ae_output__images_with_diff(self):
+    def test_imagemagick_7_1_1_compare_ae_output__images_with_diff(self):
         # Arrange
 
         async def test_async():
@@ -170,6 +170,60 @@ class ImageMagickPngImageComparerTests(unittest.TestCase):
             self.popen_async_result_future.set_result(
                 asyncpopen.AsyncPopenResult(
                     returncode=0, stdout=[], stderr=[b"1.0348e+08 (1579)"]
+                )
+            )
+
+            # Assert
+
+            compare_result = await compare_result_future
+            self.assertFalse(compare_result)
+
+        try:
+            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
+        finally:
+            self.loop.close()
+
+    def test_imagemagick_7_1_2_compare_ae_output__images_with_no_diff(self):
+        # Arrange
+
+        async def test_async():
+            comparer = ImageMagickPngImageComparer(["compare"])
+
+            compare_result_future = await self._call_compare_and_wait_for_result(
+                comparer, "first_png", "second_png", "output_diff_png"
+            )
+
+            # Act
+
+            self.popen_async_result_future.set_result(
+                asyncpopen.AsyncPopenResult(returncode=0, stdout=[], stderr=[b"0 (0)"])
+            )
+
+            # Assert
+
+            compare_result = await compare_result_future
+            self.assertTrue(compare_result)
+
+        try:
+            self.loop.run_until_complete(asyncio.wait_for(test_async(), timeout=1.0))
+        finally:
+            self.loop.close()
+
+    def test_imagemagick_7_1_2_compare_ae_output__images_with_diff(self):
+        # Arrange
+
+        async def test_async():
+            comparer = ImageMagickPngImageComparer(["compare"])
+
+            compare_result_future = await self._call_compare_and_wait_for_result(
+                comparer, "first_png", "second_png", "output_diff_png"
+            )
+
+            # Act
+
+            self.popen_async_result_future.set_result(
+                asyncpopen.AsyncPopenResult(
+                    returncode=0, stdout=[], stderr=[b"87486 (0.0402242)"]
                 )
             )
 

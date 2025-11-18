@@ -33,19 +33,20 @@ class ImageMagickPngImageComparer:
         compare_output = stderr[0].decode("ascii")
 
         # NOTE: compare from ImageMagick <= 7.0 returns a single value for the 'ae' metric, whereas in
-        # ImageMagick >= 7.1, the output is like 'AAA (BBB)', where 'BBB' is the same value that used to be output.
+        # ImageMagick >= 7.1, the output is like 'AAA (BBB)'. However, due to bugs/changes, the output has also
+        # changed between ImageMagick 7.1.1 and 7.1.2. In 7.1.1, 'BBB' is the same value that used to be output when
+        # it was a single value, but in 7.1.2 it seems that the two value have been flipped.
         match = re.match(
             r"^(?P<first>\S+)(?: \((?P<second>[^\)\s]+)\))?$", compare_output
         )
         assert match is not None
 
         if match["second"]:
-            ae_diff_str = match["second"]
+            # NOTE: the float conversion is needed because the output value could be something like "1.33125e+006"
+            ae_diff = int(max(float(match["first"]), float(match["second"])))
         else:
-            ae_diff_str = match["first"]
-
-        # NOTE: the float conversion is needed because the output value could be something like "1.33125e+006"
-        ae_diff = int(float(ae_diff_str))
+            # NOTE: the float conversion is needed because the output value could be something like "1.33125e+006"
+            ae_diff = int(float(match["first"]))
 
         # (0 means equal)
         return ae_diff == 0
