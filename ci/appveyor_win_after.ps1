@@ -56,8 +56,7 @@ Push-Location -Path $GhPages
 
 $ErrorActionPreference = "Continue"
 
-git config set advice.defaultBranchName false
-git init
+git init --initial-branch=gh-pages
 git config core.autocrlf true
 git config user.name "AppVeyor"
 git config user.email "appveyor@appveyor.com"

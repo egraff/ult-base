@@ -116,7 +116,9 @@ for:
     test_script:
       - sh: |
           echo "Running ltxpect tests..."
-          (cd test-scripts && python3 -munittest discover -s ltxpect -t ..)
+          source $HOME/venv3.12/bin/activate
+          (cd test-scripts && python -munittest discover -s ltxpect -t ..)
+          deactivate
           echo
           echo
 
