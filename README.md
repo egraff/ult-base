@@ -5,6 +5,7 @@
 
 | Build                           | Build status                                                                    |
 | ------------------------------- | ------------------------------------------------------------------------------- |
+| Linux - TeX Live 2025           | [![][cirrus-linux-tl-2025-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2024           | [![][cirrus-linux-tl-2024-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2023           | [![][cirrus-linux-tl-2023-badge]][cirrus-url]                                   |
 | Linux - TeX Live 2022           | [![][cirrus-linux-tl-2022-badge]][cirrus-url]                                   |
@@ -21,6 +22,7 @@
 [appveyor-badge]: https://ci.appveyor.com/api/projects/status/2i4xagf9s92eoxwu/branch/master?svg=true
 [appveyor-url]: https://ci.appveyor.com/project/egraff/ult-base/branch/master
 
+[cirrus-linux-tl-2025-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202025
 [cirrus-linux-tl-2024-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202024
 [cirrus-linux-tl-2023-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202023
 [cirrus-linux-tl-2022-badge]: https://api.cirrus-ci.com/github/egraff/ult-base.svg?task=Linux%20-%20TeX%20Live%202022

@@ -36,11 +36,11 @@ environment:
       PROTODIR: proto_tl2025
 
     - TEST_CATEGORY: regtest_win
-      TEST_SUITE: texlive-2024
+      TEST_SUITE: texlive-2025
       PROTODIR: proto_tl2022
 
     - TEST_CATEGORY: regtest_win
-      TEST_SUITE: texlive-2023
+      TEST_SUITE: texlive-2024
       PROTODIR: proto_tl2022
 
 
