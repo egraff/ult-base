@@ -1,0 +1,65 @@
+name: Build TeX Live CI Docker images
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "TeX Live version for which to build CI Docker image"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - "2025"
+          - "2024"
+          - "2023"
+          - "2022"
+          - "2021"
+          - "2020"
+          - "2019"
+          - "2018"
+          - "2017"
+          - "2016"
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        tl_version: ${{ fromJSON(inputs.version == 'all' && '["2016","2017","2018","2019","2020","2021","2022","2023","2024","2025"]' || format('["{0}"]', inputs.version)) }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository_owner }}/texlive-ci
+          tags: |
+            type=raw,value=${{ matrix.tl_version }}
+
+      - name: Build and push TeX Live ${{ matrix.tl_version }} CI Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ci/texlive-${{ matrix.tl_version }}-linux.Dockerfile
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
