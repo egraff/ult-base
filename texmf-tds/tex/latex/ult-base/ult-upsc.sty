@@ -1,42 +1,73 @@
 % Copyright (c) 2015 Erlend Graff <erlend.graff@gmail.com>
 
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesPackage{ult-upsc}[2016/08/18 v1.2a UiT LaTeX template upsc macro]
+\ProvidesPackage{ult-upsc}[2026/05/30 v2.0 UiT LaTeX template upsc macro]
 
 \RequirePackage{xparse}
 \RequirePackage{expl3}
 
+% Allows us to provide a PDF "/ActualText" for each character that is converted to
+% lowercase smallcaps
+\RequirePackage{accsupp}
+
 % Require mfirstuc so we can add \upsc to the block list in case mfirstuc is used
 \RequirePackage{mfirstuc}
 
-\@ifpackagelater{expl3}{2017/05/29}
-{%
-  % l3regex package was deprecated, after functionality was embedded into expl3 package
-  % See http://www.tug.org/svn/texlive?limit_changes=0&view=revision&revision=44483
-}%
-{%
-  \RequirePackage{l3regex}
-}%
-
-% Magic to define \upsc{} command that replaces upper-case letters with lower-case small-caps
 \ExplSyntaxOn
-\cs_generate_variant:Nn \tl_rescan:nn { nV }
+
+\str_new:N \l__upsc_pure_str
+\str_new:N \l__upsc_hex_str
+
+% Generate an 'e'-expanding variant so we can pass \l__upsc_pure_str by value
+\cs_generate_variant:Nn \str_set_convert:Nnnn { Nenn }
+
+% Define an error message for when a macro is used inside \upsc
+\msg_new:nnnn { ult-upsc } { macro-in-arg }
+  { Macro~'#1'~is~not~allowed~inside~\iow_char:N\\upsc. }
+  { The~argument~of~\iow_char:N\\upsc~must~be~plain~text~only. }
+
+% Checks if a character is uppercase, by testing if lowercasing changes the character
+\prg_new_protected_conditional:Npnn \__upsc_if_upper:n #1 { TF }
+  {
+    \str_if_eq:eeTF { #1 } { \text_lowercase:n { #1 } }
+      { \prg_return_false: }
+      { \prg_return_true: }
+  }
+
+% Emits a single uppercase character as lowercase smallcaps, but keep the uppercase
+% character for PDF "/ActualText" so it copies correctly (note that the character is
+% passed as UTF-16BE hex, so non-ASCII copies correctly from a pdfTeX PDF).
+\cs_new_protected:Npn \__upsc_emit_upper:n #1
+  {
+    % Use \text_purify to expand characters in LaTeX's Internal Character Representation (LICR)
+    % form (like \AE for Æ, or accent macros such as \"O) to plain Unicode (before converting to
+    % UTF-16BE hex), so the argument to ActualText is plain text.
+    \str_set:Ne \l__upsc_pure_str { \text_purify:n { #1 } }
+    \str_set_convert:Nenn \l__upsc_hex_str { \l__upsc_pure_str } { utf8 } { utf16be/hex }
+
+    % Write out the UPSC character
+    \BeginAccSupp { method = hex, unicode, ActualText = { \l__upsc_hex_str } }
+      \textsc { \text_lowercase:n { #1 } }
+    \EndAccSupp { }
+  }
+
 \NewDocumentCommand \@@upsc { m }
   {
-    \tl_set:Nx \l_tmpa_tl {#1}
-    \regex_replace_all:nnN { ([A-Z]+) }
-      { \c{textsc} \cB\{ \c{lowercase} \cB\{ \1 \cE\} \cE\} } \l_tmpa_tl
-    \tl_use:N \l_tmpa_tl
+    \text_map_inline:nn { #1 }
+      {
+        \token_if_cs:NTF ##1
+          { \msg_error:nnn { ult-upsc } { macro-in-arg } { \token_to_str:N ##1 } }
+          {
+            \__upsc_if_upper:nTF { ##1 }
+              { \__upsc_emit_upper:n { ##1 } }
+              { ##1 }
+          }
+      }
   }
+
 \ExplSyntaxOff
 
-
-\newcommand{\upsc}[1]{%
-  \begingroup
-    \expandafter{\protect\@@upsc{#1}}%
-  \endgroup
-}
-
+\newcommand{\upsc}[1]{\begingroup\@@upsc{#1}\endgroup}
 
 \@ifpackagelater{mfirstuc}{2022/10/14}
 {%
