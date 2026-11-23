@@ -1,0 +1,129 @@
+version: 2.1
+
+jobs:
+  ltxpect_self_test:
+    docker:
+      - image: registry.gitlab.com/islandoftex/images/texlive:latest
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apt-get update
+            apt-get install --no-install-recommends -qq -y python3 mypy black
+            apt-get install --no-install-recommends -qq -y poppler-utils ghostscript imagemagick
+      - run:
+          name: Log utility versions
+          command: |
+            (set -o xtrace; compare -version) || true
+            (set -o xtrace; gs -v) || true
+            (set -o xtrace; pdfinfo -v) || true
+            (set -o xtrace; python3 --version) || true
+      - run:
+          name: Run mypy
+          command: |
+            (cd test-scripts && python3 -m mypy ltxpect)
+            (cd test-scripts && python3 -m mypy regtest.py)
+      - run:
+          name: Run black
+          command: |
+            (cd test-scripts && python3 -m black --check ltxpect)
+            (cd test-scripts && python3 -m black --check regtest.py)
+      - run:
+          name: Run unit tests
+          command: |
+            (cd test-scripts && python3 -m unittest discover -s ltxpect -t ..)
+
+  latex_test:
+    parameters:
+      tl_version:
+        type: string
+    environment:
+      CIRCLE_PIPELINE_NUMBER: << pipeline.number >>
+    docker:
+      - image: ghcr.io/egraff/texlive-ci:<< parameters.tl_version >>
+    steps:
+      - checkout
+      - run:
+          name: Set PROTODIR based on TeX Live version
+          command: |
+            case "<< parameters.tl_version >>" in
+              2025)
+                echo 'export PROTODIR=proto_tl2025' >> "$BASH_ENV"
+                ;;
+              2024|2023|2022)
+                echo 'export PROTODIR=proto_tl2022' >> "$BASH_ENV"
+                ;;
+              *)
+                echo 'export PROTODIR=proto_tl2016' >> "$BASH_ENV"
+                ;;
+            esac
+      - run:
+          name: Decrypt deploy key
+          command: |
+            if [ -z "$CIRCLE_PULL_REQUEST" ]; then
+              echo "Decrypting deploy key"
+              mkdir -p "${HOME}/.ssh"
+              chmod 700 "${HOME}/.ssh"
+              python3 ci/secure-file.py -decrypt ci/circleci-deploy-key.enc \
+                -secret "${DEPLOY_KEY_SECRET}" \
+                -salt "${DEPLOY_KEY_SALT}" \
+                -out "${HOME}/.ssh/id_ed25519"
+              chmod 600 "${HOME}/.ssh/id_ed25519"
+              echo "Testing deploy key"
+              (ssh -o StrictHostKeyChecking=no -T git@github.com || true)
+            fi
+      - run:
+          name: Log versions and install TeX packages
+          command: |
+            pdfinfo -v
+            compare -version
+            gs -v
+            pdflatex -version
+            tlmgr conf
+            make install CONTINUE=y
+            texhash
+      - run:
+          name: Run LaTeX tests
+          command: |
+            make -C test PYTHON=python3 PROTODIR="${PROTODIR}"
+      - run:
+          name: Set failure result code
+          when: on_fail
+          command: |
+            echo 'export TEST_RESULT_CODE=1' >> "$BASH_ENV"
+      - run:
+          name: Set success result code
+          when: always
+          command: |
+            if [ -z "$TEST_RESULT_CODE" ]; then
+              echo 'export TEST_RESULT_CODE=0' >> "$BASH_ENV"
+            fi
+      - run:
+          name: Collect PDF artifacts
+          when: always
+          command: |
+            mkdir -p circleci-artifacts
+            COMMIT_MSG=$(git log -1 --pretty=%B)
+            if [[ "$COMMIT_MSG" =~ \[keep\-pdfs\] ]]; then
+              (cp -Rvv test/pdfs/*.pdf circleci-artifacts/ 2>/dev/null) || true
+            fi
+      - store_artifacts:
+          path: circleci-artifacts
+          destination: pdfs
+      - run:
+          name: Run after script
+          when: always
+          command: |
+            echo "Test result code: $TEST_RESULT_CODE"
+            ci/circleci_linux_after.sh "$TEST_RESULT_CODE"
+
+workflows:
+  ci:
+    jobs:
+      - ltxpect_self_test
+      - latex_test:
+          name: latex_test-tl<< matrix.tl_version >>
+          matrix:
+            parameters:
+              tl_version: ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"]
