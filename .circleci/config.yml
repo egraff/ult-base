@@ -38,26 +38,16 @@ jobs:
     parameters:
       tl_version:
         type: string
+      protodir:
+        type: string
     environment:
       CIRCLE_PIPELINE_NUMBER: << pipeline.number >>
+      CIRCLE_JOB_NUMBER: << parameters.tl_version >>
+      PROTODIR: << parameters.protodir >>
     docker:
       - image: ghcr.io/egraff/texlive-ci:<< parameters.tl_version >>
     steps:
       - checkout
-      - run:
-          name: Set PROTODIR based on TeX Live version
-          command: |
-            case "<< parameters.tl_version >>" in
-              2025)
-                echo 'export PROTODIR=proto_tl2025' >> "$BASH_ENV"
-                ;;
-              2024|2023|2022)
-                echo 'export PROTODIR=proto_tl2022' >> "$BASH_ENV"
-                ;;
-              *)
-                echo 'export PROTODIR=proto_tl2016' >> "$BASH_ENV"
-                ;;
-            esac
       - run:
           name: Decrypt deploy key
           command: |
@@ -119,11 +109,66 @@ jobs:
             ci/circleci_linux_after.sh "$TEST_RESULT_CODE"
 
 workflows:
-  ci:
+  self-test:
     jobs:
       - ltxpect_self_test
+
+  tl-2025:
+    jobs:
       - latex_test:
-          name: latex_test-tl<< matrix.tl_version >>
-          matrix:
-            parameters:
-              tl_version: ["2025", "2024", "2023", "2022", "2021", "2020", "2019", "2018", "2017", "2016"]
+          tl_version: "2025"
+          protodir: "proto_tl2025"
+
+  tl-2024:
+    jobs:
+      - latex_test:
+          tl_version: "2024"
+          protodir: "proto_tl2022"
+
+  tl-2023:
+    jobs:
+      - latex_test:
+          tl_version: "2023"
+          protodir: "proto_tl2022"
+
+  tl-2022:
+    jobs:
+      - latex_test:
+          tl_version: "2022"
+          protodir: "proto_tl2022"
+
+  tl-2021:
+    jobs:
+      - latex_test:
+          tl_version: "2021"
+          protodir: "proto_tl2016"
+
+  tl-2020:
+    jobs:
+      - latex_test:
+          tl_version: "2020"
+          protodir: "proto_tl2016"
+
+  tl-2019:
+    jobs:
+      - latex_test:
+          tl_version: "2019"
+          protodir: "proto_tl2016"
+
+  tl-2018:
+    jobs:
+      - latex_test:
+          tl_version: "2018"
+          protodir: "proto_tl2016"
+
+  tl-2017:
+    jobs:
+      - latex_test:
+          tl_version: "2017"
+          protodir: "proto_tl2016"
+
+  tl-2016:
+    jobs:
+      - latex_test:
+          tl_version: "2016"
+          protodir: "proto_tl2016"

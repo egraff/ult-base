@@ -16,7 +16,7 @@ cd "${CIRCLE_WORKING_DIRECTORY/#\~/$HOME}"
 
 # Create a new temp directory for committing test results to gh-pages branch
 GH_PAGES=$(mktemp -d)
-JOB_DIR=${GH_PAGES}/circleci-builds/${CIRCLE_PIPELINE_NUMBER}.${CIRCLE_BUILD_NUM}
+JOB_DIR=${GH_PAGES}/circleci-builds/${CIRCLE_PIPELINE_NUMBER}.${CIRCLE_JOB_NUMBER}
 mkdir -p $JOB_DIR
 
 
@@ -46,7 +46,7 @@ circleci:
   build-number: ${CIRCLE_PIPELINE_NUMBER}
   commit: ${CIRCLE_SHA1}
   job-id: ${CIRCLE_WORKFLOW_JOB_ID}
-  job-number: ${CIRCLE_BUILD_NUM}
+  job-number: ${CIRCLE_JOB_NUMBER}
   os-name: Ubuntu
   test-result: $1
 ---
@@ -58,12 +58,12 @@ rsync --archive test/tmp/tests/ $JOB_DIR/tests/ || true
 rsync --archive test/tmp/proto/ $JOB_DIR/proto/ || true
 
 mkdir -p $GH_PAGES/_data/circleci-builds
-cp test/test_result.json $GH_PAGES/_data/circleci-builds/${CIRCLE_PIPELINE_NUMBER}_${CIRCLE_BUILD_NUM}.json
+cp test/test_result.json $GH_PAGES/_data/circleci-builds/${CIRCLE_PIPELINE_NUMBER}_${CIRCLE_JOB_NUMBER}.json
 
 pushd $GH_PAGES
 
 git add --all .
-git commit -m "CircleCI: test results from job ${CIRCLE_PIPELINE_NUMBER}.${CIRCLE_BUILD_NUM}"
+git commit -m "CircleCI: test results from job ${CIRCLE_PIPELINE_NUMBER}.${CIRCLE_JOB_NUMBER}"
 
 # Allow command to fail (no exit on failure)
 set +e
