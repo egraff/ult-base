@@ -1,10 +1,10 @@
 % Copyright (c) 2015 Erlend Graff <erlend.graff@gmail.com>
 
-\NeedsTeXFormat{LaTeX2e}
+\NeedsTeXFormat{LaTeX2e}[2020/02/02]
 \ProvidesPackage{ult-upsc}[2026/05/30 v2.0 UiT LaTeX template upsc macro]
 
 \RequirePackage{xparse}
-\RequirePackage{expl3}
+\RequirePackage{expl3}[2020/03/05]
 
 % Allows us to provide a PDF "/ActualText" for each character that is converted to
 % lowercase smallcaps
@@ -18,8 +18,8 @@
 \str_new:N \l__upsc_pure_str
 \str_new:N \l__upsc_hex_str
 
-% Generate an 'e'-expanding variant so we can pass \l__upsc_pure_str by value
-\cs_generate_variant:Nn \str_set_convert:Nnnn { Nenn }
+% Generate a 'V'-expanding variant so we can pass \l__upsc_pure_str by value
+\cs_generate_variant:Nn \str_set_convert:Nnnn { NVnn }
 
 % Define an error message for when a macro is used inside \upsc
 \msg_new:nnnn { ult-upsc } { macro-in-arg }
@@ -43,7 +43,7 @@
     % form (like \AE for Æ, or accent macros such as \"O) to plain Unicode (before converting to
     % UTF-16BE hex), so the argument to ActualText is plain text.
     \str_set:Ne \l__upsc_pure_str { \text_purify:n { #1 } }
-    \str_set_convert:Nenn \l__upsc_hex_str { \l__upsc_pure_str } { utf8 } { utf16be/hex }
+    \str_set_convert:NVnn \l__upsc_hex_str \l__upsc_pure_str { utf8 } { utf16be/hex }
 
     % Write out the UPSC character
     \BeginAccSupp { method = hex, unicode, ActualText = { \l__upsc_hex_str } }
@@ -51,23 +51,57 @@
     \EndAccSupp { }
   }
 
-\NewDocumentCommand \@@upsc { m }
+\cs_new_protected:Npn \__upsc_process_text:n #1
   {
-    \text_map_inline:nn { #1 }
+    \__upsc_if_upper:nTF { #1 }
+      { \__upsc_emit_upper:n { #1 } }
+      { #1 }
+  }
+
+\cs_new_protected:Npn \__upsc_process_item:n #1
+  {
+    \tl_if_single_token:nTF { #1 }
       {
-        \token_if_cs:NTF ##1
-          { \msg_error:nnn { ult-upsc } { macro-in-arg } { \token_to_str:N ##1 } }
+        \token_if_cs:NTF #1
+          { \msg_error:nnn { ult-upsc } { macro-in-arg } { \token_to_str:N #1 } }
+          { \__upsc_process_text:n { #1 } }
+      }
+      { \__upsc_process_text:n { #1 } }
+  }
+
+\cs_if_exist:NTF \text_map_inline:nn
+  {
+    \NewDocumentCommand \@@upsc { m }
+      {
+        \text_map_inline:nn { #1 }
+          { \__upsc_process_item:n { ##1 } }
+      }
+  }
+  {
+    \NewDocumentCommand \@@upsc { m }
+      {
+        \tl_analysis_map_inline:nn { #1 }
           {
-            \__upsc_if_upper:nTF { ##1 }
-              { \__upsc_emit_upper:n { ##1 } }
-              { ##1 }
+            \str_case:nnF { ##3 }
+              {
+                { 0 } { \msg_error:nnn { ult-upsc } { macro-in-arg } { \token_to_str:N ##1 } }
+                { 1 } { ##1 }
+                { 2 } { ##1 }
+                { A } { ##1 }
+              }
+              { \__upsc_process_text:n { ##1 } }
           }
       }
   }
 
-\ExplSyntaxOff
+\NewDocumentCommand \upsc { m }
+  {
+    \group_begin:
+      \@@upsc { #1 }
+    \group_end:
+  }
 
-\newcommand{\upsc}[1]{\begingroup\@@upsc{#1}\endgroup}
+\ExplSyntaxOff
 
 \@ifpackagelater{mfirstuc}{2022/10/14}
 {%
