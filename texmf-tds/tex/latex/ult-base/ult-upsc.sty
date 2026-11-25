@@ -99,13 +99,12 @@
 
 \ExplSyntaxOff
 
+\newcommand{\upsc}[1]{\begingroup\@@upsc{#1}\endgroup}
+
 \@ifpackagelater{mfirstuc}{2022/10/14}
 {%
-  \NewDocumentCommand{\upsc}{m}{\begingroup\@@upsc{#1}\endgroup}%
-  \MFUaddmap{\@@upsc}{\@@upsc}%
-  \MFUaddmap{\upsc}{\upsc}%
-}{%
-  \newcommand{\upsc}[1]{\begingroup\@@upsc{#1}\endgroup}%
-}%
+  \MFUblocker{\@@upsc}%
+  \MFUblocker{\upsc}%
+}{}%
 
 \endinput
