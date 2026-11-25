@@ -148,27 +148,3 @@ workflows:
       - latex_test:
           tl_version: "2020"
           protodir: "proto_tl2016"
-
-  tl-2019:
-    jobs:
-      - latex_test:
-          tl_version: "2019"
-          protodir: "proto_tl2016"
-
-  tl-2018:
-    jobs:
-      - latex_test:
-          tl_version: "2018"
-          protodir: "proto_tl2016"
-
-  tl-2017:
-    jobs:
-      - latex_test:
-          tl_version: "2017"
-          protodir: "proto_tl2016"
-
-  tl-2016:
-    jobs:
-      - latex_test:
-          tl_version: "2016"
-          protodir: "proto_tl2016"
