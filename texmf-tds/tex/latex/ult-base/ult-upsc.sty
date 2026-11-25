@@ -94,19 +94,15 @@
       }
   }
 
-\NewDocumentCommand \upsc { m }
-  {
-    \group_begin:
-      \@@upsc { #1 }
-    \group_end:
-  }
-
 \ExplSyntaxOff
 
 \@ifpackagelater{mfirstuc}{2022/10/14}
 {%
-  \MFUblocker{\@@upsc}%
-  \MFUblocker{\upsc}%
-}{}%
+  \NewDocumentCommand{\upsc}{m}{\begingroup\@@upsc{#1}\endgroup}%
+  \MFUexcl{\@@upsc}%
+  \MFUexcl{\upsc}%
+}{%
+  \newcommand{\upsc}[1]{\begingroup\@@upsc{#1}\endgroup}%
+}%
 
 \endinput
