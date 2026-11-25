@@ -120,11 +120,13 @@ clean:
 	@$(RM) -r $(PDFFLD) $(BUILDFLD)
 	@echo "Done!"
 
+JUNIT_XML ?=
+
 PHONY += test
 test: check-python
 	@echo "Running comparison tests..."
 	@echo ""
-	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) --warmup-compile $(WARMUP_COMPILE) .
+	@$(PYTHON) ../test-scripts/regtest.py --protodir $(PROTODIR) --warmup-compile $(WARMUP_COMPILE) $(if $(JUNIT_XML),--junit-xml $(JUNIT_XML)) .
 
 PHONY += _file
 _file: check-file-params check-file-programs

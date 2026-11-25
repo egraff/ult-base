@@ -16,6 +16,7 @@ import ltxpect.paths
 from ltxpect.aggregatereporter import AggregateReporter
 from ltxpect.colorconsolereporter import ColorConsoleReporter
 from ltxpect.filesystem import FileSystem
+from ltxpect.junitxmlreporter import JUnitXmlReporter
 from ltxpect.shutilexternalprogramlocator import ShutilExternalProgramLocator
 from ltxpect.testresultsjsonreporter import TestResultsJsonReporter
 from ltxpect.testconfig import TestConfig
@@ -108,6 +109,13 @@ if __name__ == "__main__":
         default=False,
         help="whether to run a warmup compile step before executing the tests",
     )
+    parser.add_argument(
+        "--junit-xml",
+        dest="junit_xml_path",
+        type=str,
+        default=None,
+        help="optional path to write JUnit XML compatible test results",
+    )
 
     args = parser.parse_args()
 
@@ -164,6 +172,9 @@ if __name__ == "__main__":
             ColorConsoleReporter(diff_dir=path_util.path_join(test_base_dir, "diffs")),
         ]
     )
+
+    if args.junit_xml_path is not None:
+        reporters.append(JUnitXmlReporter(args.junit_xml_path))
 
     runner = TestRunner(test_runner_config, engine, reporter, path_util)
 

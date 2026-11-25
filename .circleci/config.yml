@@ -76,7 +76,9 @@ jobs:
       - run:
           name: Run LaTeX tests
           command: |
-            make -C test PYTHON=python3 PROTODIR="${PROTODIR}"
+            make -C test PYTHON=python3 PROTODIR="${PROTODIR}" JUNIT_XML="../test-results/junit.xml"
+      - store_test_results:
+          path: test-results
       - run:
           name: Set failure result code
           when: on_fail
