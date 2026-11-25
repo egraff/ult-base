@@ -45,6 +45,9 @@
     \str_set:Nx \l__upsc_pure_str { \text_purify:n { #1 } }
     \str_set_convert:NVnn \l__upsc_hex_str \l__upsc_pure_str { utf8 } { utf16be/hex }
 
+    % Enter horizontal mode before \BeginAccSupp
+    \mode_leave_vertical:
+
     % Write out the UPSC character
     \BeginAccSupp { method = hex, unicode, ActualText = { \l__upsc_hex_str } }
       \textsc { \text_lowercase:n { #1 } }
@@ -99,8 +102,8 @@
 \@ifpackagelater{mfirstuc}{2022/10/14}
 {%
   \NewDocumentCommand{\upsc}{m}{\begingroup\@@upsc{#1}\endgroup}%
-  \MFUexcl{\@@upsc}%
-  \MFUexcl{\upsc}%
+  \MFUaddmap{\@@upsc}{\@@upsc}%
+  \MFUaddmap{\upsc}{\upsc}%
 }{%
   \newcommand{\upsc}[1]{\begingroup\@@upsc{#1}\endgroup}%
 }%
