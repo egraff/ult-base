@@ -161,7 +161,9 @@ if __name__ == "__main__":
             TestResultsJsonReporter(
                 path_util.path_join(test_base_dir, "test_result.json")
             ),
-            ColorConsoleReporter(),
+            ColorConsoleReporter(
+                diff_dir=path_util.path_join(test_base_dir, "diffs")
+            ),
         ]
     )
 

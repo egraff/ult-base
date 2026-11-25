@@ -40,7 +40,8 @@ dlvl = [
 
 
 class ColorConsoleReporter:
-    def __init__(self) -> None:
+    def __init__(self, diff_dir: str | None = None) -> None:
+        self.diff_dir = diff_dir
         self.test_result_lock = asyncio.Lock()
         self.num_warmup_tests_completed = 0
         self.num_tests_completed = 0
@@ -124,7 +125,7 @@ class ColorConsoleReporter:
                 #   Exception ignored when trying to write to the signal wakeup fd:
                 #   BlockingIOError: [Errno 11] Resource temporarily unavailable
                 echo_out = io.StringIO()
-                echo = lambda *args: echo_out.write(self.colorfmt(*args))
+                echo = lambda *args: echo_out.write(self.colorfmt(*args) or "")
 
                 echo(debug.BOLD, "  %s\n" % (test_result.test_name,))
 
@@ -163,6 +164,25 @@ class ColorConsoleReporter:
                                 test_result.build_logfile
                             ),
                         )
+                    else:
+                        echo(debug.BOLD, "\n\n")
+                else:
+                    failed_pages_str = ", ".join(
+                        str(x) for x in test_result.failed_pages
+                    )
+                    echo(
+                        debug.ERROR,
+                        "    Pages with diff: %s.\n\n" % (failed_pages_str,),
+                    )
+
+                self.echo_raw(echo_out.getvalue())
+
+            if self.diff_dir is not None:
+                self.echo(
+                    debug.BLUE,
+                    "PNGs containing diffs are available in '%s'\n\n"
+                    % (self.diff_dir,),
+                )
 
     def echo_raw(self, echo_str):
         with self.echo_lock:
