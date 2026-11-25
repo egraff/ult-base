@@ -42,7 +42,7 @@
     % Use \text_purify to expand characters in LaTeX's Internal Character Representation (LICR)
     % form (like \AE for Æ, or accent macros such as \"O) to plain Unicode (before converting to
     % UTF-16BE hex), so the argument to ActualText is plain text.
-    \str_set:Ne \l__upsc_pure_str { \text_purify:n { #1 } }
+    \str_set:Nx \l__upsc_pure_str { \text_purify:n { #1 } }
     \str_set_convert:NVnn \l__upsc_hex_str \l__upsc_pure_str { utf8 } { utf16be/hex }
 
     % Write out the UPSC character
