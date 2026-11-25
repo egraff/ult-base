@@ -2,22 +2,22 @@
 layout: default
 ---
 {% comment %} Convert number to string {% endcomment %}
-{% capture cirrus_build_data_name %}{{ page.cirrus.build-id }}_{{ page.cirrus.task-number }}{% endcapture %}
+{% capture circleci_build_data_name %}{{ page.circleci.pipeline-number }}_{{ page.circleci.job-number }}{% endcapture %}
 
 {% comment %} Get test result from JSON {% endcomment %}
-{% assign result_map = site.data.cirrus-builds[cirrus_build_data_name] %}
+{% assign result_map = site.data.circleci-builds[circleci_build_data_name] %}
 
 {% comment %} See if test passed or failed {% endcomment %}
-{% if page.cirrus.test-result == 0 %}
+{% if page.circleci.test-result == 0 %}
 {% assign passed = true %}
 {% else %}
 {% assign passed = false %}
 {% endif %}
 
-{% capture title %}Test results for Cirrus task #{{ page.cirrus.build-id }}.{{ page.cirrus.task-number }}{% endcapture %}
+{% capture title %}Test results for CircleCI job #{{ page.circleci.pipeline-number }}.{{ page.circleci.job-number }}{% endcapture %}
 <div class="page">
   <h1 class="page-title">Test results for
-    <a href="https://cirrus-ci.com/task/{{ page.cirrus.task-id }}">Cirrus task #{{ page.cirrus.build-id }}.{{ page.cirrus.task-number }}</a>
+    <a href="{{ page.circleci.build-url }}">CircleCI job #{{ page.circleci.pipeline-number }}.{{ page.circleci.job-number }}</a>
   </h1>
   <p>
   {% if passed %}
@@ -30,7 +30,7 @@ layout: default
   {% unless result_map %}
     No results from regression tests!
   {% else %}
-    <p>Num tests: {{ result_map.num_tests }}, in task {{ page.cirrus.build-id }}.{{ page.cirrus.task-number }}!</p>
+    <p>Num tests: {{ result_map.num_tests }}, in job {{ page.circleci.pipeline-number }}.{{ page.circleci.job-number }}!</p>
     
     {% assign failed_tests = result_map.failed_tests %}
     {% for failed_test_map in failed_tests %}

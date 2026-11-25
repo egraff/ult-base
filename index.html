@@ -3,31 +3,31 @@ layout: page
 title: Last 25 test results
 ---
 
-{% comment %} ---- BEGIN CIRRUS ---- {% endcomment %}
+{% comment %} ---- BEGIN CIRCLECI ---- {% endcomment %}
 
-{% assign cirrus_pages_list = site.pages | where: 'layout','cirrus-build' %}
+{% assign circleci_pages_list = site.pages | where: 'layout','circleci-build' %}
 
-{% assign cirrus_job_num_string_list = '' %}
-{% for page in cirrus_pages_list %}
+{% assign circleci_job_num_string_list = '' %}
+{% for page in circleci_pages_list %}
   {% comment %} Make job number 8 symbols long, prepended with zeros {% endcomment %}
-  {% capture cirrus_job_num %}{{ page.cirrus.build-id }}.{{ page.cirrus.task-number }}{% endcapture %}
-  {% assign cirrus_job_sortkey = cirrus_job_num | prepend: '00000000000000000000' | slice: -20, 20 %}
+  {% capture circleci_job_num %}{{ page.circleci.pipeline-number }}.{{ page.circleci.job-number }}{% endcapture %}
+  {% assign circleci_job_sortkey = circleci_job_num | prepend: '00000000000000000000' | slice: -20, 20 %}
 
   {% comment %} Append actual job number after sortkey, with a ^ as separator {% endcomment %}
-  {% assign job_num_string = cirrus_job_sortkey | append: '^' | append: cirrus_job_num %}
+  {% assign job_num_string = circleci_job_sortkey | append: '^' | append: circleci_job_num %}
 
   {% comment %} Add to string list {% endcomment %}
-  {% if cirrus_job_num_string_list == '' %}
-    {% assign cirrus_job_num_string_list = job_num_string %}
+  {% if circleci_job_num_string_list == '' %}
+    {% assign circleci_job_num_string_list = job_num_string %}
   {% else %}
-    {% assign cirrus_job_num_string_list = cirrus_job_num_string_list | append: ',' | append: job_num_string %}
+    {% assign circleci_job_num_string_list = circleci_job_num_string_list | append: ',' | append: job_num_string %}
   {% endif %}
 {% endfor %}
 
 {% comment %} Convert to a list, and sort in descending order {% endcomment %}
-{% assign cirrus_job_num_string_list = cirrus_job_num_string_list | split: ',' | sort | reverse %}
+{% assign circleci_job_num_string_list = circleci_job_num_string_list | split: ',' | sort | reverse %}
 
-{% comment %} ---- END CIRRUS ---- {% endcomment %}
+{% comment %} ---- END CIRCLECI ---- {% endcomment %}
 
 {% comment %} ---- BEGIN APPVEYOR ---- {% endcomment %}
 
@@ -57,7 +57,7 @@ title: Last 25 test results
 
 <div style="width: 49rem; overflow: hidden;">
 <div style="float: left; width: 27rem;">
-<h2>Cirrus jobs</h2>
+<h2>CircleCI jobs</h2>
 <table class="test-overview">
   <thead>
     <tr>
@@ -68,23 +68,23 @@ title: Last 25 test results
     </tr>
   </thead>
   <tbody>
-  {% for job_num_string in cirrus_job_num_string_list limit:25 %}
+  {% for job_num_string in circleci_job_num_string_list limit:25 %}
     {% assign job_num_string_parts = job_num_string | split: '^' %}
-    {% assign cirrus_job_number = job_num_string_parts[1] %}
-    {% for page in cirrus_pages_list %}
-      {% capture page_job_num_str %}{{ page.cirrus.build-id }}.{{ page.cirrus.task-number }}{% endcapture %}
-      {% if page_job_num_str == cirrus_job_number %}
-        {% if page.cirrus.test-result == 0 %}
+    {% assign circleci_job_number = job_num_string_parts[1] %}
+    {% for page in circleci_pages_list %}
+      {% capture page_job_num_str %}{{ page.circleci.pipeline-number }}.{{ page.circleci.job-number }}{% endcapture %}
+      {% if page_job_num_str == circleci_job_number %}
+        {% if page.circleci.test-result == 0 %}
           {% assign passed = true %}
         {% else %}
           {% assign passed = false %}
         {% endif %}
-        {% capture cirrus_job_data_name %}{{ page.cirrus.build-id }}_{{ page.cirrus.task-number }}{% endcapture %}
-        {% assign result_map = site.data.cirrus-builds[cirrus_job_data_name] %}
-        {% capture commit_hash %}{{ page.cirrus.commit }}{% endcapture %}
+        {% capture circleci_job_data_name %}{{ page.circleci.pipeline-number }}_{{ page.circleci.job-number }}{% endcapture %}
+        {% assign result_map = site.data.circleci-builds[circleci_job_data_name] %}
+        {% capture commit_hash %}{{ page.circleci.commit }}{% endcapture %}
         <tr class="{% if passed %}passed{% else %}failed{% endif %}">
-          <td><a href="{{ site.baseurl }}{{ page.url }}">#{{ page.cirrus.build-id }}.{{ page.cirrus.task-number }}</a></td>
-          <td><a href="https://github.com/egraff/ult-base/tree/{{ page.cirrus.branch }}">{{ page.cirrus.branch }}</a></td>
+          <td><a href="{{ site.baseurl }}{{ page.url }}">#{{ page.circleci.pipeline-number }}.{{ page.circleci.job-number }}</a></td>
+          <td><a href="https://github.com/egraff/ult-base/tree/{{ page.circleci.branch }}">{{ page.circleci.branch }}</a></td>
           <td><a href="https://github.com/egraff/ult-base/commit/{{ commit_hash }}">{{ commit_hash | truncate: 9 }}</a></td>
           <td>
             {% unless result_map %}
