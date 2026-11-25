@@ -42,11 +42,13 @@ cat <<EOF > $JOB_DIR/index.md
 layout: circleci-build
 circleci:
   branch: ${CIRCLE_BRANCH}
-  build-id: ${CIRCLE_WORKFLOW_ID}
-  build-number: ${CIRCLE_PIPELINE_NUMBER}
-  commit: ${CIRCLE_SHA1}
+  pipeline-number: ${CIRCLE_PIPELINE_NUMBER}
+  workflow-id: ${CIRCLE_WORKFLOW_ID}
   job-id: ${CIRCLE_WORKFLOW_JOB_ID}
   job-number: ${CIRCLE_JOB_NUMBER}
+  build-number: ${CIRCLE_BUILD_NUM}
+  build-url: ${CIRCLE_BUILD_URL}
+  commit: ${CIRCLE_SHA1}
   os-name: Ubuntu
   test-result: $1
 ---
