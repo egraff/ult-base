@@ -109,42 +109,48 @@ jobs:
             ci/circleci_linux_after.sh "$TEST_RESULT_CODE"
 
 workflows:
-  self-test:
+  ltxpect_self_test:
     jobs:
       - ltxpect_self_test
 
-  tl-2025:
+  latex_test_tl2025:
     jobs:
       - latex_test:
+          name: latex_test_tl2025
           tl_version: "2025"
           protodir: "proto_tl2025"
 
-  tl-2024:
+  latex_test_tl2024:
     jobs:
       - latex_test:
+          name: latex_test_tl2024
           tl_version: "2024"
           protodir: "proto_tl2022"
 
-  tl-2023:
+  latex_test_tl2023:
     jobs:
       - latex_test:
+          name: latex_test_tl2023
           tl_version: "2023"
           protodir: "proto_tl2022"
 
-  tl-2022:
+  latex_test_tl2022:
     jobs:
       - latex_test:
+          name: latex_test_tl2022
           tl_version: "2022"
           protodir: "proto_tl2022"
 
-  tl-2021:
+  latex_test_tl2021:
     jobs:
       - latex_test:
+          name: latex_test_tl2021
           tl_version: "2021"
           protodir: "proto_tl2016"
 
-  tl-2020:
+  latex_test_tl2020:
     jobs:
       - latex_test:
+          name: latex_test_tl2020
           tl_version: "2020"
           protodir: "proto_tl2016"
