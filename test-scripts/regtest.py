@@ -163,18 +163,18 @@ if __name__ == "__main__":
         png_dimensions_inspector=png_dimensions_inspector,
         png_comparer=png_comparer,
     )
-
-    reporter = AggregateReporter(
-        [
-            TestResultsJsonReporter(
-                path_util.path_join(test_base_dir, "test_result.json")
-            ),
-            ColorConsoleReporter(diff_dir=path_util.path_join(test_base_dir, "diffs")),
-        ]
-    )
+    
+    reporters: list[ltxpect.coreabc.ITestReporter] = [
+        TestResultsJsonReporter(
+            path_util.path_join(test_base_dir, "test_result.json")
+        ),
+        ColorConsoleReporter(diff_dir=path_util.path_join(test_base_dir, "diffs")),
+    ]
 
     if args.junit_xml_path is not None:
         reporters.append(JUnitXmlReporter(args.junit_xml_path))
+
+    reporter = AggregateReporter(reporters)
 
     runner = TestRunner(test_runner_config, engine, reporter, path_util)
 
