@@ -19,7 +19,7 @@ def _sanitize_xml_text(text: str) -> str:
 
 
 class JUnitXmlReporter:
-    """Writes test results in JUnit XML compatible format.""""
+    """Writes test results in JUnit XML compatible format."""
 
     def __init__(self, junit_xml_path: str, suite_name: str) -> None:
         self.junit_xml_path = junit_xml_path
