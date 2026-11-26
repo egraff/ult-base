@@ -172,7 +172,9 @@ if __name__ == "__main__":
     ]
 
     if args.junit_xml_path is not None:
-        reporters.append(JUnitXmlReporter(args.junit_xml_path))
+        reporters.append(
+            JUnitXmlReporter(junit_xml_path=args.junit_xml_path, suite_name="ltxpect")
+        )
 
     reporter = AggregateReporter(reporters)
 
