@@ -99,16 +99,22 @@
 
 % Zero-argument sentinel so mfirstuc (>= 2022/10/14) stops after \upsc{...}
 % instead of capitalizing a trailing plural suffix.
-\cs_new_protected:Npn \ult@upsc@mfu@stop { }
+\cs_new_protected:Npn \__upsc_mfu_stop: { }
+
+\cs_new:Npn \upsc #1
+  {
+    \group_begin:
+      \@@upsc { #1 }
+    \group_end:
+    \__upsc_mfu_stop:
+  }
+
+\cs_if_exist:NT \MFUaddmap
+  {
+    \MFUblocker { \@@upsc }
+    \MFUaddmap { \__upsc_mfu_stop: } { \__upsc_mfu_stop: }
+  }
 
 \ExplSyntaxOff
-
-\newcommand{\upsc}[1]{\begingroup\@@upsc{#1}\endgroup\ult@upsc@mfu@stop}
-
-\@ifpackagelater{mfirstuc}{2022/10/14}
-{%
-  \MFUblocker{\@@upsc}%
-  \MFUaddmap{\ult@upsc@mfu@stop}{\ult@upsc@mfu@stop}%
-}{}%
 
 \endinput
