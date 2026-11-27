@@ -1,0 +1,355 @@
+This is pdfTeX, Version 3.141592653-2.6-1.40.29 (TeX Live 2026) (preloaded format=pdflatex 2026.11.27)  27 NOV 2026 02:35
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**test_acronyms.tex
+(./test_acronyms.tex
+LaTeX2e <2026-11-01>
+L3 programming layer <2026-11-16>
+(/usr/local/texlive/2026/texmf-dist/tex/latex/base/book.cls
+Document Class: book 2026-06-04 v1.4n Standard LaTeX document class
+(/usr/local/texlive/2026/texmf-dist/tex/latex/base/bk10.clo
+File: bk10.clo 2026-06-04 v1.4n Standard LaTeX file (size option)
+)
+\c@part=\count276
+\c@chapter=\count277
+\c@section=\count278
+\c@subsection=\count279
+\c@subsubsection=\count280
+\c@paragraph=\count281
+\c@subparagraph=\count282
+\c@figure=\count283
+\c@table=\count284
+\abovecaptionskip=\skip49
+\belowcaptionskip=\skip50
+\bibindent=\dimen150
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/geometry/geometry.sty
+Package: geometry 2026/11/16 v6.3 Page Geometry
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/graphics/keyval.sty
+Package: keyval 2026-06-01 v1.15 key=value parser (DPC)
+\KV@toks@=\toks17
+)
+(/usr/local/texlive/2026/texmf-dist/tex/generic/iftex/ifvtex.sty
+Package: ifvtex 2026/10/27 v1.7 ifvtex compatibility package
+
+(/usr/local/texlive/2026/texmf-dist/tex/generic/iftex/iftex.sty
+Package: iftex 2026/11/17 v1.0h TeX engine tests
+))
+\Gm@cnth=\count285
+\Gm@cntv=\count286
+\c@Gm@tempcnt=\count287
+\Gm@bindingoffset=\dimen151
+\Gm@wd@mp=\dimen152
+\Gm@odd@mp=\dimen153
+\Gm@even@mp=\dimen154
+\Gm@layoutwidth=\dimen155
+\Gm@layoutheight=\dimen156
+\Gm@layouthoffset=\dimen157
+\Gm@layoutvoffset=\dimen158
+\Gm@dimlist=\toks18
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/glossaries/base/glossaries.sty
+Package: glossaries 2026/04/21 v5.1 (NLCT)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2026-06-01 v1.1e Standard LaTeX ifthen package (DPC)
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2025/11/04 v2.10 package option processing (HA)
+
+(/usr/local/texlive/2026/texmf-dist/tex/generic/xkeyval/xkeyval.tex
+(/usr/local/texlive/2026/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks19
+\XKV@tempa@toks=\toks20
+\XKV@tempb@toks=\toks21
+)
+\XKV@depth=\count288
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+(/usr/local/texlive/2026/texmf-dist/tex/latex/mfirstuc/mfirstuc.sty
+Package: mfirstuc 2025/04/03 v2.09 (NLCT)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+Package: etoolbox 2025/10/02 v2.5m e-TeX tools for LaTeX (JAW)
+\etb@tempcnta=\count289
+)
+\@glsmfirst=\toks22
+\@glsmrest=\toks23
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/xfor/xfor.sty
+Package: xfor 2009/02/05 v1.05 (NLCT)
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsgen.sty
+File: amsgen.sty 1999/11/30 v2.0 generic functions
+\@emptytoks=\toks24
+\ex@=\dimen159
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/datatool/datatool-base.sty
+Package: datatool-base 2026/08/23 v3.4.5 (NLCT)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsmath.sty
+Package: amsmath 2026-08-26 v2.18e AMS math features
+\@mathmargin=\skip51
+
+For additional information on amsmath, use the `?' option.
+(/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amstext.sty
+Package: amstext 2026/06/26 v2.01 AMS text
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsbsy.sty
+Package: amsbsy 1999/11/29 v1.2d Bold Symbols
+\pmbraise@=\dimen160
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/amsmath/amsopn.sty
+Package: amsopn 2022/04/08 v2.04 operator names
+)
+\inf@bad=\count290
+LaTeX Info: Redefining \frac on input line 233.
+\uproot@=\count291
+\leftroot@=\count292
+LaTeX Info: Redefining \overline on input line 370.
+LaTeX Info: Redefining \colon on input line 381.
+\classnum@=\count293
+\DOTSCASE@=\count294
+LaTeX Info: Redefining \ldots on input line 467.
+LaTeX Info: Redefining \dots on input line 470.
+LaTeX Info: Redefining \cdots on input line 591.
+\Mathstrutbox@=\box53
+\strutbox@=\box54
+LaTeX Info: Redefining \big on input line 693.
+LaTeX Info: Redefining \Big on input line 694.
+LaTeX Info: Redefining \bigg on input line 695.
+LaTeX Info: Redefining \Bigg on input line 696.
+\big@size=\dimen161
+LaTeX Font Info:    Redeclaring font encoding OML on input line 714.
+LaTeX Font Info:    Redeclaring font encoding OMS on input line 715.
+\macc@depth=\count295
+LaTeX Info: Redefining \bmod on input line 876.
+LaTeX Info: Redefining \pmod on input line 881.
+LaTeX Info: Redefining \smash on input line 911.
+LaTeX Info: Redefining \relbar on input line 941.
+LaTeX Info: Redefining \Relbar on input line 942.
+\c@MaxMatrixCols=\count296
+\dotsspace@=\muskip17
+\c@parentequation=\count297
+\dspbrk@lvl=\count298
+\tag@help=\toks25
+\row@=\count299
+\column@=\count300
+\maxfields@=\count301
+\andhelp@=\toks26
+\eqnshift@=\dimen162
+\alignsep@=\dimen163
+\tagshift@=\dimen164
+\tagwidth@=\dimen165
+\totwidth@=\dimen166
+\lineht@=\dimen167
+\@envbody=\toks27
+\multlinegap=\skip52
+\multlinetaggap=\skip53
+\mathdisplay@stack=\toks28
+LaTeX Info: Redefining \[ on input line 2937.
+LaTeX Info: Redefining \] on input line 2938.
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/tracklang/tracklang.sty
+Package: tracklang 2026/05/24 v1.6.8 (NLCT) Track Languages
+
+(/usr/local/texlive/2026/texmf-dist/tex/generic/tracklang/tracklang.tex))
+\l__datatool_tmpa_int=\count302
+\l__datatool_tmpb_int=\count303
+\l__datatool_tmpc_int=\count304
+\l__datatool_tmpd_int=\count305
+\l__datatool_count_int=\count306
+\l__datatool_tmp_datatype_int=\count307
+\l__datatool_tmpa_dim=\dimen168
+\l__datatool_tmpb_dim=\dimen169
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/datatool/datatool-l3fp.def
+File: datatool-l3fp.def 2026/08/23 v3.4.5 (NLCT)
+)
+\@dtl@toks=\toks29
+\@dtl@tmpcount=\count308
+\dtl@tmplength=\skip54
+\l__datatool_measure_box=\box55
+\dtl@sortresult=\count309
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/datatool/datatool-utf8.ldf
+File: datatool-utf8.ldf 2026/08/23 v3.4.5 (NLCT)
+)
+\@dtl@datatype=\count310
+\c_datatool_unknown_int=\count311
+\l__datatool_year_int=\count312
+\l__datatool_month_int=\count313
+\l__datatool_day_int=\count314
+\l__datatool_hour_int=\count315
+\l__datatool_minute_int=\count316
+\l__datatool_second_int=\count317
+\l__datatool_tzhour_int=\count318
+\l__datatool_tzminute_int=\count319
+\l__datatool_julian_int=\count320
+\l__datatool_local_julian_int=\count321
+\l__datatool_prefix_int=\count322
+\l__datatool_suffix_int=\count323
+\@dtl@foreach@level=\count324
+\dtl@codeA=\count325
+\dtl@codeB=\count326
+)
+\gls@level=\count327
+\@gls@tmpb=\toks30
+\gls@tmplen=\skip55
+\l__glossaries_tmpa_dim=\dimen170
+\l__glossaries_tmpb_dim=\dimen171
+\glskeylisttok=\toks31
+\glslabeltok=\toks32
+\glsshorttok=\toks33
+\glslongtok=\toks34
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/glossaries/styles/glossary-hypern
+av.sty
+Package: glossary-hypernav 2026/04/21 v5.1 (NLCT)
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/glossaries/styles/glossary-list.s
+ty
+Package: glossary-list 2026/04/21 v5.1 (NLCT)
+\glslistdottedwidth=\skip56
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/glossaries/styles/glossary-long.s
+ty
+Package: glossary-long 2026/04/21 v5.1 (NLCT)
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/tools/longtable.sty
+Package: longtable 2026-10-05 v4.28 Multi-page Table package (DPC)
+\LTleft=\skip57
+\LTright=\skip58
+\LTpre=\skip59
+\LTpost=\skip60
+\LTchunksize=\count328
+\LTcapwidth=\dimen172
+\LT@head=\box56
+\LT@firsthead=\box57
+\LT@foot=\box58
+\LT@lastfoot=\box59
+\LT@gbox=\box60
+\LT@cols=\count329
+\LT@rows=\count330
+\c@LT@tables=\count331
+\c@LT@chunks=\count332
+\LT@p@ftn=\toks35
+)
+\glsdescwidth=\skip61
+\glspagelistwidth=\skip62
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/glossaries/styles/glossary-super.
+sty
+Package: glossary-super 2026/04/21 v5.1 (NLCT)
+ (/usr/local/texlive/2026/texmf-dist/tex/latex/supertabular/supertabular.sty
+Package: supertabular 2025/06/26 v4.2d the supertabular environment
+\c@tracingst=\count333
+\ST@wd=\dimen173
+\ST@rightskip=\skip63
+\ST@leftskip=\skip64
+\ST@parfillskip=\skip65
+\ST@pageleft=\dimen174
+\ST@headht=\dimen175
+\ST@tailht=\dimen176
+\ST@pagesofar=\dimen177
+\ST@pboxht=\dimen178
+\ST@rowht=\dimen179
+\ST@prevht=\dimen180
+\ST@toadd=\dimen181
+\ST@dimen=\dimen182
+\ST@pbox=\box61
+))
+(/usr/local/texlive/2026/texmf-dist/tex/latex/glossaries/styles/glossary-tree.s
+ty
+Package: glossary-tree 2026/04/21 v5.1 (NLCT)
+\l__glossaries_tree_max_known_level_int=\count334
+\l__glossaries_tree_offset_dim=\dimen183
+\l__glossaries_tree_namewidth_dim=\dimen184
+\l__glossaries_tree_symbolwidth_dim=\dimen185
+\l__glossaries_tree_prenamesym_width_dim=\dimen186
+\l__glossaries_tree_presubnamesym_width_dim=\dimen187
+\l__glossaries_tree_namewidth_padding_dim=\dimen188
+\l__glossaries_tree_symbolwidth_padding_dim=\dimen189
+\l__glossaries_tree_namesymbolwidth_dim=\dimen190
+\l__glossaries_tree_namesymbolwidth_padding_dim=\dimen191
+\l__glossaries_tree_level_int=\count335
+\glstreeindent=\skip66
+)) (/home/appveyor/texmf/tex/latex/ult-base/ult-glossaries.sty
+Package: ult-glossaries 2024/03/25 v1.1 UiT LaTeX template glossaries style cus
+tomizations
+
+(/home/appveyor/texmf/tex/latex/ult-base/ult-upsc.sty
+Package: ult-upsc 2026/05/30 v2.0 UiT LaTeX template upsc macro
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/l3packages/xparse/xparse.sty
+(/usr/local/texlive/2026/texmf-dist/tex/latex/l3kernel/expl3.sty
+Package: expl3 2026-11-16 L3 programming layer (loader) 
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/l3kernel/l3backend-pdftex.def
+File: l3backend-pdftex.def 2026-11-16 L3 backend support: PDF output (pdfTeX)
+\l__color_backend_stack_int=\count336
+))
+Package: xparse 2025-10-09 L3 Experimental document command parser
+)
+(/usr/local/texlive/2026/texmf-dist/tex/latex/accsupp/accsupp.sty
+Package: accsupp 2019/12/05 v0.6 Accessibility support by marked content (HO)
+
+(/usr/local/texlive/2026/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+Package: pdfescape 2019/12/09 v1.15 Implements pdfTeX's escape features (HO)
+
+(/usr/local/texlive/2026/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+Package: ltxcmds 2023-12-04 v1.26 LaTeX kernel commands for general use (HO)
+)
+(/usr/local/texlive/2026/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+Package: pdftexcmds 2026-10-28 v0.34 Utility functions of pdfTeX for LuaTeX (HO
+)
+
+(/usr/local/texlive/2026/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+Package: infwarerr 2019/12/03 v1.5 Providing info/warning/error messages (HO)
+)
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+Package pdftexcmds Info: \pdfdraftmode found.
+))
+(/usr/local/texlive/2026/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+Package: kvoptions 2026-10-27 v3.17 Key value format for package options (HO)
+
+(/usr/local/texlive/2026/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+Package: kvsetkeys 2022-10-05 v1.19 Key value parser (HO)
+))
+(/usr/local/texlive/2026/texmf-dist/tex/latex/accsupp/accsupp-pdftex.def
+File: accsupp-pdftex.def 2019/12/05 v0.6 accsupp driver for pdfTeX (HO)
+))))
+(/home/appveyor/texmf/tex/latex/ult-base/ult-glossaries-casechange-fix.sty
+Package: ult-glossaries-casechange-fix 2024/03/25 v1.0 UiT LaTeX template gloss
+aries case-change fix
+)
+\glswrite=\write3
+\glo@main@file=\write4
+\openout4 = `output.glo'.
+
+Package glossaries Info: Writing glossary file output.glo on input line 10.
+\glo@acronym@file=\write5
+\openout5 = `output.acn'.
+
+Package glossaries Info: Writing glossary file output.acn on input line 10.
+
+No file output.aux.
+\openout1 = `output.aux'.
+
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 17.
+LaTeX Font Info:    ... okay on input line 17.
+*geometry* 
