@@ -97,26 +97,18 @@
       }
   }
 
-% Sentinel taking an empty braced argument so mfirstuc (>= 2022/10/14) stops
-% after \upsc{...} instead of capitalizing a trailing plural suffix, while
-% satisfying l3text's single-argument expectation in \l_text_case_exclude_arg_tl.
-\cs_new_protected:Npn \__upsc_mfu_stop:n #1 { #1 }
-
-\cs_new:Npn \upsc #1
-  {
-    \group_begin:
-      \@@upsc { #1 }
-    \group_end:
-    \__upsc_mfu_stop:n { }
-  }
-
-\use:c { @ifpackagelater } { mfirstuc } { 2022/10/14 }
-  {
-    \MFUblocker { \@@upsc }
-    \MFUaddmap { \__upsc_mfu_stop:n } { \__upsc_mfu_stop:n }
-  }
-  { }
-
 \ExplSyntaxOff
+
+\newcommand{\upsc}[1]{%
+  \begingroup
+    \expandafter{\protect\@@upsc{#1}}%
+  \endgroup
+}
+
+\@ifpackagelater{mfirstuc}{2022/10/14}
+{%
+  \MFUblocker{\@@upsc}%
+  \MFUblocker{\upsc}%
+}{}%
 
 \endinput
