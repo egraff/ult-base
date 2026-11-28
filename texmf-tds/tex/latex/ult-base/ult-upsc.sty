@@ -5,6 +5,7 @@
 
 \RequirePackage{xparse}
 \RequirePackage{expl3}[2020/03/05]
+\RequirePackage{etoolbox}
 
 % Allows us to provide a PDF "/ActualText" for each character that is converted to
 % lowercase smallcaps
@@ -101,6 +102,19 @@
 % instead of capitalizing a trailing plural suffix.
 \cs_new_protected:Npn \__upsc_mfu_stop: { }
 
+% \MFUaddmap registers \__upsc_mfu_stop: in \l_text_case_exclude_arg_tl, which
+% causes l3text to treat it as taking an argument and break \MakeUppercase.
+\cs_new_protected:Npn \__upsc_remove_case_exclude_arg:N #1
+  {
+    \tl_if_exist:NT \l_text_case_exclude_arg_tl
+      {
+        \tl_if_in:NnT \l_text_case_exclude_arg_tl { #1 }
+          {
+            \tl_remove_all:Nn \l_text_case_exclude_arg_tl { #1 }
+          }
+      }
+  }
+
 \cs_new:Npn \upsc #1
   {
     \group_begin:
@@ -109,11 +123,14 @@
     \__upsc_mfu_stop:
   }
 
-\cs_if_exist:NT \MFUaddmap
+\UseName { @ifpackagelater } { mfirstuc } { 2022/10/14 }
   {
     \MFUblocker { \@@upsc }
     \MFUaddmap { \__upsc_mfu_stop: } { \__upsc_mfu_stop: }
+    \__upsc_remove_case_exclude_arg:N \__upsc_mfu_stop:
+    \AfterEndPreamble { \__upsc_remove_case_exclude_arg:N \__upsc_mfu_stop: }
   }
+  { }
 
 \ExplSyntaxOff
 
