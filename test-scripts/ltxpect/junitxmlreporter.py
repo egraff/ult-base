@@ -57,9 +57,7 @@ class JUnitXmlReporter:
         """Report the result of the overall test run."""
 
         elapsed = (
-            time.monotonic() - self.start_time
-            if self.start_time is not None
-            else 0.0
+            time.monotonic() - self.start_time if self.start_time is not None else 0.0
         )
 
         async with self.test_result_lock:
