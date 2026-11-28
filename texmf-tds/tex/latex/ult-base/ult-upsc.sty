@@ -5,7 +5,6 @@
 
 \RequirePackage{xparse}
 \RequirePackage{expl3}[2020/03/05]
-\RequirePackage{etoolbox}
 
 % Allows us to provide a PDF "/ActualText" for each character that is converted to
 % lowercase smallcaps
@@ -98,37 +97,23 @@
       }
   }
 
-% Zero-argument sentinel so mfirstuc (>= 2022/10/14) stops after \upsc{...}
-% instead of capitalizing a trailing plural suffix.
-\cs_new_protected:Npn \__upsc_mfu_stop: { }
-
-% \MFUaddmap registers \__upsc_mfu_stop: in \l_text_case_exclude_arg_tl, which
-% causes l3text to treat it as taking an argument and break \MakeUppercase.
-\cs_new_protected:Npn \__upsc_remove_case_exclude_arg:N #1
-  {
-    \tl_if_exist:NT \l_text_case_exclude_arg_tl
-      {
-        \tl_if_in:NnT \l_text_case_exclude_arg_tl { #1 }
-          {
-            \tl_remove_all:Nn \l_text_case_exclude_arg_tl { #1 }
-          }
-      }
-  }
+% Sentinel taking an empty braced argument so mfirstuc (>= 2022/10/14) stops
+% after \upsc{...} instead of capitalizing a trailing plural suffix, while
+% satisfying l3text's single-argument expectation in \l_text_case_exclude_arg_tl.
+\cs_new_protected:Npn \__upsc_mfu_stop:n #1 { #1 }
 
 \cs_new:Npn \upsc #1
   {
     \group_begin:
       \@@upsc { #1 }
     \group_end:
-    \__upsc_mfu_stop:
+    \__upsc_mfu_stop:n { }
   }
 
-\UseName { @ifpackagelater } { mfirstuc } { 2022/10/14 }
+\use:c { @ifpackagelater } { mfirstuc } { 2022/10/14 }
   {
     \MFUblocker { \@@upsc }
-    \MFUaddmap { \__upsc_mfu_stop: } { \__upsc_mfu_stop: }
-    \__upsc_remove_case_exclude_arg:N \__upsc_mfu_stop:
-    \AfterEndPreamble { \__upsc_remove_case_exclude_arg:N \__upsc_mfu_stop: }
+    \MFUaddmap { \__upsc_mfu_stop:n } { \__upsc_mfu_stop:n }
   }
   { }
 
