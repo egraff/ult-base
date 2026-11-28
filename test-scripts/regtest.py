@@ -165,9 +165,7 @@ if __name__ == "__main__":
     )
     
     reporters: list[ltxpect.coreabc.ITestReporter] = [
-        TestResultsJsonReporter(
-            path_util.path_join(test_base_dir, "test_result.json")
-        ),
+        TestResultsJsonReporter(path_util.path_join(test_base_dir, "test_result.json")),
         ColorConsoleReporter(diff_dir=path_util.path_join(test_base_dir, "diffs")),
     ]
 
